@@ -42,3 +42,9 @@ export interface GridCell {
   anchorScore: number;
   score: number;
 }
+
+export interface TrafficWay {
+  id: number;
+  coords: LatLon[];
+  tags: Record<string, string>;
+}

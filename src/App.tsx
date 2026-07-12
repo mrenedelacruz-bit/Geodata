@@ -5,20 +5,32 @@ import Sidebar from './components/Sidebar';
 import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
 import { computeGrid, scoreAtPoint, findPoiAtPoint, SANTO_DOMINGO_BBOX } from './lib/grid';
-import type { GridCell, LatLon, OsmPOI } from './types';
+import { fetchTrafficWays } from './lib/traffic';
+import type { GridCell, LatLon, OsmPOI, TrafficWay } from './types';
 import './App.css';
 
 export default function App() {
   const [pois, setPois] = useState<OsmPOI[]>([]);
+  const [trafficWays, setTrafficWays] = useState<TrafficWay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState(BUSINESS_CATEGORIES[0]);
   const [selectedCell, setSelectedCell] = useState<GridCell | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<{ point: LatLon; label: string } | null>(null);
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [showGrid, setShowGrid] = useState(true);
+  const [showTraffic, setShowTraffic] = useState(true);
+  const [showCompetitors, setShowCompetitors] = useState(true);
 
   useEffect(() => {
-    fetchOsmPOIs(SANTO_DOMINGO_BBOX)
-      .then((data) => setPois(data))
+    Promise.all([
+      fetchOsmPOIs(SANTO_DOMINGO_BBOX),
+      fetchTrafficWays(SANTO_DOMINGO_BBOX),
+    ])
+      .then(([poiData, trafficData]) => {
+        setPois(poiData);
+        setTrafficWays(trafficData);
+      })
       .catch((err) => setError(err instanceof Error ? err.message : 'Error desconocido'))
       .finally(() => setLoading(false));
   }, []);
@@ -68,9 +80,18 @@ export default function App() {
           grid={grid}
           category={category}
           competitors={competitors}
+          trafficWays={trafficWays}
           onMapClick={handleMapClick}
           selectedCell={selectedCell}
           onSelectCell={handleSelectCell}
+          showHeatmap={showHeatmap}
+          onHeatmapToggle={setShowHeatmap}
+          showGrid={showGrid}
+          onGridToggle={setShowGrid}
+          showTraffic={showTraffic}
+          onTrafficToggle={setShowTraffic}
+          showCompetitors={showCompetitors}
+          onCompetitorsToggle={setShowCompetitors}
         />
       </main>
     </div>

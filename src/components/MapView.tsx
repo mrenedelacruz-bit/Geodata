@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import { MapContainer, TileLayer, Rectangle, CircleMarker, Popup, useMapEvents } from 'react-leaflet';
-import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
+import type { BusinessCategory, GridCell, LatLon, OsmPOI, TrafficWay } from '../types';
 import { SANTO_DOMINGO_CENTER } from '../lib/grid';
 import HeatmapLayerComponent from './HeatmapLayer';
+import TrafficLayer from './TrafficLayer';
+import LayerControl from './LayerControl';
 
 function scoreColor(score: number): string {
   // 0 (red, saturated) -> 100 (green, oportunidad)
@@ -23,12 +25,37 @@ interface Props {
   grid: GridCell[];
   category: BusinessCategory;
   competitors: OsmPOI[];
+  trafficWays: TrafficWay[];
   onMapClick: (p: LatLon) => void;
   selectedCell: GridCell | null;
   onSelectCell: (cell: GridCell) => void;
+  showHeatmap: boolean;
+  onHeatmapToggle: (show: boolean) => void;
+  showGrid: boolean;
+  onGridToggle: (show: boolean) => void;
+  showTraffic: boolean;
+  onTrafficToggle: (show: boolean) => void;
+  showCompetitors: boolean;
+  onCompetitorsToggle: (show: boolean) => void;
 }
 
-export default function MapView({ grid, category, competitors, onMapClick, selectedCell, onSelectCell }: Props) {
+export default function MapView({
+  grid,
+  category,
+  competitors,
+  trafficWays,
+  onMapClick,
+  selectedCell,
+  onSelectCell,
+  showHeatmap,
+  onHeatmapToggle,
+  showGrid,
+  onGridToggle,
+  showTraffic,
+  onTrafficToggle,
+  showCompetitors,
+  onCompetitorsToggle,
+}: Props) {
   const competitorMarkers = useMemo(
     () =>
       competitors.map((poi) => (
@@ -47,40 +74,54 @@ export default function MapView({ grid, category, competitors, onMapClick, selec
   );
 
   return (
-    <MapContainer
-      center={[SANTO_DOMINGO_CENTER.lat, SANTO_DOMINGO_CENTER.lon]}
-      zoom={13}
-      style={{ height: '100%', width: '100%' }}
-      preferCanvas
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <MapContainer
+        center={[SANTO_DOMINGO_CENTER.lat, SANTO_DOMINGO_CENTER.lon]}
+        zoom={13}
+        style={{ height: '100%', width: '100%' }}
+        preferCanvas
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <ClickHandler onClick={onMapClick} />
+        {showHeatmap && <HeatmapLayerComponent grid={grid} />}
+        {showTraffic && <TrafficLayer ways={trafficWays} visible={true} />}
+        {showGrid &&
+          grid.map((cell) => (
+            <Rectangle
+              key={`${cell.row}_${cell.col}`}
+              bounds={cell.bounds}
+              pathOptions={{
+                color: selectedCell === cell ? '#111827' : 'transparent',
+                weight: selectedCell === cell ? 2 : 0,
+                fillColor: scoreColor(cell.score),
+                fillOpacity: 0.38,
+              }}
+              eventHandlers={{ click: () => onSelectCell(cell) }}
+            >
+              <Popup>
+                <div style={{ fontSize: '12px', minWidth: '160px' }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Score: {cell.score}</div>
+                  <div>📊 Demanda: {Math.round(cell.anchorScore)}</div>
+                  <div>🏢 Competencia: {cell.competitorCount}</div>
+                </div>
+              </Popup>
+            </Rectangle>
+          ))}
+        {showCompetitors && competitorMarkers}
+      </MapContainer>
+      <LayerControl
+        showHeatmap={showHeatmap}
+        onHeatmapToggle={onHeatmapToggle}
+        showGrid={showGrid}
+        onGridToggle={onGridToggle}
+        showTraffic={showTraffic}
+        onTrafficToggle={onTrafficToggle}
+        showCompetitors={showCompetitors}
+        onCompetitorsToggle={onCompetitorsToggle}
       />
-      <ClickHandler onClick={onMapClick} />
-      <HeatmapLayerComponent grid={grid} />
-      {grid.map((cell) => (
-        <Rectangle
-          key={`${cell.row}_${cell.col}`}
-          bounds={cell.bounds}
-          pathOptions={{
-            color: selectedCell === cell ? '#111827' : 'transparent',
-            weight: selectedCell === cell ? 2 : 0,
-            fillColor: scoreColor(cell.score),
-            fillOpacity: 0.38,
-          }}
-          eventHandlers={{ click: () => onSelectCell(cell) }}
-        >
-          <Popup>
-            <div style={{ fontSize: '12px', minWidth: '160px' }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Score: {cell.score}</div>
-              <div>📊 Demanda: {Math.round(cell.anchorScore)}</div>
-              <div>🏢 Competencia: {cell.competitorCount}</div>
-            </div>
-          </Popup>
-        </Rectangle>
-      ))}
-      {competitorMarkers}
-    </MapContainer>
+    </div>
   );
 }
