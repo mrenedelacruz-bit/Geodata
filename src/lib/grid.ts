@@ -97,6 +97,22 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, bbox = S
   return cells;
 }
 
+export function findPoiAtPoint(pois: OsmPOI[], point: LatLon, radiusMeters = 30): OsmPOI | null {
+  let closest: OsmPOI | null = null;
+  let closestDist = radiusMeters;
+
+  for (const poi of pois) {
+    const dLat = (poi.lat - point.lat) * METERS_PER_DEG_LAT;
+    const dLon = (poi.lon - point.lon) * metersPerDegLon(point.lat);
+    const dist = Math.sqrt(dLat * dLat + dLon * dLon);
+    if (dist < closestDist) {
+      closestDist = dist;
+      closest = poi;
+    }
+  }
+  return closest;
+}
+
 export function scoreAtPoint(pois: OsmPOI[], category: BusinessCategory, point: LatLon, radiusMeters = 500) {
   let competitorCount = 0;
   let anchorScore = 0;

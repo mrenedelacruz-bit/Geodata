@@ -4,7 +4,7 @@ import MapView from './components/MapView';
 import Sidebar from './components/Sidebar';
 import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
-import { computeGrid, scoreAtPoint, SANTO_DOMINGO_BBOX } from './lib/grid';
+import { computeGrid, scoreAtPoint, findPoiAtPoint, SANTO_DOMINGO_BBOX } from './lib/grid';
 import type { GridCell, LatLon, OsmPOI } from './types';
 import './App.css';
 
@@ -34,7 +34,9 @@ export default function App() {
   }, [selectedPoint, pois, category]);
 
   function handleMapClick(p: LatLon) {
-    setSelectedPoint({ point: p, label: `Punto (${p.lat.toFixed(4)}, ${p.lon.toFixed(4)})` });
+    const poi = findPoiAtPoint(pois, p);
+    const label = poi?.tags.name || `Punto (${p.lat.toFixed(4)}, ${p.lon.toFixed(4)})`;
+    setSelectedPoint({ point: p, label });
     setSelectedCell(null);
   }
 

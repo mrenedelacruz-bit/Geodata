@@ -70,7 +70,13 @@ export default function Sidebar({
       {pointAnalysis && (
         <div className="panel">
           <h2>Punto seleccionado</h2>
-          <p className="point-label">{pointAnalysis.label}</p>
+          <p className="point-label" style={{
+            fontSize: '16px',
+            fontWeight: pointAnalysis.label.startsWith('Punto') ? '400' : '600',
+            color: pointAnalysis.label.startsWith('Punto') ? '#666' : '#111827'
+          }}>
+            {pointAnalysis.label}
+          </p>
 
           <div style={{ marginBottom: '12px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '6px', borderLeft: '3px solid #0ea5e9' }}>
             <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0ea5e9', marginBottom: '4px' }}>
