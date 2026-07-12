@@ -1,11 +1,13 @@
 import { ANCHOR_SIGNALS } from '../data/categories';
 import type { BBox, BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 
+// Cobertura ampliada hasta la Circunvalación de Santo Domingo (Norte/Duarte y Este),
+// incluyendo Santo Domingo Este, Norte, Oeste (Los Alcarrizos) y el Distrito Nacional.
 export const SANTO_DOMINGO_BBOX: BBox = {
-  south: 18.42,
-  west: -70.06,
-  north: 18.56,
-  east: -69.83,
+  south: 18.4,
+  west: -70.15,
+  north: 18.62,
+  east: -69.75,
 };
 
 export const SANTO_DOMINGO_CENTER: LatLon = { lat: 18.4861, lon: -69.9312 };

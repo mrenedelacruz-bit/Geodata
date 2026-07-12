@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
-import { HeatmapLayer } from 'react-leaflet-heatmap-layer-v3';
+import { useEffect } from 'react';
+import { useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet.heat';
 import type { GridCell } from '../types';
 
 interface Props {
@@ -7,32 +9,33 @@ interface Props {
 }
 
 export default function HeatmapLayerComponent({ grid }: Props) {
-  const heatmapData = useMemo(
-    () =>
-      grid.map((cell) => [
-        cell.center.lat,
-        cell.center.lon,
-        cell.score / 100, // Normalize to 0-1
-      ]) as [number, number, number][],
-    [grid]
-  );
+  const map = useMap();
 
-  return (
-    <HeatmapLayer
-      points={heatmapData}
-      longitudeExtractor={(point: [number, number, number]) => point[1]}
-      latitudeExtractor={(point: [number, number, number]) => point[0]}
-      intensityExtractor={(point: [number, number, number]) => point[2]}
-      radius={40}
-      blur={15}
-      maxZoom={18}
-      gradient={{
+  useEffect(() => {
+    if (!grid.length) return;
+
+    const points = grid.map((cell) => [cell.center.lat, cell.center.lon, cell.score / 100] as [number, number, number]);
+
+    const heatLayer = L.heatLayer(points, {
+      radius: 35,
+      blur: 20,
+      maxZoom: 18,
+      max: 1.0,
+      gradient: {
         0.0: '#2166AC',
         0.25: '#92C5DE',
         0.5: '#F7F7F7',
         0.75: '#F4A582',
         1.0: '#B2182B',
-      }}
-    />
-  );
+      },
+    });
+
+    heatLayer.addTo(map);
+
+    return () => {
+      map.removeLayer(heatLayer);
+    };
+  }, [grid, map]);
+
+  return null;
 }
