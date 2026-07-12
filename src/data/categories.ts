@@ -90,7 +90,14 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
     label: 'Estación de Gas / GLP',
     icon: '🛢️',
     competitorLabel: 'Estaciones de Gas/GLP',
-    matchesCompetitor: (t) => has(t, 'amenity', ['fuel']) && has(t, 'fuel:lpg', ['yes']),
+    matchesCompetitor: (t) => {
+      const name = (t.name || '').toLowerCase();
+      return (
+        (has(t, 'amenity', ['fuel']) && has(t, 'fuel:lpg', ['yes'])) ||
+        has(t, 'shop', ['gas']) ||
+        (has(t, 'amenity', ['fuel']) && (name.includes('gas') || name.includes('glp') || name.includes('planta')))
+      );
+    },
   },
 ];
 
