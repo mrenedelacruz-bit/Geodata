@@ -71,22 +71,35 @@ export default function Sidebar({
         <div className="panel">
           <h2>Punto seleccionado</h2>
           <p className="point-label">{pointAnalysis.label}</p>
+
+          <div style={{ marginBottom: '12px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '6px', borderLeft: '3px solid #0ea5e9' }}>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0ea5e9', marginBottom: '4px' }}>
+              Score: {Math.round(Math.max(0, (pointAnalysis.anchorScore / Math.max(1, pointAnalysis.anchorScore)) * 100 - (pointAnalysis.competitorCount / Math.max(1, pointAnalysis.competitorCount)) * 55))}
+            </div>
+            <div style={{ fontSize: '12px', color: '#666' }}>
+              Demanda (anclas) vs Competencia
+            </div>
+          </div>
+
           <ul className="stat-list">
             <li>
-              <strong>{pointAnalysis.competitorCount}</strong> {category.competitorLabel.toLowerCase()} en 500 m
+              <strong>{pointAnalysis.anchorScore.toFixed(1)}</strong> demanda (POIs atractivos cercanos)
             </li>
             <li>
-              <strong>{pointAnalysis.anchorScore.toFixed(1)}</strong> puntaje de demanda (anclas cercanas)
+              <strong>{pointAnalysis.competitorCount}</strong> {category.competitorLabel.toLowerCase()} en radio de búsqueda
             </li>
           </ul>
           {pointAnalysis.nearby.length > 0 && (
-            <ul className="anchor-list">
-              {pointAnalysis.nearby.slice(0, 5).map((n) => (
-                <li key={n.anchor}>
-                  {n.anchor}: {n.count}
-                </li>
-              ))}
-            </ul>
+            <>
+              <p style={{ fontSize: '12px', fontWeight: 'bold', marginTop: '10px', marginBottom: '6px' }}>Recursos cercanos:</p>
+              <ul className="anchor-list">
+                {pointAnalysis.nearby.slice(0, 5).map((n) => (
+                  <li key={n.anchor}>
+                    {n.anchor}: {n.count}
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
       )}

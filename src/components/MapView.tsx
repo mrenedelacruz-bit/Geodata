@@ -68,7 +68,15 @@ export default function MapView({ grid, category, competitors, onMapClick, selec
             fillOpacity: 0.38,
           }}
           eventHandlers={{ click: () => onSelectCell(cell) }}
-        />
+        >
+          <Popup>
+            <div style={{ fontSize: '12px', minWidth: '160px' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Score: {cell.score}</div>
+              <div>📊 Demanda: {Math.round(cell.anchorScore)}</div>
+              <div>🏢 Competencia: {cell.competitorCount}</div>
+            </div>
+          </Popup>
+        </Rectangle>
       ))}
       {competitorMarkers}
     </MapContainer>
