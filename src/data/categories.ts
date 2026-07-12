@@ -78,6 +78,20 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
     competitorLabel: 'Clínicas dentales',
     matchesCompetitor: (t) => has(t, 'amenity', ['dentist']),
   },
+  {
+    id: 'gasolinera',
+    label: 'Estación de combustibles',
+    icon: '⛽',
+    competitorLabel: 'Estaciones de combustibles',
+    matchesCompetitor: (t) => has(t, 'amenity', ['fuel']),
+  },
+  {
+    id: 'estacion_gas',
+    label: 'Estación de Gas / GLP',
+    icon: '🛢️',
+    competitorLabel: 'Estaciones de Gas/GLP',
+    matchesCompetitor: (t) => has(t, 'amenity', ['fuel']) && has(t, 'fuel:lpg', ['yes']),
+  },
 ];
 
 export const ANCHOR_SIGNALS: AnchorSignal[] = [
