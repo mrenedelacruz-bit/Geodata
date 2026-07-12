@@ -23,6 +23,7 @@ export interface BusinessCategory {
   icon: string;
   competitorLabel: string;
   matchesCompetitor: (tags: Record<string, string>) => boolean;
+  anchorWeights?: Record<string, number>;
 }
 
 export interface AnchorSignal {

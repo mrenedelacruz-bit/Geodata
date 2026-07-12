@@ -48,6 +48,7 @@ function bucketPOIs(pois: OsmPOI[], bbox: BBox, latStep: number, lonStep: number
 export function computeGrid(pois: OsmPOI[], category: BusinessCategory, bbox = SANTO_DOMINGO_BBOX): GridCell[] {
   const { latStep, lonStep, rows, cols } = buildGridDims(bbox);
   const buckets = bucketPOIs(pois, bbox, latStep, lonStep);
+  const weights = category.anchorWeights || {};
 
   const cells: GridCell[] = [];
   for (let row = 0; row < rows; row++) {
@@ -61,7 +62,10 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, bbox = S
           for (const poi of bucket) {
             if (category.matchesCompetitor(poi.tags)) competitorCount++;
             for (const anchor of ANCHOR_SIGNALS) {
-              if (anchor.matches(poi.tags)) anchorScore += anchor.weight;
+              if (anchor.matches(poi.tags)) {
+                const weight = weights[anchor.id] ?? anchor.weight;
+                anchorScore += weight;
+              }
             }
           }
         }
@@ -98,6 +102,7 @@ export function scoreAtPoint(pois: OsmPOI[], category: BusinessCategory, point: 
   let anchorScore = 0;
   const nearby: { anchor: string; count: number }[] = [];
   const anchorCounts = new Map<string, number>();
+  const weights = category.anchorWeights || {};
 
   for (const poi of pois) {
     const dLat = (poi.lat - point.lat) * METERS_PER_DEG_LAT;
@@ -107,7 +112,8 @@ export function scoreAtPoint(pois: OsmPOI[], category: BusinessCategory, point: 
     if (category.matchesCompetitor(poi.tags)) competitorCount++;
     for (const anchor of ANCHOR_SIGNALS) {
       if (anchor.matches(poi.tags)) {
-        anchorScore += anchor.weight;
+        const weight = weights[anchor.id] ?? anchor.weight;
+        anchorScore += weight;
         anchorCounts.set(anchor.label, (anchorCounts.get(anchor.label) ?? 0) + 1);
       }
     }
