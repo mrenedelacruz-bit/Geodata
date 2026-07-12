@@ -6,6 +6,7 @@ import type { LatLon } from '../types';
 interface PointAnalysis {
   point: LatLon;
   label: string;
+  score: number | null;
   competitorCount: number;
   anchorScore: number;
   nearby: { anchor: string; count: number }[];
@@ -78,14 +79,16 @@ export default function Sidebar({
             {pointAnalysis.label}
           </p>
 
-          <div style={{ marginBottom: '12px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '6px', borderLeft: '3px solid #0ea5e9' }}>
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0ea5e9', marginBottom: '4px' }}>
-              Score: {Math.round(Math.max(0, (pointAnalysis.anchorScore / Math.max(1, pointAnalysis.anchorScore)) * 100 - (pointAnalysis.competitorCount / Math.max(1, pointAnalysis.competitorCount)) * 55))}
+          {pointAnalysis.score !== null && (
+            <div style={{ marginBottom: '12px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '6px', borderLeft: '3px solid #0ea5e9' }}>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#0ea5e9', marginBottom: '4px' }}>
+                Score: {pointAnalysis.score}
+              </div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                Score de la zona (demanda por anclas menos competencia)
+              </div>
             </div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              Demanda (anclas) vs Competencia
-            </div>
-          </div>
+          )}
 
           <ul className="stat-list">
             <li>

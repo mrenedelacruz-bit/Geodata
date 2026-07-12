@@ -77,7 +77,7 @@ export default function MapView({
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <MapContainer
         center={[SANTO_DOMINGO_CENTER.lat, SANTO_DOMINGO_CENTER.lon]}
-        zoom={13}
+        zoom={12}
         style={{ height: '100%', width: '100%' }}
         preferCanvas
       >
@@ -87,9 +87,11 @@ export default function MapView({
         />
         <ClickHandler onClick={onMapClick} />
         {showHeatmap && <HeatmapLayerComponent grid={grid} />}
-        {showTraffic && <TrafficLayer ways={trafficWays} visible={true} />}
+        {showTraffic && <TrafficLayer ways={trafficWays} />}
         {showGrid &&
-          grid.map((cell) => (
+          grid
+            .filter((cell) => cell.anchorScore > 0 || cell.competitorCount > 0)
+            .map((cell) => (
             <Rectangle
               key={`${cell.row}_${cell.col}`}
               bounds={cell.bounds}

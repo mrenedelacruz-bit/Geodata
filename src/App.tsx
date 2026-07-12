@@ -42,8 +42,13 @@ export default function App() {
   const pointAnalysis = useMemo(() => {
     if (!selectedPoint || !pois.length) return null;
     const result = scoreAtPoint(pois, category, selectedPoint.point);
-    return { point: selectedPoint.point, label: selectedPoint.label, ...result };
-  }, [selectedPoint, pois, category]);
+    const { lat, lon } = selectedPoint.point;
+    const cell = grid.find(
+      (c) =>
+        lat >= c.bounds[0][0] && lat < c.bounds[1][0] && lon >= c.bounds[0][1] && lon < c.bounds[1][1],
+    );
+    return { point: selectedPoint.point, label: selectedPoint.label, score: cell?.score ?? null, ...result };
+  }, [selectedPoint, pois, category, grid]);
 
   function handleMapClick(p: LatLon) {
     const poi = findPoiAtPoint(pois, p);

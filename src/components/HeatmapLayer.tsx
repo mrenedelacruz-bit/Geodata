@@ -14,7 +14,9 @@ export default function HeatmapLayerComponent({ grid }: Props) {
   useEffect(() => {
     if (!grid.length) return;
 
-    const points = grid.map((cell) => [cell.center.lat, cell.center.lon, cell.score / 100] as [number, number, number]);
+    const points = grid
+      .filter((cell) => cell.score > 0)
+      .map((cell) => [cell.center.lat, cell.center.lon, cell.score / 100] as [number, number, number]);
 
     const heatLayer = L.heatLayer(points, {
       radius: 35,

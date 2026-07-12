@@ -5,10 +5,9 @@ import { getHighwayStyle } from '../lib/traffic';
 
 interface Props {
   ways: TrafficWay[];
-  visible: boolean;
 }
 
-export default function TrafficLayer({ ways, visible }: Props) {
+export default function TrafficLayer({ ways }: Props) {
   const polylines = useMemo(
     () =>
       ways.map((way) => (
@@ -30,5 +29,5 @@ export default function TrafficLayer({ ways, visible }: Props) {
     [ways]
   );
 
-  return visible ? <>{polylines}</> : null;
+  return <>{polylines}</>;
 }

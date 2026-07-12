@@ -1,53 +1,57 @@
-import type { BBox, LatLon } from '../types';
+import type { BBox, TrafficWay } from '../types';
 
-export interface TrafficWay {
-  id: number;
-  coords: LatLon[];
-  tags: Record<string, string>;
+export type { TrafficWay };
+
+const ENDPOINTS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+];
+
+function buildQuery(bbox: BBox): string {
+  const b = `${bbox.south},${bbox.west},${bbox.north},${bbox.east}`;
+  return `[out:json][timeout:90];
+(
+  way["highway"~"^(motorway|trunk|primary|secondary|tertiary)$"](${b});
+);
+out geom;`;
 }
 
-const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
+interface OverpassWay {
+  type: string;
+  id: number;
+  geometry?: { lat: number; lon: number }[];
+  tags?: Record<string, string>;
+}
 
 export async function fetchTrafficWays(bbox: BBox): Promise<TrafficWay[]> {
-  const query = `
-    [bbox:${bbox.south},${bbox.west},${bbox.north},${bbox.east}];
-    (
-      way["highway"~"^(motorway|trunk|primary|secondary|tertiary)$"];
-    );
-    out geom;
-  `;
+  const query = buildQuery(bbox);
 
-  try {
-    const response = await fetch(OVERPASS_URL, {
-      method: 'POST',
-      body: query,
-    });
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const data = await response.json();
-    const ways: TrafficWay[] = [];
-
-    if (data.elements) {
-      for (const way of data.elements) {
-        if (way.type === 'way' && way.geometry) {
-          ways.push({
-            id: way.id,
-            coords: way.geometry.map((point: { lat: number; lon: number }) => ({
-              lat: point.lat,
-              lon: point.lon,
-            })),
-            tags: way.tags || {},
-          });
-        }
+  for (const endpoint of ENDPOINTS) {
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        body: 'data=' + encodeURIComponent(query),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+      if (!res.ok) throw new Error(`Overpass respondió ${res.status}`);
+      const json = await res.json();
+      const elements: OverpassWay[] = json.elements ?? [];
+      const ways: TrafficWay[] = [];
+      for (const el of elements) {
+        if (el.type !== 'way' || !el.geometry?.length) continue;
+        ways.push({
+          id: el.id,
+          coords: el.geometry.map((p) => ({ lat: p.lat, lon: p.lon })),
+          tags: el.tags ?? {},
+        });
       }
+      return ways;
+    } catch (err) {
+      console.error(`Error obteniendo vías desde ${endpoint}:`, err);
     }
-
-    return ways;
-  } catch (error) {
-    console.error('Error fetching traffic ways:', error);
-    return [];
   }
+  // La capa de tráfico es opcional: no rompemos la app si Overpass falla.
+  return [];
 }
 
 function getTrafficWeight(highway: string): number {
@@ -62,7 +66,7 @@ function getTrafficWeight(highway: string): number {
 }
 
 function getTrafficColor(weight: number): string {
-  // Rojo fuerte para autopistas, naranja para vías principales
+  // Rojo fuerte para autopistas, degradando hacia amarillo en vías menores
   const colors: Record<number, string> = {
     5: '#d32f2f',
     4: '#f57c00',
@@ -80,7 +84,7 @@ export function getHighwayStyle(tags: Record<string, string>) {
 
   return {
     color,
-    weight: weight,
+    weight,
     opacity: 0.7,
   };
 }
