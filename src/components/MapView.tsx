@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { MapContainer, TileLayer, Rectangle, CircleMarker, Popup, useMapEvents } from 'react-leaflet';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import { SANTO_DOMINGO_CENTER } from '../lib/grid';
+import HeatmapLayerComponent from './HeatmapLayer';
 
 function scoreColor(score: number): string {
   // 0 (red, saturated) -> 100 (green, oportunidad)
@@ -57,6 +58,7 @@ export default function MapView({ grid, category, competitors, onMapClick, selec
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <ClickHandler onClick={onMapClick} />
+      <HeatmapLayerComponent grid={grid} />
       {grid.map((cell) => (
         <Rectangle
           key={`${cell.row}_${cell.col}`}
