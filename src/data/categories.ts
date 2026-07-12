@@ -95,6 +95,11 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
       return (
         (has(t, 'amenity', ['fuel']) && has(t, 'fuel:lpg', ['yes'])) ||
         has(t, 'shop', ['gas']) ||
+        name.includes('tropigas') ||
+        name.includes('propagas') ||
+        name.includes('gasval') ||
+        name.includes('comatgas') ||
+        name.includes('agagas') ||
         (has(t, 'amenity', ['fuel']) && (name.includes('gas') || name.includes('glp') || name.includes('planta')))
       );
     },
