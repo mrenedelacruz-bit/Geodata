@@ -32,24 +32,27 @@ export default function HeatmapLayerComponent({ grid }: Props) {
     // de intensidad (heatmap invisible). 12 = intensidad plena al zoom inicial.
     // Gradiente de 11 paradas: más grados de intensidad distinguibles entre
     // el velo urbano bajo y los núcleos de mayor potencial.
+    // minOpacity subido (0.06 -> 0.22) para que el extremo más suave ya sea
+    // visible en vez de casi transparente; colores más saturados en ambos
+    // extremos (celeste más vivo abajo, azul casi negro más profundo arriba).
     const heatLayer = L.heatLayer(points, {
       radius: 35,
       blur: 28,
       maxZoom: 12,
       max: 8,
-      minOpacity: 0.06,
+      minOpacity: 0.22,
       gradient: {
-        0.05: '#eef7fd',
-        0.15: '#dbeffc',
-        0.27: '#b7e2f8',
-        0.38: '#8cd1f2',
-        0.5: '#55bce9',
-        0.6: '#2aa3dc',
-        0.7: '#1585c8',
-        0.79: '#0e6fb0',
-        0.87: '#0B5FA5',
-        0.94: '#083A66',
-        1.0: '#04223d',
+        0.05: '#cdeafc',
+        0.15: '#a3ddfa',
+        0.27: '#72c9f5',
+        0.38: '#42b3ef',
+        0.5: '#1f9ce3',
+        0.6: '#0f87d1',
+        0.7: '#0c6fb5',
+        0.79: '#0a5a9a',
+        0.87: '#08447a',
+        0.94: '#052c54',
+        1.0: '#02121f',
       },
     });
 
