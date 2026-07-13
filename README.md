@@ -51,4 +51,3 @@ para que carguen los tiles del mapa, Overpass y Nominatim.
 
 React + TypeScript + Vite, Leaflet / react-leaflet para el mapa, Overpass API y Nominatim para los
 datos geoespaciales.
-# Deployment trigger
