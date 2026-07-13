@@ -48,13 +48,13 @@ export default function LayerControl({
           <div
             className="swatch"
             style={{
-              background: 'linear-gradient(135deg, #2166AC 0%, #92C5DE 25%, #F7F7F7 50%, #F4A582 75%, #B2182B 100%)',
+              background: 'linear-gradient(135deg, #87D4F1, #083A66)',
             }}
           />
           Mapa de calor
           <div className="chk">{showHeatmap ? '✓' : ''}</div>
         </div>
-        <div className="sub">Visualización suave de oportunidades por demanda vs competencia</div>
+        <div className="sub">Potencial de la zona: azul claro (bajo) → azul oscuro (alto)</div>
 
         <div
           className={`layer-btn ${showGrid ? '' : 'off'}`}
