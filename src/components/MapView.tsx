@@ -4,6 +4,7 @@ import type { BusinessCategory, GridCell, LatLon, OsmPOI, TrafficWay } from '../
 import { SANTO_DOMINGO_CENTER } from '../lib/grid';
 import HeatmapLayerComponent from './HeatmapLayer';
 import TrafficLayer from './TrafficLayer';
+import CensusLayer from './CensusLayer';
 import LayerControl from './LayerControl';
 
 function scoreColor(score: number): string {
@@ -37,6 +38,8 @@ interface Props {
   onTrafficToggle: (show: boolean) => void;
   showCompetitors: boolean;
   onCompetitorsToggle: (show: boolean) => void;
+  showCensus: boolean;
+  onCensusToggle: (show: boolean) => void;
 }
 
 export default function MapView({
@@ -55,6 +58,8 @@ export default function MapView({
   onTrafficToggle,
   showCompetitors,
   onCompetitorsToggle,
+  showCensus,
+  onCensusToggle,
 }: Props) {
   const competitorMarkers = useMemo(
     () =>
@@ -105,6 +110,7 @@ export default function MapView({
         <ClickHandler onClick={onMapClick} />
         {showHeatmap && <HeatmapLayerComponent grid={grid} />}
         {showTraffic && <TrafficLayer ways={trafficWays} />}
+        {showCensus && <CensusLayer />}
         {showGrid &&
           grid
             .filter((cell) => cell.anchorScore > 0 || cell.competitorCount > 0)
@@ -141,6 +147,8 @@ export default function MapView({
         onTrafficToggle={onTrafficToggle}
         showCompetitors={showCompetitors}
         onCompetitorsToggle={onCompetitorsToggle}
+        showCensus={showCensus}
+        onCensusToggle={onCensusToggle}
       />
     </div>
   );

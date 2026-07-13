@@ -11,6 +11,8 @@ interface Props {
   onGridToggle: (show: boolean) => void;
   showCompetitors: boolean;
   onCompetitorsToggle: (show: boolean) => void;
+  showCensus: boolean;
+  onCensusToggle: (show: boolean) => void;
 }
 
 export default function LayerControl({
@@ -23,6 +25,8 @@ export default function LayerControl({
   onGridToggle,
   showCompetitors,
   onCompetitorsToggle,
+  showCensus,
+  onCensusToggle,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -91,6 +95,22 @@ export default function LayerControl({
           <div className="chk">{showCompetitors ? '✓' : ''}</div>
         </div>
         <div className="sub">{category.competitorLabel} existentes en el mapa</div>
+
+        <div
+          className={`layer-btn ${showCensus ? '' : 'off'}`}
+          onClick={() => toggleLayer(onCensusToggle, showCensus)}
+        >
+          <div
+            className="swatch"
+            style={{ background: 'linear-gradient(135deg, #d32f2f, #fbc02d, #1b5e20)' }}
+          />
+          Nivel socioeconómico
+          <div className="chk">{showCensus ? '✓' : ''}</div>
+        </div>
+        <div className="sub">
+          Poder adquisitivo por sector (Censo ONE 2022 + SIUBEN/MEPyD). Verde = alto, rojo = bajo.
+          Borde punteado = estimación.
+        </div>
       </div>
     </div>
   );

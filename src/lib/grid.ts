@@ -1,4 +1,5 @@
 import { ANCHOR_SIGNALS } from '../data/categories';
+import { purchasingPowerAt } from '../data/census';
 import type { BBox, BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 
 // Cobertura ampliada hasta la Circunvalación de Santo Domingo (Norte/Duarte y Este),
@@ -94,7 +95,12 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, bbox = S
   for (const cell of cells) {
     const demand = cell.anchorScore / maxAnchor;
     const saturation = cell.competitorCount / maxCompetitor;
-    cell.score = Math.round(Math.max(0, demand * 100 - saturation * 55));
+    // Ajuste socioeconómico (ONE/SIUBEN): el poder adquisitivo del sector
+    // modula la demanda en ±30% — power 0.5 es neutro (×1.0), 1.0 → ×1.3,
+    // 0.0 → ×0.7. Multiplicativo para que celdas sin demanda sigan en 0.
+    const power = purchasingPowerAt(cell.center);
+    const adjustedDemand = demand * (0.7 + 0.6 * power);
+    cell.score = Math.round(Math.min(100, Math.max(0, adjustedDemand * 100 - saturation * 55)));
   }
   return cells;
 }

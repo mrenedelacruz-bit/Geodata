@@ -1,4 +1,5 @@
 import { BUSINESS_CATEGORIES } from '../data/categories';
+import { powerLabel, powerColor, type CensusSector } from '../data/census';
 import type { BusinessCategory, GridCell } from '../types';
 import SearchBox from './SearchBox';
 import type { LatLon } from '../types';
@@ -7,6 +8,7 @@ interface PointAnalysis {
   point: LatLon;
   label: string;
   score: number | null;
+  sector: CensusSector | null;
   competitorCount: number;
   anchorScore: number;
   nearby: { anchor: string; count: number }[];
@@ -85,7 +87,29 @@ export default function Sidebar({
                 Score: {pointAnalysis.score}
               </div>
               <div style={{ fontSize: '12px', color: '#666' }}>
-                Score de la zona (demanda por anclas menos competencia)
+                Score de la zona: demanda por anclas × poder adquisitivo, menos competencia
+              </div>
+            </div>
+          )}
+
+          {pointAnalysis.sector && (
+            <div style={{ marginBottom: '10px', padding: '8px 10px', backgroundColor: '#f7fafc', borderRadius: '6px', border: '1px solid #e5edf3', fontSize: '12px' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
+                📍 {pointAnalysis.sector.name} · {pointAnalysis.sector.municipio}
+              </div>
+              <div>
+                Poder adquisitivo:{' '}
+                <strong style={{ color: powerColor(pointAnalysis.sector.purchasingPower) }}>
+                  {powerLabel(pointAnalysis.sector.purchasingPower)}
+                </strong>
+              </div>
+              {pointAnalysis.sector.povertyRate !== undefined && (
+                <div>Hogares pobres: {pointAnalysis.sector.povertyRate}% (SIUBEN)</div>
+              )}
+              <div style={{ fontSize: '10px', color: '#7a8a99', marginTop: '3px' }}>
+                {pointAnalysis.sector.dataQuality === 'sourced'
+                  ? 'Fuente: SIUBEN/MEPyD · Censo ONE 2022'
+                  : 'Estimación derivada de estrato ICV municipal'}
               </div>
             </div>
           )}
@@ -133,9 +157,10 @@ export default function Sidebar({
       <footer>
         <p>
           Datos: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>{' '}
-          contributors (ODbL). El puntaje es un modelo aproximado (demanda por anclas cercanas menos densidad de
-          competencia); no sustituye un estudio de mercado formal. La densidad poblacional usa zonas residenciales de
-          OSM como proxy — sustitúyela por cifras oficiales de la ONE cuando estén disponibles.
+          contributors (ODbL). Datos socioeconómicos: Censo ONE 2022 y SIUBEN/MEPyD (índice ICV y tasas de pobreza
+          por sector; algunos sectores usan estimaciones derivadas del estrato municipal). El puntaje es un modelo
+          aproximado (demanda por anclas ajustada por poder adquisitivo, menos densidad de competencia); no sustituye
+          un estudio de mercado formal.
         </p>
       </footer>
     </aside>

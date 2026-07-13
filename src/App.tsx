@@ -7,6 +7,7 @@ import { fetchOsmPOIs } from './lib/overpass';
 import { computeGrid, scoreAtPoint, findPoiAtPoint, SANTO_DOMINGO_BBOX } from './lib/grid';
 import { fetchTrafficWays } from './lib/traffic';
 import { MANUAL_POIS } from './data/manualPois';
+import { sectorAt } from './data/census';
 import type { GridCell, LatLon, OsmPOI, TrafficWay } from './types';
 import './App.css';
 
@@ -22,6 +23,7 @@ export default function App() {
   const [showGrid, setShowGrid] = useState(true);
   const [showTraffic, setShowTraffic] = useState(true);
   const [showCompetitors, setShowCompetitors] = useState(true);
+  const [showCensus, setShowCensus] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -48,7 +50,8 @@ export default function App() {
       (c) =>
         lat >= c.bounds[0][0] && lat < c.bounds[1][0] && lon >= c.bounds[0][1] && lon < c.bounds[1][1],
     );
-    return { point: selectedPoint.point, label: selectedPoint.label, score: cell?.score ?? null, ...result };
+    const sector = sectorAt(selectedPoint.point);
+    return { point: selectedPoint.point, label: selectedPoint.label, score: cell?.score ?? null, sector, ...result };
   }, [selectedPoint, pois, category, grid]);
 
   function handleMapClick(p: LatLon) {
@@ -98,6 +101,8 @@ export default function App() {
           onTrafficToggle={setShowTraffic}
           showCompetitors={showCompetitors}
           onCompetitorsToggle={setShowCompetitors}
+          showCensus={showCensus}
+          onCensusToggle={setShowCensus}
         />
       </main>
     </div>
