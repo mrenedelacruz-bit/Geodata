@@ -13,15 +13,16 @@ import type { OsmPOI } from '../types';
 export const MANUAL_POIS: OsmPOI[] = [
   {
     id: -101,
-    // Estimada: entrada de El Batey, Carretera 5, Sosúa.
-    lat: 19.7508,
-    lon: -70.5147,
+    // Confirmada por el usuario (19.7525, -70.5216) — Carretera Sosúa-Cabarete Km 1, El Batey.
+    lat: 19.7525,
+    lon: -70.5216,
     tags: {
       amenity: 'fuel',
-      name: 'Texaco Sosúa',
+      name: 'Texaco Colonia Sosúa',
       brand: 'Texaco',
+      'addr:street': 'Carretera Sosúa-Cabarete Km 1',
       'addr:city': 'Sosúa',
-      source: 'manual:directorios (reportada por el usuario) — coordenadas estimadas sobre la Carretera 5, pendientes de confirmación',
+      source: 'manual:reportada por el usuario — coordenadas confirmadas (Carretera Sosúa-Cabarete Km 1, El Batey)',
     },
   },
   {
@@ -49,6 +50,32 @@ export const MANUAL_POIS: OsmPOI[] = [
       'addr:street': 'Calle Benigno Lantigua 2',
       'addr:city': 'Sosúa',
       source: 'manual:reportada por el usuario — coordenadas confirmadas (Calle Benigno Lantigua 2)',
+    },
+  },
+  {
+    id: -104,
+    // Confirmada por el usuario (19.7602, -70.5055) — Carretera Sosúa-Cabarete Km 3.5.
+    lat: 19.7602,
+    lon: -70.5055,
+    tags: {
+      amenity: 'fuel',
+      name: 'Next Grupo Propagas',
+      brand: 'Next',
+      'addr:street': 'Carretera Sosúa-Cabarete Km 3.5',
+      'addr:city': 'Sosúa',
+      source: 'manual:reportada por el usuario — coordenadas confirmadas (Carretera Sosúa-Cabarete Km 3.5)',
+    },
+  },
+  {
+    id: -105,
+    // Confirmada por el usuario (19.7511, -70.5568) — Sabaneta de Cangrejos, cerca Base Aérea.
+    lat: 19.7511,
+    lon: -70.5568,
+    tags: {
+      shop: 'gas',
+      name: 'Gasolinera Base Aérea',
+      'addr:city': 'Sabaneta de Cangrejos',
+      source: 'manual:reportada por el usuario — coordenadas confirmadas (Sabaneta de Cangrejos, cerca Base Aérea de Puerto Plata)',
     },
   },
 ];
