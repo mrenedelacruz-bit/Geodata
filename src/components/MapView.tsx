@@ -5,6 +5,7 @@ import { getLocation } from '../data/locations';
 import HeatmapLayerComponent from './HeatmapLayer';
 import TrafficLayer from './TrafficLayer';
 import CensusLayer from './CensusLayer';
+import SaturationLayer from './SaturationLayer';
 import LayerControl from './LayerControl';
 import LocationSwitcher from './LocationSwitcher';
 
@@ -43,6 +44,8 @@ interface Props {
   onCompetitorsToggle: (show: boolean) => void;
   showCensus: boolean;
   onCensusToggle: (show: boolean) => void;
+  showSaturation: boolean;
+  onSaturationToggle: (show: boolean) => void;
 }
 
 export default function MapView({
@@ -65,6 +68,8 @@ export default function MapView({
   onCompetitorsToggle,
   showCensus,
   onCensusToggle,
+  showSaturation,
+  onSaturationToggle,
 }: Props) {
   const locationConfig = getLocation(location);
 
@@ -153,6 +158,7 @@ export default function MapView({
             })}
 
         {showCompetitors && competitorMarkers}
+        {showSaturation && <SaturationLayer grid={grid} />}
       </MapContainer>
       <LayerControl
         category={category}
@@ -166,6 +172,8 @@ export default function MapView({
         onCompetitorsToggle={onCompetitorsToggle}
         showCensus={showCensus}
         onCensusToggle={onCensusToggle}
+        showSaturation={showSaturation}
+        onSaturationToggle={onSaturationToggle}
       />
     </div>
   );

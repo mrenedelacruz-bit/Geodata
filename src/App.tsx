@@ -30,6 +30,7 @@ export default function App({ location }: AppProps) {
   const [showTraffic, setShowTraffic] = useState(true);
   const [showCompetitors, setShowCompetitors] = useState(true);
   const [showCensus, setShowCensus] = useState(false);
+  const [showSaturation, setShowSaturation] = useState(false);
 
   const locationConfig = getLocation(location);
 
@@ -131,6 +132,8 @@ export default function App({ location }: AppProps) {
           onCompetitorsToggle={setShowCompetitors}
           showCensus={showCensus}
           onCensusToggle={setShowCensus}
+          showSaturation={showSaturation}
+          onSaturationToggle={setShowSaturation}
         />
       </main>
     </div>

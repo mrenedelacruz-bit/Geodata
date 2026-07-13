@@ -33,6 +33,8 @@ export interface AnchorSignal {
   matches: (tags: Record<string, string>) => boolean;
 }
 
+export type SaturationLevel = 'oportunidad' | 'moderado' | 'saturado';
+
 export interface GridCell {
   row: number;
   col: number;
@@ -41,6 +43,7 @@ export interface GridCell {
   competitorCount: number;
   anchorScore: number;
   score: number;
+  saturationLevel: SaturationLevel;
 }
 
 export interface TrafficWay {

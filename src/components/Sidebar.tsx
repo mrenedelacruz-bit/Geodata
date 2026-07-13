@@ -1,5 +1,6 @@
 import { BUSINESS_CATEGORIES } from '../data/categories';
 import { powerLabel, powerColor, sectorAt, type CensusSector } from '../data/census';
+import { saturationLabel, saturationColor } from '../lib/saturation';
 import type { BusinessCategory, GridCell } from '../types';
 import SearchBox from './SearchBox';
 import type { LatLon } from '../types';
@@ -249,6 +250,20 @@ export default function Sidebar({
               <span onClick={() => onSelectCell(cell)} style={{ flex: 1 }}>
                 <span className="score-pill" style={{ background: `hsl(${(cell.score / 100) * 120}, 70%, 45%)` }}>
                   {cell.score}
+                </span>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    fontSize: '9.5px',
+                    fontWeight: 700,
+                    color: '#fff',
+                    background: saturationColor(cell.saturationLevel),
+                    borderRadius: '8px',
+                    padding: '1px 6px',
+                    marginRight: '6px',
+                  }}
+                >
+                  {saturationLabel(cell.saturationLevel)}
                 </span>
                 <span>
                   {cell.center.lat.toFixed(4)}, {cell.center.lon.toFixed(4)} · {cell.competitorCount} competidores cerca

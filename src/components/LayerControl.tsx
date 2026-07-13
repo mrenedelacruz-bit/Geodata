@@ -13,6 +13,8 @@ interface Props {
   onCompetitorsToggle: (show: boolean) => void;
   showCensus: boolean;
   onCensusToggle: (show: boolean) => void;
+  showSaturation: boolean;
+  onSaturationToggle: (show: boolean) => void;
 }
 
 export default function LayerControl({
@@ -27,6 +29,8 @@ export default function LayerControl({
   onCompetitorsToggle,
   showCensus,
   onCensusToggle,
+  showSaturation,
+  onSaturationToggle,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -110,6 +114,22 @@ export default function LayerControl({
         <div className="sub">
           Poder adquisitivo por sector (Censo ONE 2022 + SIUBEN/MEPyD). Verde = alto, rojo = bajo.
           Borde punteado = estimación.
+        </div>
+
+        <div
+          className={`layer-btn ${showSaturation ? '' : 'off'}`}
+          onClick={() => toggleLayer(onSaturationToggle, showSaturation)}
+        >
+          <div
+            className="swatch"
+            style={{ background: 'linear-gradient(135deg, #16a34a, #eab308, #dc2626)' }}
+          />
+          Semáforo de saturación
+          <div className="chk">{showSaturation ? '✓' : ''}</div>
+        </div>
+        <div className="sub">
+          Competidores vs. demanda de cada celda: verde = oportunidad, amarillo = moderado, rojo =
+          saturado.
         </div>
       </div>
     </div>

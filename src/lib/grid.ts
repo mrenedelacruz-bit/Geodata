@@ -1,7 +1,7 @@
 import { ANCHOR_SIGNALS } from '../data/categories';
 import { purchasingPowerAt } from '../data/census';
 import { getLocation } from '../data/locations';
-import type { BBox, BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
+import type { BBox, BusinessCategory, GridCell, LatLon, OsmPOI, SaturationLevel } from '../types';
 
 // Cobertura ampliada hasta la Circunvalación de Santo Domingo (Norte/Duarte y Este),
 // incluyendo Santo Domingo Este, Norte, Oeste (Los Alcarrizos) y el Distrito Nacional.
@@ -28,6 +28,19 @@ export function buildGridDims(bbox: BBox) {
   const rows = Math.ceil((bbox.north - bbox.south) / latStep);
   const cols = Math.ceil((bbox.east - bbox.west) / lonStep);
   return { latStep, lonStep, rows, cols };
+}
+
+/**
+ * Nivel de saturación de la celda según su propia proporción competidores/demanda
+ * (no se compara contra el promedio del área). Sin competidores siempre es
+ * oportunidad; con competidores pero sin demanda cercana, siempre saturado.
+ */
+function saturationLevelOf(competitorCount: number, anchorScore: number): SaturationLevel {
+  if (competitorCount === 0) return 'oportunidad';
+  const ratio = competitorCount / Math.max(anchorScore, 1);
+  if (ratio <= 0.5) return 'oportunidad';
+  if (ratio <= 1.2) return 'moderado';
+  return 'saturado';
 }
 
 function cellKeyOf(lat: number, lon: number, bbox: BBox, latStep: number, lonStep: number) {
@@ -89,6 +102,7 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, location
         competitorCount,
         anchorScore,
         score: 0,
+        saturationLevel: saturationLevelOf(competitorCount, anchorScore),
       });
     }
   }
