@@ -26,15 +26,15 @@ export const MANUAL_POIS: OsmPOI[] = [
   },
   {
     id: -102,
-    // Estimada: Carretera 5, zona Los Charamicos / entrada oeste de Sosúa.
-    lat: 19.7452,
-    lon: -70.5245,
+    // Confirmada por el usuario vía Google Maps (19.7719537, -70.4982483).
+    lat: 19.7719537,
+    lon: -70.4982483,
     tags: {
       shop: 'gas',
       name: 'Tropigas Sosúa',
       brand: 'Tropigas',
       'addr:city': 'Sosúa',
-      source: 'manual:directorios (reportada por el usuario) — coordenadas estimadas sobre la Carretera 5, pendientes de confirmación',
+      source: 'manual:reportada por el usuario — coordenadas confirmadas vía Google Maps',
     },
   },
   {
