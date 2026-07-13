@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Manual de Usuario — Asesor de Ubicación</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: #1f2937;
+    font-size: 11.5px;
+    line-height: 1.55;
+    margin: 0;
+  }
+  .cover {
+    text-align: center;
+    padding: 90px 30px 60px;
+    page-break-after: always;
+  }
+  .cover .logo { font-size: 64px; margin-bottom: 18px; }
+  .cover h1 { font-size: 30px; color: #0b5fa5; margin: 0 0 8px; }
+  .cover .sub { font-size: 15px; color: #6b7280; margin-bottom: 40px; }
+  .cover .meta {
+    display: inline-block; text-align: left; font-size: 12px; color: #374151;
+    border-top: 2px solid #0ea5e9; padding-top: 16px; margin-top: 30px;
+  }
+  .cover .meta div { margin: 3px 0; }
+  h2 {
+    font-size: 17px; color: #0b5fa5;
+    border-bottom: 2px solid #0ea5e9; padding-bottom: 5px;
+    margin: 28px 0 12px;
+  }
+  h3 { font-size: 13.5px; color: #111827; margin: 18px 0 6px; }
+  p { margin: 6px 0; }
+  ul, ol { margin: 6px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.5px; }
+  th { background: #0b5fa5; color: #fff; text-align: left; padding: 6px 8px; }
+  td { border: 1px solid #d1d5db; padding: 5px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f3f7fb; }
+  .box {
+    background: #f0f9ff; border-left: 4px solid #0ea5e9;
+    padding: 8px 12px; border-radius: 4px; margin: 10px 0;
+  }
+  .warn {
+    background: #fff8ee; border-left: 4px solid #f59e0b;
+    padding: 8px 12px; border-radius: 4px; margin: 10px 0;
+  }
+  .pill {
+    display: inline-block; padding: 1px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600; color: #fff;
+  }
+  .kbd {
+    background: #eef2f7; border: 1px solid #cbd5e1; border-radius: 4px;
+    padding: 0 5px; font-family: monospace; font-size: 10.5px;
+  }
+  .footer-note { font-size: 9.5px; color: #7a8a99; margin-top: 26px; border-top: 1px solid #e5e7eb; padding-top: 8px; }
+  .section { page-break-inside: avoid; }
+  .newfeature {
+    background: #fef3c7; color: #92400e; font-size: 9px; font-weight: 700;
+    padding: 1px 6px; border-radius: 8px; vertical-align: middle; margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="logo">📍</div>
+  <h1>Asesor de Ubicación de Negocios</h1>
+  <div class="sub">Manual de Usuario</div>
+  <div class="sub" style="font-size:13px;">Gran Santo Domingo · Provincia de Puerto Plata<br>República Dominicana</div>
+  <div class="meta">
+    <div><strong>Versión:</strong> 2.1</div>
+    <div><strong>Fecha:</strong> Julio 2026</div>
+    <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
+    <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
+  </div>
+</div>
+
+<h2>1. ¿Qué es el Asesor de Ubicación?</h2>
+<p>
+El Asesor de Ubicación es una aplicación web interactiva que ayuda a decidir <strong>dónde ubicar un
+negocio</strong> en el Gran Santo Domingo o en la Provincia de Puerto Plata. Combina datos geográficos
+abiertos (OpenStreetMap), datos socioeconómicos oficiales (Censo ONE 2022, SIUBEN/MEPyD) y un modelo
+de puntuación que balancea <strong>demanda</strong>, <strong>poder adquisitivo</strong> y
+<strong>competencia</strong> en cada zona.
+</p>
+<div class="box">
+<strong>No requiere instalación:</strong> funciona directamente en el navegador (computadora, tablet o
+celular) y no necesita cuentas, claves ni configuración.
+</div>
+
+<h3>1.1 Ciudades disponibles</h3>
+<table>
+  <tr><th>Ubicación</th><th>Ruta</th><th>Cobertura</th></tr>
+  <tr><td>Gran Santo Domingo</td><td><span class="kbd">/santo-domingo</span></td><td>Distrito Nacional y municipios del Gran Santo Domingo</td></tr>
+  <tr><td>Provincia Puerto Plata</td><td><span class="kbd">/puerto-plata</span></td><td>Corredor costero completo: Puerto Plata, Sosúa, Cabarete, Sabaneta de Cangrejos y alrededores</td></tr>
+</table>
+<p>Se puede cambiar de ciudad en cualquier momento con el <strong>selector de ubicación</strong> ubicado en la esquina superior del mapa.</p>
+
+<h2>2. Pantalla principal</h2>
+<p>La aplicación se divide en dos áreas:</p>
+<ul>
+  <li><strong>Panel lateral (izquierda):</strong> búsqueda, selección de tipo de negocio, análisis del punto seleccionado, comparación de zonas y ranking Top 10.</li>
+  <li><strong>Mapa interactivo (derecha):</strong> mapa de calor, cuadrícula de puntuación, competidores, tráfico, capa censal y controles de capas.</li>
+</ul>
+
+<h2>3. Tipos de negocio</h2>
+<p>Selecciona el rubro en el menú <em>“Tipo de negocio”</em>. Todo el análisis (puntajes, competidores, ranking) se recalcula automáticamente para el rubro elegido:</p>
+<table>
+  <tr><th>Categoría</th><th>Competidores que detecta</th></tr>
+  <tr><td>⛽ Estación de combustibles</td><td>Gasolineras (bombas de gasolina/diésel)</td></tr>
+  <tr><td>🔥 Estación de Gas / GLP</td><td>Envasadoras y estaciones de GLP (mutuamente excluyente con gasolineras)</td></tr>
+  <tr><td>🍽️ Restaurante</td><td>Restaurantes</td></tr>
+  <tr><td>☕ Cafetería</td><td>Cafeterías</td></tr>
+  <tr><td>💊 Farmacia</td><td>Farmacias</td></tr>
+  <tr><td>🛒 Supermercado / Colmado</td><td>Supermercados, colmados, tiendas de conveniencia</td></tr>
+  <tr><td>💇 Salón de belleza / Barbería</td><td>Salones y barberías</td></tr>
+  <tr><td>🏋️ Gimnasio</td><td>Gimnasios y centros fitness</td></tr>
+  <tr><td>🔨 Ferretería</td><td>Ferreterías</td></tr>
+  <tr><td>🥖 Panadería / Repostería</td><td>Panaderías y reposterías</td></tr>
+  <tr><td>🧺 Lavandería</td><td>Lavanderías</td></tr>
+  <tr><td>🦷 Clínica dental</td><td>Clínicas dentales</td></tr>
+</table>
+
+<h2>4. El modelo de puntuación (Score 0–100)</h2>
+<p>El área de estudio se divide en <strong>celdas de ~450 × 450 metros</strong>. Cada celda recibe un puntaje de 0 a 100:</p>
+<div class="box">
+<strong>Score = Demanda cercana × Factor socioeconómico − Saturación de competencia</strong>
+</div>
+<ul>
+  <li><strong>Demanda:</strong> suma ponderada de “anclas” que atraen público — oficinas (×1.0), centros comerciales (×2.0), universidades y colegios (×1.3), hospitales/clínicas (×1.0), bancos (×1.0), paradas de transporte (×1.4), zonas residenciales (×1.2) y actividad comercial general (×0.6).</li>
+  <li><strong>Factor socioeconómico:</strong> índice de poder adquisitivo (0–1) del sector censal donde cae la celda, derivado del ICV (SIUBEN/MEPyD) y el Censo ONE 2022.</li>
+  <li><strong>Saturación:</strong> penalización por cada competidor del mismo rubro ya presente en la zona.</li>
+</ul>
+<p>Interpretación del color en el mapa:</p>
+<ul>
+  <li><span class="pill" style="background:hsl(120,70%,45%)">Verde</span> — alta oportunidad: mucha demanda, poca competencia.</li>
+  <li><span class="pill" style="background:hsl(60,70%,45%)">Amarillo</span> — oportunidad media.</li>
+  <li><span class="pill" style="background:hsl(0,70%,45%)">Rojo</span> — zona saturada: la competencia supera la demanda disponible.</li>
+</ul>
+
+<h2>5. Capas del mapa</h2>
+<p>El control de capas (esquina del mapa) permite activar/desactivar:</p>
+<table>
+  <tr><th>Capa</th><th>Qué muestra</th></tr>
+  <tr><td>🔥 Mapa de calor</td><td>Campo continuo de potencial comercial: concentración de demanda de mayor a menor en toda el área.</td></tr>
+  <tr><td>🟩 Cuadrícula</td><td>Celdas de ~450 m coloreadas por score. Clic en una celda muestra su detalle.</td></tr>
+  <tr><td>🚦 Tráfico</td><td>Vías principales (avenidas, carreteras) que concentran flujo vehicular.</td></tr>
+  <tr><td>⚪ Competidores</td><td>Cada negocio del rubro seleccionado. Los puntos <strong style="color:#0B5FA5;">azules</strong> son establecimientos agregados manualmente (verificados por el usuario, aún no mapeados en OpenStreetMap).</td></tr>
+  <tr><td>🏘️ Censo</td><td>Sectores censales coloreados por poder adquisitivo (ICV / SIUBEN).</td></tr>
+</table>
+
+<h2>6. Analizar un punto específico</h2>
+<h3>6.1 Buscar por dirección</h3>
+<ol>
+  <li>Escribe la dirección o el nombre del lugar en el <strong>buscador</strong> del panel lateral.</li>
+  <li>Selecciona el resultado correcto — el mapa salta al punto y el panel muestra el análisis.</li>
+</ol>
+<h3>6.2 Clic en el mapa</h3>
+<p>Haz clic en cualquier punto del mapa para analizarlo. El panel <em>“Punto seleccionado”</em> muestra:</p>
+<ul>
+  <li><strong>Score</strong> de la zona donde cae el punto.</li>
+  <li><strong>Sector censal</strong>: nombre, municipio, nivel de poder adquisitivo y % de hogares pobres (SIUBEN), indicando si el dato es oficial o estimado.</li>
+  <li><strong>Demanda</strong>: puntaje de POIs atractivos en un radio de 500 m.</li>
+  <li><strong>Competencia</strong>: cuántos negocios del mismo rubro hay en ese radio.</li>
+  <li><strong>Recursos cercanos</strong>: desglose de las anclas encontradas (oficinas, bancos, transporte, etc.).</li>
+</ul>
+
+<h2>7. Top 10 zonas recomendadas</h2>
+<p>
+El panel <em>“Top 10 zonas recomendadas”</em> lista las celdas con mayor score para el rubro
+seleccionado, con sus coordenadas y número de competidores cercanos. Haz clic en cualquier zona de la
+lista para centrar el análisis en ella.
+</p>
+
+<h2>8. Comparación de zonas <span class="newfeature">NUEVO</span></h2>
+<p>Permite comparar <strong>hasta 2 zonas lado a lado</strong> antes de decidir:</p>
+<ol>
+  <li>En el Top 10, presiona el botón <span class="kbd">+</span> junto a una zona para agregarla a la comparación (el botón cambia a <span class="kbd">✓</span>).</li>
+  <li>Agrega una segunda zona de la misma forma.</li>
+  <li>El panel <em>“Comparación de zonas”</em> muestra ambas tarjetas lado a lado con:
+    <ul>
+      <li><strong>Score</strong> de cada zona</li>
+      <li><strong>Demanda</strong> (POIs atractivos)</li>
+      <li><strong>Competencia</strong> (negocios del rubro)</li>
+      <li><strong>Sector censal y poder adquisitivo</strong></li>
+    </ul>
+  </li>
+  <li>En el mapa, las zonas comparadas se resaltan con <strong style="color:#b45309;">borde anaranjado punteado</strong>.</li>
+  <li>Usa <span class="kbd">Quitar</span> en una tarjeta para sacarla, o <span class="kbd">Limpiar</span> para vaciar toda la comparación.</li>
+</ol>
+
+<h2>9. Establecimientos agregados manualmente</h2>
+<p>
+Algunos negocios reales aún no están mapeados en OpenStreetMap. La aplicación los incorpora
+manualmente con coordenadas verificadas (Google Maps / reporte directo) y los distingue con
+<strong style="color:#0B5FA5;">marcadores azules</strong>. Al hacer clic muestran una nota con su fuente.
+</p>
+<h3>9.1 Estaciones verificadas en Puerto Plata (zona Sosúa)</h3>
+<table>
+  <tr><th>Establecimiento</th><th>Tipo</th><th>Ubicación</th></tr>
+  <tr><td>Texaco Colonia Sosúa</td><td>Combustibles</td><td>Carretera Sosúa–Cabarete Km 1, El Batey</td></tr>
+  <tr><td>Tropigas Sosúa</td><td>GLP</td><td>Sosúa</td></tr>
+  <tr><td>United Gas Sosúa</td><td>GLP</td><td>Calle Benigno Lantigua 2</td></tr>
+  <tr><td>Next (Grupo Propagas)</td><td>Combustibles</td><td>Carretera Sosúa–Cabarete Km 3.5</td></tr>
+  <tr><td>Estación de Gas Sabaneta de Cangrejos</td><td>GLP</td><td>Sabaneta de Cangrejos (dirección aeropuerto)</td></tr>
+  <tr><td>Estación Tropimar (Grupo Propagas)</td><td>Combustibles</td><td>Carretera Sosúa–Cabarete Km 3½</td></tr>
+</table>
+<div class="warn">
+<strong>Anti-duplicados:</strong> si OpenStreetMap llega a mapear uno de estos establecimientos, la
+aplicación detecta automáticamente la coincidencia (mismo tipo a menos de 150 m) y evita mostrarlo
+dos veces.
+</div>
+
+<h2>10. Datos, caché y rendimiento</h2>
+<ul>
+  <li><strong>Datos en vivo:</strong> al abrir la app se consultan los POIs y vías desde la API de Overpass (OpenStreetMap).</li>
+  <li><strong>Caché local (12 horas):</strong> los datos descargados se guardan en el navegador. Las recargas dentro de ese período son instantáneas y no dependen de la red.</li>
+  <li><strong>Tolerancia a fallos:</strong> si la API está saturada (error 429) o sin conexión, la app usa automáticamente la última copia guardada, aunque esté vencida.</li>
+</ul>
+
+<h2>11. Fuentes de datos y limitaciones</h2>
+<ul>
+  <li><strong>POIs y vías:</strong> © OpenStreetMap contributors (licencia ODbL). La cobertura depende de qué tan mapeada esté cada zona.</li>
+  <li><strong>Socioeconómico:</strong> Censo ONE 2022 y SIUBEN/MEPyD (índice ICV y tasas de pobreza por sector). Algunos sectores usan estimaciones derivadas del estrato municipal — el panel lo indica en cada caso.</li>
+  <li><strong>Geocodificación:</strong> Nominatim (OpenStreetMap).</li>
+</ul>
+<div class="warn">
+<strong>Importante:</strong> el puntaje es un modelo aproximado y orientativo. Sirve para priorizar y
+comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilidad formal</strong>.
+</div>
+
+<h2>12. Preguntas frecuentes</h2>
+<h3>¿Por qué no veo un negocio que sé que existe?</h3>
+<p>Probablemente aún no está mapeado en OpenStreetMap. Puede reportarse para incorporarlo manualmente con coordenadas verificadas (ver sección 9).</p>
+<h3>¿Por qué la primera carga tarda unos segundos?</h3>
+<p>La app descarga miles de puntos desde Overpass. Las siguientes visitas usan la caché local y cargan al instante.</p>
+<h3>¿Funciona en el celular?</h3>
+<p>Sí, es una aplicación web adaptable; solo se necesita un navegador moderno y conexión a internet en la primera carga.</p>
+<h3>¿Los datos de poder adquisitivo son exactos?</h3>
+<p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
+
+<div class="footer-note">
+Asesor de Ubicación de Negocios · Manual de Usuario v2.1 · Julio 2026 —
+Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
+Herramienta orientativa; no sustituye un estudio de mercado formal.
+</div>
+
+</body>
+</html>

@@ -4,6 +4,9 @@ App interactiva para ayudar a decidir dónde ubicar un negocio en el Gran Santo 
 Dominicana, combinando geodata abierta: POIs de OpenStreetMap, geocodificación y un modelo simple
 de puntuación por competencia/demanda sobre una cuadrícula del área metropolitana.
 
+📖 **Manual de usuario**: [docs/Manual-Asesor-de-Ubicacion.pdf](docs/Manual-Asesor-de-Ubicacion.pdf)
+(fuente editable en [docs/manual.html](docs/manual.html)).
+
 ## Cómo funciona
 
 - **Datos en vivo desde el navegador**: al abrir la app, se consulta la API de Overpass
