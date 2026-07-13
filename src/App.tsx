@@ -6,7 +6,7 @@ import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
 import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
 import { fetchTrafficWays } from './lib/traffic';
-import { getManualPOIs } from './data/manualPois';
+import { mergeManualPois } from './data/manualPois';
 import { sectorAt } from './data/census';
 import { getLocation } from './data/locations';
 import type { GridCell, LatLon, OsmPOI, TrafficWay } from './types';
@@ -38,7 +38,7 @@ export default function App({ location }: AppProps) {
       fetchTrafficWays(locationConfig.bbox),
     ])
       .then(([poiData, trafficData]) => {
-        setPois([...poiData, ...getManualPOIs(location)]);
+        setPois(mergeManualPois(poiData, location));
         setTrafficWays(trafficData);
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Error desconocido'))
