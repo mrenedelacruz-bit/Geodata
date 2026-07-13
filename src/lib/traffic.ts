@@ -1,10 +1,12 @@
 import type { BBox, TrafficWay } from '../types';
+import { readCache, writeCache } from './osmCache';
 
 export type { TrafficWay };
 
 const ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
 ];
 
 function buildQuery(bbox: BBox): string {
@@ -24,6 +26,10 @@ interface OverpassWay {
 }
 
 export async function fetchTrafficWays(bbox: BBox): Promise<TrafficWay[]> {
+  const cacheKey = `osm_traffic_v1_${bbox.south}_${bbox.west}_${bbox.north}_${bbox.east}`;
+  const cached = readCache<TrafficWay[]>(cacheKey);
+  if (cached && !cached.stale) return cached.value;
+
   const query = buildQuery(bbox);
 
   for (const endpoint of ENDPOINTS) {
@@ -45,13 +51,19 @@ export async function fetchTrafficWays(bbox: BBox): Promise<TrafficWay[]> {
           tags: el.tags ?? {},
         });
       }
+      // Solo se dibujan estilo/color por highway: guardamos tags mínimos.
+      writeCache(
+        cacheKey,
+        ways.map((w) => ({ ...w, tags: { highway: w.tags.highway ?? '' } })),
+      );
       return ways;
     } catch (err) {
       console.error(`Error obteniendo vías desde ${endpoint}:`, err);
     }
   }
-  // La capa de tráfico es opcional: no rompemos la app si Overpass falla.
-  return [];
+  // La capa de tráfico es opcional: usa caché vencida si existe y, si no,
+  // no rompemos la app.
+  return cached ? cached.value : [];
 }
 
 function getTrafficWeight(highway: string): number {
