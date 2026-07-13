@@ -1,8 +1,11 @@
 .location-switcher {
+  /* Centrado arriba: la esquina derecha la ocupa el panel de capas
+     (.layer-legend, z-index 9999) que lo tapaba por completo. */
   position: absolute;
   top: 12px;
-  right: 12px;
-  z-index: 1000;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
