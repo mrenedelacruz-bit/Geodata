@@ -39,15 +39,16 @@ export const MANUAL_POIS: OsmPOI[] = [
   },
   {
     id: -103,
-    // Estimada: corredor Sosúa–Cabarete (Carretera 5).
-    lat: 19.753,
-    lon: -70.487,
+    // Confirmada por el usuario (19.761884, -70.521804) — Calle Benigno Lantigua 2.
+    lat: 19.761884,
+    lon: -70.521804,
     tags: {
       shop: 'gas',
       name: 'United Gas Sosúa',
       brand: 'United Gas',
+      'addr:street': 'Calle Benigno Lantigua 2',
       'addr:city': 'Sosúa',
-      source: 'manual:directorios (reportada por el usuario) — coordenadas estimadas sobre el corredor Sosúa–Cabarete, pendientes de confirmación',
+      source: 'manual:reportada por el usuario — coordenadas confirmadas (Calle Benigno Lantigua 2)',
     },
   },
 ];
