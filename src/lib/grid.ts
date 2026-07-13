@@ -14,15 +14,6 @@ export const SANTO_DOMINGO_BBOX: BBox = {
 
 export const SANTO_DOMINGO_CENTER: LatLon = { lat: 18.4861, lon: -69.9312 };
 
-export const PUERTO_PLATA_BBOX: BBox = {
-  south: 19.65,
-  west: -70.35,
-  north: 19.88,
-  east: -70.02,
-};
-
-export const PUERTO_PLATA_CENTER: LatLon = { lat: 19.765, lon: -70.195 };
-
 const CELL_METERS = 450;
 const METERS_PER_DEG_LAT = 111_320;
 

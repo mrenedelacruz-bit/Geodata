@@ -25,13 +25,18 @@ export const LOCATIONS: Record<string, LocationConfig> = {
     id: 'puerto-plata',
     label: 'Puerto Plata',
     title: 'Asesor de Ubicación · Puerto Plata',
+    // Corredor costero y municipios de la provincia: Luperón/Villa Isabela al
+    // oeste, San Felipe de Puerto Plata al centro, Sosúa/Cabarete al este y
+    // Gaspar Hernández en el límite oriental. (La ciudad de Puerto Plata está
+    // en lon ≈ -70.69; Sosúa ≈ -70.51; Cabarete ≈ -70.41.)
     bbox: {
-      south: 19.65,
-      west: -70.35,
-      north: 19.88,
-      east: -70.02,
+      south: 19.55,
+      west: -71.1,
+      north: 19.95,
+      east: -70.25,
     },
-    center: { lat: 19.765, lon: -70.195 },
+    // Centrado en San Felipe de Puerto Plata (centro histórico / Playa Dorada).
+    center: { lat: 19.778, lon: -70.66 },
   },
 };
 

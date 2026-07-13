@@ -4,16 +4,19 @@ import type { LatLon } from '../types';
  * Datos socioeconómicos por sector de la Provincia de Puerto Plata.
  *
  * Fuentes:
- * - Población municipal: X Censo Nacional de Población y Vivienda 2022 (ONE).
- *   Puerto Plata 309,080 · Sosúa 58,920 · Cabarete 45,830 · Gaspar Hernández 27,140 ·
- *   Cotuí 33,920 · Altamira 12,520 · Juan de Vera 8,340 · Villa Isabela 7,880.
- * - Estratos ICV (SIUBEN): Sosúa y Cabarete con mayor poder adquisitivo (turismo,
- *   residencial extranjero); Puerto Plata Centro media-baja; municipios del interior
- *   con pobreza moderada-alta.
+ * - Población provincial: X Censo Nacional de Población y Vivienda 2022 (ONE) —
+ *   provincia Puerto Plata ≈ 321,600 hab. Municipios: San Felipe de Puerto Plata
+ *   (cabecera), Sosúa (con los distritos Cabarete y Sabaneta de Yásica), Imbert,
+ *   Luperón, Altamira, Villa Isabela, Villa Montellano, Guananico, Los Hidalgos.
+ * - Estratos ICV (SIUBEN): los polos turísticos (Playa Dorada, Cofresí, El Batey
+ *   de Sosúa, Cabarete) concentran el mayor poder adquisitivo (turismo y
+ *   residencial extranjero); el centro de la ciudad es medio; los barrios
+ *   populares (Los Charamicos, barrios del sur de la ciudad) y los municipios
+ *   del interior tienen pobreza moderada-alta.
  *
- * `purchasingPower` es un índice 0–1 derivado de esas fuentes: calibrado con el
- * estrato ICV. Los sectores marcados `estimated` interpolan el dato municipal;
- * los `sourced` tienen cifra directa de SIUBEN/MEPyD.
+ * `purchasingPower` es un índice 0–1 calibrado con el estrato ICV. Todos los
+ * sectores de esta provincia están marcados `estimated`: interpolan el estrato
+ * municipal/turístico, pendientes de cifra directa SIUBEN por barrio.
  */
 export interface CensusSector {
   id: string;
@@ -29,43 +32,38 @@ export interface CensusSector {
 }
 
 export const CENSUS_SECTORS: CensusSector[] = [
-  // ── Puerto Plata Centro (turismo, comercio) ──
-  { id: 'pp_center', name: 'Puerto Plata Centro', municipio: 'Puerto Plata', center: { lat: 19.755, lon: -70.195 }, radiusKm: 1.2, purchasingPower: 0.62, dataQuality: 'estimated' },
-  { id: 'pp_malecón', name: 'Malecón / Frente Marítimo', municipio: 'Puerto Plata', center: { lat: 19.747, lon: -70.193 }, radiusKm: 1.0, purchasingPower: 0.58, dataQuality: 'estimated' },
-  { id: 'pp_este', name: 'Puerto Plata Este (Circunvalación)', municipio: 'Puerto Plata', center: { lat: 19.755, lon: -70.155 }, radiusKm: 1.5, purchasingPower: 0.48, dataQuality: 'estimated' },
-  { id: 'pp_oeste', name: 'Puerto Plata Oeste / Barrio Viejo', municipio: 'Puerto Plata', center: { lat: 19.768, lon: -70.225 }, radiusKm: 1.3, purchasingPower: 0.38, dataQuality: 'estimated' },
-  { id: 'pp_sur', name: 'Puerto Plata Sur / Residencial', municipio: 'Puerto Plata', center: { lat: 19.74, lon: -70.19 }, radiusKm: 2.0, purchasingPower: 0.42, dataQuality: 'estimated' },
+  // ── San Felipe de Puerto Plata (cabecera provincial) ──
+  { id: 'pp_centro', name: 'Centro Histórico / Parque Central', municipio: 'Puerto Plata', center: { lat: 19.797, lon: -70.687 }, radiusKm: 0.9, purchasingPower: 0.55, dataQuality: 'estimated' },
+  { id: 'pp_malecon', name: 'Malecón / Long Beach', municipio: 'Puerto Plata', center: { lat: 19.8, lon: -70.677 }, radiusKm: 0.8, purchasingPower: 0.58, dataQuality: 'estimated' },
+  { id: 'pp_bella_vista', name: 'Bella Vista / Urbanizaciones Este', municipio: 'Puerto Plata', center: { lat: 19.788, lon: -70.672 }, radiusKm: 1.0, purchasingPower: 0.6, dataQuality: 'estimated' },
+  { id: 'pp_barrios_sur', name: 'Barrios del Sur (San Marcos / Padre Las Casas)', municipio: 'Puerto Plata', center: { lat: 19.78, lon: -70.7 }, radiusKm: 1.5, purchasingPower: 0.35, dataQuality: 'estimated' },
+  { id: 'playa_dorada', name: 'Playa Dorada / Costa Dorada', municipio: 'Puerto Plata', center: { lat: 19.771, lon: -70.628 }, radiusKm: 1.2, purchasingPower: 0.85, dataQuality: 'estimated' },
+  { id: 'cofresi', name: 'Cofresí / Costambar', municipio: 'Puerto Plata', center: { lat: 19.78, lon: -70.727 }, radiusKm: 1.2, purchasingPower: 0.78, dataQuality: 'estimated' },
+  { id: 'maimon', name: 'Maimón / Amber Cove', municipio: 'Puerto Plata', center: { lat: 19.799, lon: -70.758 }, radiusKm: 1.2, purchasingPower: 0.5, dataQuality: 'estimated' },
 
-  // ── Sosúa (turismo, residencial internacional, sector alto) ──
-  { id: 'sosua_center', name: 'Sosúa Centro / Turístico', municipio: 'Sosúa', center: { lat: 19.736, lon: -70.193 }, radiusKm: 0.8, purchasingPower: 0.82, dataQuality: 'estimated' },
-  { id: 'sosua_residencial', name: 'Sosúa Residencial', municipio: 'Sosúa', center: { lat: 19.724, lon: -70.188 }, radiusKm: 1.2, purchasingPower: 0.78, dataQuality: 'estimated' },
-  { id: 'sosua_playa', name: 'Sosúa Playa / Turismo', municipio: 'Sosúa', center: { lat: 19.745, lon: -70.2 }, radiusKm: 1.0, purchasingPower: 0.8, dataQuality: 'estimated' },
+  // ── Sosúa (turismo y residencial internacional) ──
+  { id: 'sosua_batey', name: 'Sosúa El Batey (centro turístico)', municipio: 'Sosúa', center: { lat: 19.752, lon: -70.512 }, radiusKm: 0.9, purchasingPower: 0.8, dataQuality: 'estimated' },
+  { id: 'sosua_charamicos', name: 'Los Charamicos', municipio: 'Sosúa', center: { lat: 19.746, lon: -70.523 }, radiusKm: 0.7, purchasingPower: 0.35, dataQuality: 'estimated' },
+  { id: 'sosua_abajo', name: 'Sosúa Abajo / residencial', municipio: 'Sosúa', center: { lat: 19.757, lon: -70.535 }, radiusKm: 1.0, purchasingPower: 0.62, dataQuality: 'estimated' },
 
-  // ── Cabarete (turismo, deportes acuáticos, residencial) ──
-  { id: 'cabarete_center', name: 'Cabarete Centro', municipio: 'Cabarete', center: { lat: 19.715, lon: -70.151 }, radiusKm: 0.7, purchasingPower: 0.8, dataQuality: 'estimated' },
-  { id: 'cabarete_beach', name: 'Cabarete Playa / Kitesurf', municipio: 'Cabarete', center: { lat: 19.72, lon: -70.156 }, radiusKm: 0.8, purchasingPower: 0.79, dataQuality: 'estimated' },
-  { id: 'cabarete_residencial', name: 'Cabarete Residencial', municipio: 'Cabarete', center: { lat: 19.703, lon: -70.145 }, radiusKm: 1.1, purchasingPower: 0.75, dataQuality: 'estimated' },
+  // ── Cabarete (distrito de Sosúa · turismo deportivo) ──
+  { id: 'cabarete_playa', name: 'Cabarete Centro / Playa (kitesurf)', municipio: 'Cabarete (Sosúa)', center: { lat: 19.758, lon: -70.409 }, radiusKm: 1.0, purchasingPower: 0.78, dataQuality: 'estimated' },
+  { id: 'cabarete_loma', name: 'Callejón de la Loma / Islabón', municipio: 'Cabarete (Sosúa)', center: { lat: 19.75, lon: -70.42 }, radiusKm: 0.8, purchasingPower: 0.4, dataQuality: 'estimated' },
+  { id: 'sabaneta_yasica', name: 'Sabaneta de Yásica', municipio: 'Sosúa', center: { lat: 19.705, lon: -70.403 }, radiusKm: 1.2, purchasingPower: 0.3, dataQuality: 'estimated' },
 
-  // ── Gaspar Hernández y Altamira (municipios menores, rural-urbano) ──
-  { id: 'gaspar_center', name: 'Gaspar Hernández Centro', municipio: 'Gaspar Hernández', center: { lat: 19.787, lon: -70.258 }, radiusKm: 1.0, purchasingPower: 0.35, dataQuality: 'estimated' },
-  { id: 'gaspar_rural', name: 'Gaspar Hernández Rural', municipio: 'Gaspar Hernández', center: { lat: 19.8, lon: -70.28 }, radiusKm: 1.5, purchasingPower: 0.28, dataQuality: 'estimated' },
-  { id: 'altamira_center', name: 'Altamira Centro', municipio: 'Altamira', center: { lat: 19.82, lon: -70.235 }, radiusKm: 0.9, purchasingPower: 0.32, dataQuality: 'estimated' },
+  // ── Villa Montellano (corredor Puerto Plata–Sosúa) ──
+  { id: 'montellano', name: 'Villa Montellano', municipio: 'Villa Montellano', center: { lat: 19.758, lon: -70.559 }, radiusKm: 1.2, purchasingPower: 0.32, dataQuality: 'estimated' },
 
-  // ── Cotuí (municipio del interior, menor actividad comercial) ──
-  { id: 'cotui_center', name: 'Cotuí Centro', municipio: 'Cotuí', center: { lat: 19.78, lon: -70.195 }, radiusKm: 1.2, purchasingPower: 0.38, dataQuality: 'estimated' },
-  { id: 'cotui_rural', name: 'Cotuí Zones Rurales', municipio: 'Cotuí', center: { lat: 19.8, lon: -70.21 }, radiusKm: 1.8, purchasingPower: 0.25, dataQuality: 'estimated' },
+  // ── Municipios del interior y oeste ──
+  { id: 'imbert', name: 'Imbert Centro', municipio: 'Imbert', center: { lat: 19.755, lon: -70.83 }, radiusKm: 1.2, purchasingPower: 0.35, dataQuality: 'estimated' },
+  { id: 'altamira', name: 'Altamira Centro', municipio: 'Altamira', center: { lat: 19.699, lon: -70.84 }, radiusKm: 1.2, purchasingPower: 0.3, dataQuality: 'estimated' },
+  { id: 'guananico', name: 'Guananico', municipio: 'Guananico', center: { lat: 19.726, lon: -70.918 }, radiusKm: 1.0, purchasingPower: 0.27, dataQuality: 'estimated' },
+  { id: 'luperon', name: 'Luperón Centro / Marina', municipio: 'Luperón', center: { lat: 19.89, lon: -70.962 }, radiusKm: 1.2, purchasingPower: 0.36, dataQuality: 'estimated' },
+  { id: 'los_hidalgos', name: 'Los Hidalgos', municipio: 'Los Hidalgos', center: { lat: 19.737, lon: -71.034 }, radiusKm: 1.1, purchasingPower: 0.28, dataQuality: 'estimated' },
+  { id: 'villa_isabela', name: 'Villa Isabela', municipio: 'Villa Isabela', center: { lat: 19.817, lon: -71.067 }, radiusKm: 1.2, purchasingPower: 0.28, dataQuality: 'estimated' },
 
-  // ── Juan de Vera, Villa Isabela y otros (municipios menores) ──
-  { id: 'juan_vera_center', name: 'Juan de Vera Centro', municipio: 'Juan de Vera', center: { lat: 19.84, lon: -70.28 }, radiusKm: 0.8, purchasingPower: 0.3, dataQuality: 'estimated' },
-  { id: 'villa_isabela_center', name: 'Villa Isabela Centro', municipio: 'Villa Isabela', center: { lat: 19.86, lon: -70.125 }, radiusKm: 0.9, purchasingPower: 0.4, dataQuality: 'estimated' },
-  { id: 'villa_isabela_turismo', name: 'Villa Isabela Turismo', municipio: 'Villa Isabela', center: { lat: 19.862, lon: -70.125 }, radiusKm: 0.7, purchasingPower: 0.72, dataQuality: 'estimated' },
-
-  // ── Luperón (municipio costero, sector turístico emergente) ──
-  { id: 'luperon_center', name: 'Luperón Centro', municipio: 'Luperón', center: { lat: 19.916, lon: -70.29 }, radiusKm: 1.0, purchasingPower: 0.36, dataQuality: 'estimated' },
-
-  // ── Zones periurbanas/rurales ──
-  { id: 'pp_norte_rural', name: 'Puerto Plata Norte (Rural)', municipio: 'Puerto Plata', center: { lat: 19.82, lon: -70.2 }, radiusKm: 2.2, purchasingPower: 0.26, dataQuality: 'estimated' },
-  { id: 'pp_caribe_rural', name: 'Zona Caribeña Rural', municipio: 'Puerto Plata', center: { lat: 19.7, lon: -70.1 }, radiusKm: 2.5, purchasingPower: 0.29, dataQuality: 'estimated' },
+  // ── Límite oriental de la provincia ──
+  { id: 'gaspar_hernandez', name: 'Gaspar Hernández Centro', municipio: 'Gaspar Hernández', center: { lat: 19.627, lon: -70.276 }, radiusKm: 1.2, purchasingPower: 0.3, dataQuality: 'estimated' },
 ];
 
 const METERS_PER_DEG_LAT = 111_320;
