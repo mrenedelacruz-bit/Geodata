@@ -40,9 +40,9 @@ export const MANUAL_POIS: OsmPOI[] = [
   },
   {
     id: -103,
-    // Confirmada por el usuario (19.761884, -70.521804) — Calle Benigno Lantigua 2.
-    lat: 19.761884,
-    lon: -70.521804,
+    // Confirmada por el usuario (19.7548, -70.5244) — Calle Benigno Lantigua 2.
+    lat: 19.7548,
+    lon: -70.5244,
     tags: {
       shop: 'gas',
       name: 'United Gas Sosúa',
@@ -68,14 +68,28 @@ export const MANUAL_POIS: OsmPOI[] = [
   },
   {
     id: -105,
-    // Confirmada por el usuario (19.7511, -70.5568) — Sabaneta de Cangrejos, cerca Base Aérea.
-    lat: 19.7511,
-    lon: -70.5568,
+    // Confirmada por el usuario (19.7491, -70.5845) — Sabaneta de Cangrejos.
+    lat: 19.7491,
+    lon: -70.5845,
     tags: {
       shop: 'gas',
-      name: 'Gasolinera Base Aérea',
+      name: 'Estación de Gas Sabaneta de Cangrejos',
       'addr:city': 'Sabaneta de Cangrejos',
-      source: 'manual:reportada por el usuario — coordenadas confirmadas (Sabaneta de Cangrejos, cerca Base Aérea de Puerto Plata)',
+      source: 'manual:reportada por el usuario — coordenadas confirmadas (Sabaneta de Cangrejos)',
+    },
+  },
+  {
+    id: -106,
+    // Confirmada por el usuario (19.7525, -70.5283) — Carretera Sosúa-Cabarete Km 3½.
+    lat: 19.7525,
+    lon: -70.5283,
+    tags: {
+      amenity: 'fuel',
+      name: 'Estación Tropimar Grupo Propagas',
+      brand: 'Tropimar',
+      'addr:street': 'Carretera Sosúa-Cabarete Km 3½',
+      'addr:city': 'Sosúa',
+      source: 'manual:reportada por el usuario — coordenadas confirmadas (Carretera Sosúa-Cabarete Km 3½)',
     },
   },
 ];
