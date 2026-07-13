@@ -30,6 +30,42 @@ function isGlpStation(t: Record<string, string>): boolean {
 
 export const BUSINESS_CATEGORIES: BusinessCategory[] = [
   {
+    id: 'gasolinera',
+    label: 'Estación de combustibles',
+    icon: '⛽',
+    competitorLabel: 'Estaciones de combustibles',
+    // Excluye estaciones de GLP/gas natural (marca o nombre) para que no se
+    // cuenten dos veces entre esta categoría y "Estación de Gas / GLP".
+    matchesCompetitor: (t) => has(t, 'amenity', ['fuel']) && !isGlpStation(t),
+    anchorWeights: {
+      office: 1.5,
+      mall: 1.0,
+      university: 0.6,
+      health: 0.4,
+      bank: 0.8,
+      transit: 3.0,
+      residential: 1.8,
+      retail: 0.8,
+    },
+  },
+  {
+    id: 'estacion_gas',
+    label: 'Estación de Gas / GLP',
+    icon: '🛢️',
+    competitorLabel: 'Estaciones de Gas/GLP',
+    matchesCompetitor: isGlpStation,
+    anchorWeights: {
+      office: 1.2,
+      mall: 0.8,
+      university: 0.5,
+      health: 0.3,
+      bank: 0.6,
+      transit: 2.8,
+      residential: 2.0,
+      retail: 0.6,
+    },
+  },
+  {
     id: 'restaurante',
     label: 'Restaurante',
     icon: '🍽️',
@@ -197,42 +233,6 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
       transit: 1.5,
       residential: 1.8,
       retail: 0.8,
-    },
-  },
-  {
-    id: 'gasolinera',
-    label: 'Estación de combustibles',
-    icon: '⛽',
-    competitorLabel: 'Estaciones de combustibles',
-    // Excluye estaciones de GLP/gas natural (marca o nombre) para que no se
-    // cuenten dos veces entre esta categoría y "Estación de Gas / GLP".
-    matchesCompetitor: (t) => has(t, 'amenity', ['fuel']) && !isGlpStation(t),
-    anchorWeights: {
-      office: 1.5,
-      mall: 1.0,
-      university: 0.6,
-      health: 0.4,
-      bank: 0.8,
-      transit: 3.0,
-      residential: 1.8,
-      retail: 0.8,
-    },
-  },
-  {
-    id: 'estacion_gas',
-    label: 'Estación de Gas / GLP',
-    icon: '🛢️',
-    competitorLabel: 'Estaciones de Gas/GLP',
-    matchesCompetitor: isGlpStation,
-    anchorWeights: {
-      office: 1.2,
-      mall: 0.8,
-      university: 0.5,
-      health: 0.3,
-      bank: 0.6,
-      transit: 2.8,
-      residential: 2.0,
-      retail: 0.6,
     },
   },
 ];
