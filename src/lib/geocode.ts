@@ -4,9 +4,9 @@ export interface GeocodeResult {
   lon: number;
 }
 
-export async function geocodeAddress(query: string): Promise<GeocodeResult[]> {
+export async function geocodeAddress(query: string, locationLabel: string): Promise<GeocodeResult[]> {
   const params = new URLSearchParams({
-    q: `${query}, Santo Domingo, República Dominicana`,
+    q: `${query}, ${locationLabel}, República Dominicana`,
     format: 'json',
     limit: '6',
     countrycodes: 'do',

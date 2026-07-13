@@ -59,11 +59,13 @@ export const MANUAL_POIS: OsmPOI[] = [
     lon: -70.5055,
     tags: {
       amenity: 'fuel',
-      name: 'Next Grupo Propagas',
+      // "Grupo Propagas" no va en name/brand: el clasificador de categorías
+      // trata "propagas" como marca de GLP y la sacaría de combustibles.
+      name: 'Next',
       brand: 'Next',
       'addr:street': 'Carretera Sosúa-Cabarete Km 3.5',
       'addr:city': 'Sosúa',
-      source: 'manual:reportada por el usuario — coordenadas confirmadas (Carretera Sosúa-Cabarete Km 3.5)',
+      source: 'manual:reportada por el usuario — estación Next de Grupo Propagas, coordenadas confirmadas (Carretera Sosúa-Cabarete Km 3.5)',
     },
   },
   {
@@ -85,11 +87,12 @@ export const MANUAL_POIS: OsmPOI[] = [
     lon: -70.5283,
     tags: {
       amenity: 'fuel',
-      name: 'Estación Tropimar Grupo Propagas',
+      // "Grupo Propagas" no va en name/brand (ver nota en la estación Next).
+      name: 'Estación Tropimar',
       brand: 'Tropimar',
       'addr:street': 'Carretera Sosúa-Cabarete Km 3½',
       'addr:city': 'Sosúa',
-      source: 'manual:reportada por el usuario — coordenadas confirmadas (Carretera Sosúa-Cabarete Km 3½)',
+      source: 'manual:reportada por el usuario — estación Tropimar de Grupo Propagas, coordenadas confirmadas (Carretera Sosúa-Cabarete Km 3½)',
     },
   },
 ];

@@ -61,7 +61,7 @@ export default function Sidebar({
         usando datos abiertos de OpenStreetMap.
       </p>
 
-      <SearchBox onSelect={onSearchSelect} />
+      <SearchBox onSelect={onSearchSelect} locationLabel={locationLabel} />
 
       <label className="field">
         <span>Tipo de negocio</span>

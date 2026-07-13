@@ -35,17 +35,41 @@ export default function App({ location }: AppProps) {
   const locationConfig = getLocation(location);
 
   useEffect(() => {
+    // Al cambiar de ciudad, descartar todo el estado de la anterior para no
+    // mostrar sus datos mientras cargan los nuevos.
+    setLoading(true);
+    setError(null);
+    setPois([]);
+    setTrafficWays([]);
+    setSelectedCell(null);
+    setSelectedPoint(null);
+    setComparisonCells([]);
+    let cancelled = false;
     Promise.all([
       fetchOsmPOIs(locationConfig.bbox),
       fetchTrafficWays(locationConfig.bbox),
     ])
       .then(([poiData, trafficData]) => {
+        if (cancelled) return;
         setPois(mergeManualPois(poiData, location));
         setTrafficWays(trafficData);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : 'Error desconocido'))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Error desconocido');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [location, locationConfig.bbox]);
+
+  // Los scores de la comparación dependen del rubro: al cambiarlo dejan de
+  // ser comparables y se vacía la selección.
+  useEffect(() => {
+    setComparisonCells([]);
+  }, [category]);
 
   const grid = useMemo(() => (pois.length ? computeGrid(pois, category, location) : []), [pois, category, location]);
 

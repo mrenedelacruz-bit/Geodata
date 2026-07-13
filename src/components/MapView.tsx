@@ -131,7 +131,8 @@ export default function MapView({
           grid
             .filter((cell) => cell.anchorScore > 0 || cell.competitorCount > 0)
             .map((cell) => {
-              const selected = selectedCell === cell;
+              const selected =
+                selectedCell !== null && selectedCell.row === cell.row && selectedCell.col === cell.col;
               const inComparison = isInComparison(cell);
               return (
                 <Rectangle

@@ -4,9 +4,10 @@ import type { LatLon } from '../types';
 
 interface Props {
   onSelect: (point: LatLon, label: string) => void;
+  locationLabel: string;
 }
 
-export default function SearchBox({ onSelect }: Props) {
+export default function SearchBox({ onSelect, locationLabel }: Props) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<GeocodeResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ export default function SearchBox({ onSelect }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const res = await geocodeAddress(query);
+      const res = await geocodeAddress(query, locationLabel);
       setResults(res);
       if (res.length === 0) setError('No se encontraron resultados.');
     } catch (err) {
