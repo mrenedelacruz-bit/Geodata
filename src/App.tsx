@@ -82,6 +82,7 @@ export default function App({ location }: AppProps) {
     <div className="layout">
       <Sidebar
         title={locationConfig.title}
+        locationLabel={locationConfig.label}
         category={category}
         onCategoryChange={setCategory}
         grid={grid}

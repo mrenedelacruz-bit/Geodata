@@ -16,6 +16,7 @@ interface PointAnalysis {
 
 interface Props {
   title: string;
+  locationLabel: string;
   category: BusinessCategory;
   onCategoryChange: (c: BusinessCategory) => void;
   grid: GridCell[];
@@ -29,6 +30,7 @@ interface Props {
 
 export default function Sidebar({
   title,
+  locationLabel,
   category,
   onCategoryChange,
   grid,
@@ -68,7 +70,7 @@ export default function Sidebar({
         </select>
       </label>
 
-      {loading && <p className="status">Cargando datos de OpenStreetMap para Santo Domingo…</p>}
+      {loading && <p className="status">Cargando datos de OpenStreetMap para {locationLabel}…</p>}
       {error && <p className="status error">{error}</p>}
       {!loading && !error && <p className="status">{poiCount.toLocaleString('es-DO')} puntos de interés cargados</p>}
 
