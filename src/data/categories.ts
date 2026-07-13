@@ -7,6 +7,27 @@ const has = (tags: Record<string, string>, key: string, values?: string[]) => {
   return values.includes(v);
 };
 
+// Marcas dominicanas de gas/GLP conocidas — cualquier POI cuyo nombre las
+// contenga se clasifica como estación de Gas/GLP, nunca como combustibles
+// líquidos, sin importar cómo esté etiquetado en OSM (amenity=fuel, shop=gas, etc).
+const GLP_BRANDS = ['tropigas', 'propagas', 'gasval', 'comatgas', 'agagas', 'alba gas', 'albagas'];
+
+// \b...\b evita falsos positivos como "Gasolinera" o "Gasoducto", que
+// contienen "gas" como substring pero no son estaciones de GLP.
+const GLP_WORD_RE = /\b(gas|glp|planta)\b/i;
+
+function isGlpStation(t: Record<string, string>): boolean {
+  const name = (t.name ?? '').toLowerCase();
+  const brand = (t.brand ?? '').toLowerCase();
+  const haystack = `${name} ${brand}`;
+  return (
+    (has(t, 'amenity', ['fuel']) && has(t, 'fuel:lpg', ['yes'])) ||
+    has(t, 'shop', ['gas']) ||
+    GLP_BRANDS.some((b) => haystack.includes(b)) ||
+    (has(t, 'amenity', ['fuel']) && GLP_WORD_RE.test(haystack))
+  );
+}
+
 export const BUSINESS_CATEGORIES: BusinessCategory[] = [
   {
     id: 'restaurante',
@@ -183,7 +204,9 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
     label: 'Estación de combustibles',
     icon: '⛽',
     competitorLabel: 'Estaciones de combustibles',
-    matchesCompetitor: (t) => has(t, 'amenity', ['fuel']),
+    // Excluye estaciones de GLP/gas natural (marca o nombre) para que no se
+    // cuenten dos veces entre esta categoría y "Estación de Gas / GLP".
+    matchesCompetitor: (t) => has(t, 'amenity', ['fuel']) && !isGlpStation(t),
     anchorWeights: {
       office: 1.5,
       mall: 1.0,
@@ -200,19 +223,7 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
     label: 'Estación de Gas / GLP',
     icon: '🛢️',
     competitorLabel: 'Estaciones de Gas/GLP',
-    matchesCompetitor: (t) => {
-      const name = (t.name || '').toLowerCase();
-      return (
-        (has(t, 'amenity', ['fuel']) && has(t, 'fuel:lpg', ['yes'])) ||
-        has(t, 'shop', ['gas']) ||
-        name.includes('tropigas') ||
-        name.includes('propagas') ||
-        name.includes('gasval') ||
-        name.includes('comatgas') ||
-        name.includes('agagas') ||
-        (has(t, 'amenity', ['fuel']) && (name.includes('gas') || name.includes('glp') || name.includes('planta')))
-      );
-    },
+    matchesCompetitor: isGlpStation,
     anchorWeights: {
       office: 1.2,
       mall: 0.8,
