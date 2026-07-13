@@ -58,18 +58,35 @@ export default function MapView({
 }: Props) {
   const competitorMarkers = useMemo(
     () =>
-      competitors.map((poi) => (
-        <CircleMarker
-          key={poi.id}
-          center={[poi.lat, poi.lon]}
-          radius={4}
-          pathOptions={{ color: '#1e1e1e', weight: 1, fillColor: '#ffffff', fillOpacity: 0.9 }}
-        >
-          <Popup>
-            {category.icon} {poi.tags.name ?? category.competitorLabel}
-          </Popup>
-        </CircleMarker>
-      )),
+      competitors.map((poi) => {
+        const isManual = poi.tags.source?.startsWith('manual:');
+        return (
+          <CircleMarker
+            key={poi.id}
+            center={[poi.lat, poi.lon]}
+            radius={4}
+            pathOptions={
+              isManual
+                ? { color: '#0B5FA5', weight: 2, fillColor: '#16A5E6', fillOpacity: 0.95 }
+                : { color: '#1e1e1e', weight: 1, fillColor: '#ffffff', fillOpacity: 0.9 }
+            }
+          >
+            <Popup>
+              <div style={{ fontSize: '12px', minWidth: isManual ? '200px' : undefined }}>
+                <div>
+                  {category.icon} {poi.tags.name ?? category.competitorLabel}
+                </div>
+                {isManual && (
+                  <div style={{ marginTop: '6px', padding: '6px 8px', background: '#fff8ee', borderRadius: '4px', fontSize: '10.5px', color: '#b45309' }}>
+                    ⚠ Agregado manualmente (fuente: prensa/sitio oficial) — aún no está en
+                    OpenStreetMap. Ubicación estimada, sujeta a verificación.
+                  </div>
+                )}
+              </div>
+            </Popup>
+          </CircleMarker>
+        );
+      }),
     [competitors, category],
   );
 

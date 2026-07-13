@@ -6,6 +6,7 @@ import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
 import { computeGrid, scoreAtPoint, findPoiAtPoint, SANTO_DOMINGO_BBOX } from './lib/grid';
 import { fetchTrafficWays } from './lib/traffic';
+import { MANUAL_POIS } from './data/manualPois';
 import type { GridCell, LatLon, OsmPOI, TrafficWay } from './types';
 import './App.css';
 
@@ -28,7 +29,7 @@ export default function App() {
       fetchTrafficWays(SANTO_DOMINGO_BBOX),
     ])
       .then(([poiData, trafficData]) => {
-        setPois(poiData);
+        setPois([...poiData, ...MANUAL_POIS]);
         setTrafficWays(trafficData);
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Error desconocido'))
