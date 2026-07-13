@@ -1,10 +1,16 @@
 import { Circle, Popup } from 'react-leaflet';
-import { CENSUS_SECTORS, powerColor, powerLabel } from '../data/census';
+import { getCensusSectors, powerColor, powerLabel } from '../data/census';
+import type { CensusSector } from '../data/census';
 
-export default function CensusLayer() {
+interface Props {
+  location: string;
+}
+
+export default function CensusLayer({ location }: Props) {
+  const sectors = getCensusSectors(location);
   return (
     <>
-      {CENSUS_SECTORS.map((s) => (
+      {sectors.map((s: CensusSector) => (
         <Circle
           key={s.id}
           center={[s.center.lat, s.center.lon]}

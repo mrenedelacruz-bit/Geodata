@@ -1,5 +1,6 @@
 import { ANCHOR_SIGNALS } from '../data/categories';
 import { purchasingPowerAt } from '../data/census';
+import { getLocation } from '../data/locations';
 import type { BBox, BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 
 // Cobertura ampliada hasta la Circunvalación de Santo Domingo (Norte/Duarte y Este),
@@ -12,6 +13,15 @@ export const SANTO_DOMINGO_BBOX: BBox = {
 };
 
 export const SANTO_DOMINGO_CENTER: LatLon = { lat: 18.4861, lon: -69.9312 };
+
+export const PUERTO_PLATA_BBOX: BBox = {
+  south: 19.65,
+  west: -70.35,
+  north: 19.88,
+  east: -70.02,
+};
+
+export const PUERTO_PLATA_CENTER: LatLon = { lat: 19.765, lon: -70.195 };
 
 const CELL_METERS = 450;
 const METERS_PER_DEG_LAT = 111_320;
@@ -48,7 +58,9 @@ function bucketPOIs(pois: OsmPOI[], bbox: BBox, latStep: number, lonStep: number
   return buckets;
 }
 
-export function computeGrid(pois: OsmPOI[], category: BusinessCategory, bbox = SANTO_DOMINGO_BBOX): GridCell[] {
+export function computeGrid(pois: OsmPOI[], category: BusinessCategory, location = 'santo-domingo'): GridCell[] {
+  const locationConfig = getLocation(location);
+  const bbox = locationConfig.bbox;
   const { latStep, lonStep, rows, cols } = buildGridDims(bbox);
   const buckets = bucketPOIs(pois, bbox, latStep, lonStep);
   const weights = category.anchorWeights || {};
@@ -98,7 +110,7 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, bbox = S
     // Ajuste socioeconómico (ONE/SIUBEN): el poder adquisitivo del sector
     // modula la demanda en ±30% — power 0.5 es neutro (×1.0), 1.0 → ×1.3,
     // 0.0 → ×0.7. Multiplicativo para que celdas sin demanda sigan en 0.
-    const power = purchasingPowerAt(cell.center);
+    const power = purchasingPowerAt(cell.center, location);
     const adjustedDemand = demand * (0.7 + 0.6 * power);
     cell.score = Math.round(Math.min(100, Math.max(0, adjustedDemand * 100 - saturation * 55)));
   }

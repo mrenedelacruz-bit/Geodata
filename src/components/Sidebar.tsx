@@ -15,6 +15,7 @@ interface PointAnalysis {
 }
 
 interface Props {
+  title: string;
   category: BusinessCategory;
   onCategoryChange: (c: BusinessCategory) => void;
   grid: GridCell[];
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export default function Sidebar({
+  title,
   category,
   onCategoryChange,
   grid,
@@ -41,7 +43,7 @@ export default function Sidebar({
 
   return (
     <aside className="sidebar">
-      <h1>Asesor de Ubicación · Santo Domingo</h1>
+      <h1>{title}</h1>
       <p className="subtitle">
         Encuentra las mejores zonas para tu negocio combinando POIs, densidad comercial y competencia,
         usando datos abiertos de OpenStreetMap.

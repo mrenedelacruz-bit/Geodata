@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { MapContainer, TileLayer, Rectangle, CircleMarker, Popup, useMapEvents } from 'react-leaflet';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI, TrafficWay } from '../types';
-import { SANTO_DOMINGO_CENTER } from '../lib/grid';
+import { getLocation } from '../data/locations';
 import HeatmapLayerComponent from './HeatmapLayer';
 import TrafficLayer from './TrafficLayer';
 import CensusLayer from './CensusLayer';
@@ -23,6 +23,7 @@ function ClickHandler({ onClick }: { onClick: (p: LatLon) => void }) {
 }
 
 interface Props {
+  location: string;
   grid: GridCell[];
   category: BusinessCategory;
   competitors: OsmPOI[];
@@ -43,6 +44,7 @@ interface Props {
 }
 
 export default function MapView({
+  location,
   grid,
   category,
   competitors,
@@ -61,6 +63,7 @@ export default function MapView({
   showCensus,
   onCensusToggle,
 }: Props) {
+  const locationConfig = getLocation(location);
   const competitorMarkers = useMemo(
     () =>
       competitors.map((poi) => {
@@ -98,7 +101,7 @@ export default function MapView({
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <MapContainer
-        center={[SANTO_DOMINGO_CENTER.lat, SANTO_DOMINGO_CENTER.lon]}
+        center={[locationConfig.center.lat, locationConfig.center.lon]}
         zoom={12}
         style={{ height: '100%', width: '100%' }}
         preferCanvas
@@ -110,7 +113,7 @@ export default function MapView({
         <ClickHandler onClick={onMapClick} />
         {showHeatmap && <HeatmapLayerComponent grid={grid} />}
         {showTraffic && <TrafficLayer ways={trafficWays} />}
-        {showCensus && <CensusLayer />}
+        {showCensus && <CensusLayer location={location} />}
         {showGrid &&
           grid
             .filter((cell) => cell.anchorScore > 0 || cell.competitorCount > 0)

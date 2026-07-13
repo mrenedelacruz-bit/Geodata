@@ -4,14 +4,19 @@ import MapView from './components/MapView';
 import Sidebar from './components/Sidebar';
 import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
-import { computeGrid, scoreAtPoint, findPoiAtPoint, SANTO_DOMINGO_BBOX } from './lib/grid';
+import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
 import { fetchTrafficWays } from './lib/traffic';
-import { MANUAL_POIS } from './data/manualPois';
+import { getManualPOIs } from './data/manualPois';
 import { sectorAt } from './data/census';
+import { getLocation } from './data/locations';
 import type { GridCell, LatLon, OsmPOI, TrafficWay } from './types';
 import './App.css';
 
-export default function App() {
+interface AppProps {
+  location: string;
+}
+
+export default function App({ location }: AppProps) {
   const [pois, setPois] = useState<OsmPOI[]>([]);
   const [trafficWays, setTrafficWays] = useState<TrafficWay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,20 +30,22 @@ export default function App() {
   const [showCompetitors, setShowCompetitors] = useState(true);
   const [showCensus, setShowCensus] = useState(false);
 
+  const locationConfig = getLocation(location);
+
   useEffect(() => {
     Promise.all([
-      fetchOsmPOIs(SANTO_DOMINGO_BBOX),
-      fetchTrafficWays(SANTO_DOMINGO_BBOX),
+      fetchOsmPOIs(locationConfig.bbox),
+      fetchTrafficWays(locationConfig.bbox),
     ])
       .then(([poiData, trafficData]) => {
-        setPois([...poiData, ...MANUAL_POIS]);
+        setPois([...poiData, ...getManualPOIs(location)]);
         setTrafficWays(trafficData);
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Error desconocido'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [location, locationConfig.bbox]);
 
-  const grid = useMemo(() => (pois.length ? computeGrid(pois, category) : []), [pois, category]);
+  const grid = useMemo(() => (pois.length ? computeGrid(pois, category, location) : []), [pois, category, location]);
 
   const competitors = useMemo(() => pois.filter((p) => category.matchesCompetitor(p.tags)), [pois, category]);
 
@@ -50,9 +57,9 @@ export default function App() {
       (c) =>
         lat >= c.bounds[0][0] && lat < c.bounds[1][0] && lon >= c.bounds[0][1] && lon < c.bounds[1][1],
     );
-    const sector = sectorAt(selectedPoint.point);
+    const sector = sectorAt(selectedPoint.point, location);
     return { point: selectedPoint.point, label: selectedPoint.label, score: cell?.score ?? null, sector, ...result };
-  }, [selectedPoint, pois, category, grid]);
+  }, [selectedPoint, pois, category, grid, location]);
 
   function handleMapClick(p: LatLon) {
     const poi = findPoiAtPoint(pois, p);
@@ -74,6 +81,7 @@ export default function App() {
   return (
     <div className="layout">
       <Sidebar
+        title={locationConfig.title}
         category={category}
         onCategoryChange={setCategory}
         grid={grid}
@@ -86,6 +94,7 @@ export default function App() {
       />
       <main className="map-area">
         <MapView
+          location={location}
           grid={grid}
           category={category}
           competitors={competitors}
