@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import type { BusinessCategory } from '../types';
 
 interface Props {
+  category: BusinessCategory;
   showHeatmap: boolean;
   onHeatmapToggle: (show: boolean) => void;
   showTraffic: boolean;
@@ -12,6 +14,7 @@ interface Props {
 }
 
 export default function LayerControl({
+  category,
   showHeatmap,
   onHeatmapToggle,
   showTraffic,
@@ -30,7 +33,7 @@ export default function LayerControl({
   return (
     <div className="layer-legend">
       <div className="legend-header">
-        <span>Capas del mapa</span>
+        <span>Capas · {category.icon} {category.label}</span>
         <button
           className="collapse-btn"
           onClick={() => setCollapsed(!collapsed)}
@@ -54,7 +57,10 @@ export default function LayerControl({
           Mapa de calor
           <div className="chk">{showHeatmap ? '✓' : ''}</div>
         </div>
-        <div className="sub">Potencial de la zona: azul claro (bajo) → azul oscuro (alto)</div>
+        <div className="sub">
+          Potencial para <strong>{category.label.toLowerCase()}</strong>: azul claro (bajo) → azul
+          oscuro (alto). Se recalcula al cambiar la categoría.
+        </div>
 
         <div
           className={`layer-btn ${showGrid ? '' : 'off'}`}
@@ -84,7 +90,7 @@ export default function LayerControl({
           Puntos de competencia
           <div className="chk">{showCompetitors ? '✓' : ''}</div>
         </div>
-        <div className="sub">Ubicaciones de competidores en la categoría</div>
+        <div className="sub">{category.competitorLabel} existentes en el mapa</div>
       </div>
     </div>
   );

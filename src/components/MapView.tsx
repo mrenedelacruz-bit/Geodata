@@ -132,6 +132,7 @@ export default function MapView({
         {showCompetitors && competitorMarkers}
       </MapContainer>
       <LayerControl
+        category={category}
         showHeatmap={showHeatmap}
         onHeatmapToggle={onHeatmapToggle}
         showGrid={showGrid}
