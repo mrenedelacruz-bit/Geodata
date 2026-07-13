@@ -12,10 +12,9 @@ import type { OsmPOI } from '../types';
 export const MANUAL_POIS: OsmPOI[] = [
   {
     id: -1,
-    // Estimada: anclada a las coordenadas del Aeropuerto La Isabela (JBQ),
-    // en el Enlace 1 de la Circunvalación Santo Domingo, El Higüero.
-    lat: 18.5735,
-    lon: -69.9838,
+    // Confirmada por el usuario vía Google Maps (18.5877525, -69.9566372).
+    lat: 18.5877525,
+    lon: -69.9566372,
     tags: {
       amenity: 'fuel',
       name: 'United Petroleum - Gulf Express Higüero',
@@ -23,7 +22,7 @@ export const MANUAL_POIS: OsmPOI[] = [
       operator: 'United Petroleum',
       'addr:city': 'Santo Domingo Norte',
       description: 'Centro de Servicios Integral Gulf Express, Enlace 1 de la Circunvalación Santo Domingo, El Higüero.',
-      source: 'manual:prensa (El Nuevo Diario, Diario Libre, marzo 2024) — no confirmado aún en OSM',
+      source: 'manual:prensa (El Nuevo Diario, Diario Libre, marzo 2024) + coordenadas confirmadas por el usuario — no confirmado aún en OSM',
     },
   },
 ];

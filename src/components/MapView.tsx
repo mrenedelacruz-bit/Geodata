@@ -79,7 +79,7 @@ export default function MapView({
                 {isManual && (
                   <div style={{ marginTop: '6px', padding: '6px 8px', background: '#fff8ee', borderRadius: '4px', fontSize: '10.5px', color: '#b45309' }}>
                     ⚠ Agregado manualmente (fuente: prensa/sitio oficial) — aún no está en
-                    OpenStreetMap. Ubicación estimada, sujeta a verificación.
+                    OpenStreetMap. Coordenadas confirmadas por el usuario.
                   </div>
                 )}
               </div>
