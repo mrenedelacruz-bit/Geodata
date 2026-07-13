@@ -1,5 +1,5 @@
 import { BUSINESS_CATEGORIES } from '../data/categories';
-import { powerLabel, powerColor, type CensusSector } from '../data/census';
+import { powerLabel, powerColor, sectorAt, type CensusSector } from '../data/census';
 import type { BusinessCategory, GridCell } from '../types';
 import SearchBox from './SearchBox';
 import type { LatLon } from '../types';
@@ -26,6 +26,9 @@ interface Props {
   onSearchSelect: (p: LatLon, label: string) => void;
   onSelectCell: (cell: GridCell) => void;
   pointAnalysis: PointAnalysis | null;
+  comparisonCells: GridCell[];
+  onToggleComparison: (cell: GridCell) => void;
+  location: string;
 }
 
 export default function Sidebar({
@@ -40,8 +43,14 @@ export default function Sidebar({
   onSearchSelect,
   onSelectCell,
   pointAnalysis,
+  comparisonCells,
+  onToggleComparison,
+  location,
 }: Props) {
   const topZones = [...grid].sort((a, b) => b.score - a.score).slice(0, 10);
+
+  const isInComparison = (cell: GridCell) =>
+    comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
 
   return (
     <aside className="sidebar">
@@ -73,6 +82,85 @@ export default function Sidebar({
       {loading && <p className="status">Cargando datos de OpenStreetMap para {locationLabel}…</p>}
       {error && <p className="status error">{error}</p>}
       {!loading && !error && <p className="status">{poiCount.toLocaleString('es-DO')} puntos de interés cargados</p>}
+
+      {comparisonCells.length > 0 && (
+        <div className="panel" style={{ borderLeft: '3px solid #f59e0b' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <h2 style={{ margin: 0 }}>Comparación de zonas</h2>
+            <button
+              onClick={() => {
+                comparisonCells.forEach(onToggleComparison);
+              }}
+              style={{
+                padding: '4px 8px',
+                fontSize: '11px',
+                background: '#fee2e2',
+                color: '#991b1b',
+                border: '1px solid #fecaca',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Limpiar
+            </button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            {comparisonCells.map((cell, idx) => {
+              const sector = sectorAt(cell.center, location);
+              return (
+                <div
+                  key={`${cell.row}_${cell.col}`}
+                  style={{
+                    padding: '10px',
+                    backgroundColor: '#fafafa',
+                    borderRadius: '6px',
+                    border: '2px solid #f59e0b',
+                    fontSize: '12px',
+                  }}
+                >
+                  <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#111827' }}>
+                    Zona {idx + 1}
+                  </div>
+                  <div style={{ marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid #e5e7eb' }}>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#0ea5e9' }}>
+                      {Math.round(cell.score)}
+                    </div>
+                    <div style={{ fontSize: '10px', color: '#666' }}>Score</div>
+                  </div>
+                  <div style={{ marginBottom: '6px' }}>
+                    <div>📊 Demanda: <strong>{Math.round(cell.anchorScore)}</strong></div>
+                    <div>🏢 Competencia: <strong>{cell.competitorCount}</strong></div>
+                  </div>
+                  {sector && (
+                    <div style={{ paddingTop: '6px', borderTop: '1px solid #e5e7eb', fontSize: '11px' }}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>{sector.name}</div>
+                      <div style={{ color: powerColor(sector.purchasingPower) }}>
+                        {powerLabel(sector.purchasingPower)}
+                      </div>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => onToggleComparison(cell)}
+                    style={{
+                      marginTop: '8px',
+                      width: '100%',
+                      padding: '4px',
+                      fontSize: '10px',
+                      background: '#fee2e2',
+                      color: '#991b1b',
+                      border: '1px solid #fecaca',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Quitar
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {pointAnalysis && (
         <div className="panel">
@@ -146,13 +234,45 @@ export default function Sidebar({
         <p className="hint">para {category.label.toLowerCase()}</p>
         <ol className="zone-list">
           {topZones.map((cell) => (
-            <li key={`${cell.row}_${cell.col}`} onClick={() => onSelectCell(cell)}>
-              <span className="score-pill" style={{ background: `hsl(${(cell.score / 100) * 120}, 70%, 45%)` }}>
-                {cell.score}
+            <li
+              key={`${cell.row}_${cell.col}`}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingRight: '8px',
+                cursor: 'pointer',
+                borderLeft: isInComparison(cell) ? '3px solid #f59e0b' : 'none',
+                paddingLeft: isInComparison(cell) ? '8px' : '11px',
+              }}
+            >
+              <span onClick={() => onSelectCell(cell)} style={{ flex: 1 }}>
+                <span className="score-pill" style={{ background: `hsl(${(cell.score / 100) * 120}, 70%, 45%)` }}>
+                  {cell.score}
+                </span>
+                <span>
+                  {cell.center.lat.toFixed(4)}, {cell.center.lon.toFixed(4)} · {cell.competitorCount} competidores cerca
+                </span>
               </span>
-              <span>
-                {cell.center.lat.toFixed(4)}, {cell.center.lon.toFixed(4)} · {cell.competitorCount} competidores cerca
-              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleComparison(cell);
+                }}
+                style={{
+                  padding: '4px 8px',
+                  fontSize: '11px',
+                  background: isInComparison(cell) ? '#fee2e2' : '#f3f4f6',
+                  color: isInComparison(cell) ? '#991b1b' : '#374151',
+                  border: isInComparison(cell) ? '1px solid #fecaca' : '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  marginLeft: '6px',
+                }}
+              >
+                {isInComparison(cell) ? '✓' : '+'}
+              </button>
             </li>
           ))}
         </ol>

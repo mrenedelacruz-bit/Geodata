@@ -32,6 +32,7 @@ interface Props {
   onMapClick: (p: LatLon) => void;
   selectedCell: GridCell | null;
   onSelectCell: (cell: GridCell) => void;
+  comparisonCells: GridCell[];
   showHeatmap: boolean;
   onHeatmapToggle: (show: boolean) => void;
   showGrid: boolean;
@@ -53,6 +54,7 @@ export default function MapView({
   onMapClick,
   selectedCell,
   onSelectCell,
+  comparisonCells,
   showHeatmap,
   onHeatmapToggle,
   showGrid,
@@ -65,6 +67,10 @@ export default function MapView({
   onCensusToggle,
 }: Props) {
   const locationConfig = getLocation(location);
+
+  const isInComparison = (cell: GridCell) =>
+    comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
+
   const competitorMarkers = useMemo(
     () =>
       competitors.map((poi) => {
@@ -119,27 +125,33 @@ export default function MapView({
         {showGrid &&
           grid
             .filter((cell) => cell.anchorScore > 0 || cell.competitorCount > 0)
-            .map((cell) => (
-            <Rectangle
-              key={`${cell.row}_${cell.col}`}
-              bounds={cell.bounds}
-              pathOptions={{
-                color: selectedCell === cell ? '#111827' : 'transparent',
-                weight: selectedCell === cell ? 2 : 0,
-                fillColor: scoreColor(cell.score),
-                fillOpacity: 0.38,
-              }}
-              eventHandlers={{ click: () => onSelectCell(cell) }}
-            >
-              <Popup>
-                <div style={{ fontSize: '12px', minWidth: '160px' }}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Score: {cell.score}</div>
-                  <div>📊 Demanda: {Math.round(cell.anchorScore)}</div>
-                  <div>🏢 Competencia: {cell.competitorCount}</div>
-                </div>
-              </Popup>
-            </Rectangle>
-          ))}
+            .map((cell) => {
+              const selected = selectedCell === cell;
+              const inComparison = isInComparison(cell);
+              return (
+                <Rectangle
+                  key={`${cell.row}_${cell.col}`}
+                  bounds={cell.bounds}
+                  pathOptions={{
+                    color: inComparison ? '#f59e0b' : selected ? '#111827' : 'transparent',
+                    weight: inComparison ? 3 : selected ? 2 : 0,
+                    dashArray: inComparison ? '5, 5' : undefined,
+                    fillColor: scoreColor(cell.score),
+                    fillOpacity: 0.38,
+                  }}
+                  eventHandlers={{ click: () => onSelectCell(cell) }}
+                >
+                  <Popup>
+                    <div style={{ fontSize: '12px', minWidth: '160px' }}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Score: {cell.score}</div>
+                      <div>📊 Demanda: {Math.round(cell.anchorScore)}</div>
+                      <div>🏢 Competencia: {cell.competitorCount}</div>
+                    </div>
+                  </Popup>
+                </Rectangle>
+              );
+            })}
+
         {showCompetitors && competitorMarkers}
       </MapContainer>
       <LayerControl

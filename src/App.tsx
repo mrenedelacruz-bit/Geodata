@@ -24,6 +24,7 @@ export default function App({ location }: AppProps) {
   const [category, setCategory] = useState(BUSINESS_CATEGORIES[0]);
   const [selectedCell, setSelectedCell] = useState<GridCell | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<{ point: LatLon; label: string } | null>(null);
+  const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
   const [showHeatmap, setShowHeatmap] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
   const [showTraffic, setShowTraffic] = useState(true);
@@ -78,6 +79,19 @@ export default function App({ location }: AppProps) {
     setSelectedPoint({ point: cell.center, label: `Zona (${cell.center.lat.toFixed(4)}, ${cell.center.lon.toFixed(4)})` });
   }
 
+  function handleToggleComparison(cell: GridCell) {
+    setComparisonCells((prev) => {
+      const isAlreadySelected = prev.some((c) => c.row === cell.row && c.col === cell.col);
+      if (isAlreadySelected) {
+        return prev.filter((c) => !(c.row === cell.row && c.col === cell.col));
+      }
+      if (prev.length < 2) {
+        return [...prev, cell];
+      }
+      return prev;
+    });
+  }
+
   return (
     <div className="layout">
       <Sidebar
@@ -92,6 +106,9 @@ export default function App({ location }: AppProps) {
         onSearchSelect={handleSearchSelect}
         onSelectCell={handleSelectCell}
         pointAnalysis={pointAnalysis}
+        comparisonCells={comparisonCells}
+        onToggleComparison={handleToggleComparison}
+        location={location}
       />
       <main className="map-area">
         <MapView
@@ -103,6 +120,7 @@ export default function App({ location }: AppProps) {
           onMapClick={handleMapClick}
           selectedCell={selectedCell}
           onSelectCell={handleSelectCell}
+          comparisonCells={comparisonCells}
           showHeatmap={showHeatmap}
           onHeatmapToggle={setShowHeatmap}
           showGrid={showGrid}
