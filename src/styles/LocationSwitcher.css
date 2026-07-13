@@ -1,0 +1,42 @@
+.location-switcher {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  gap: 0;
+  border: 1px solid #e5e7eb;
+}
+
+.location-link {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #666;
+  transition: all 0.2s;
+  border-right: 1px solid #e5e7eb;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.location-link:last-child {
+  border-right: none;
+}
+
+.location-link:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.location-link.active {
+  background: #0ea5e9;
+  color: white;
+}
+
+.location-link.active:hover {
+  background: #0284c7;
+}

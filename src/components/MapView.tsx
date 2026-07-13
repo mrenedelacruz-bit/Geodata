@@ -6,6 +6,7 @@ import HeatmapLayerComponent from './HeatmapLayer';
 import TrafficLayer from './TrafficLayer';
 import CensusLayer from './CensusLayer';
 import LayerControl from './LayerControl';
+import LocationSwitcher from './LocationSwitcher';
 
 function scoreColor(score: number): string {
   // 0 (red, saturated) -> 100 (green, oportunidad)
@@ -100,6 +101,7 @@ export default function MapView({
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <LocationSwitcher currentLocation={location} />
       <MapContainer
         center={[locationConfig.center.lat, locationConfig.center.lon]}
         zoom={12}
