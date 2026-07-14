@@ -252,6 +252,26 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
       retail: 1.2,
     },
   },
+  {
+    id: 'tienda_repuestos',
+    label: 'Tienda de Repuestos',
+    icon: '🔩',
+    competitorLabel: 'Tiendas de repuestos',
+    // shop=car_parts es el tag de OSM para tiendas de piezas/repuestos.
+    // Excluye a propósito shop=car_repair (talleres de servicio, no venta de
+    // piezas) para no mezclarlos con "Dealer / Importador de Vehículos".
+    matchesCompetitor: (t) => has(t, 'shop', ['car_parts', 'tyres']),
+    anchorWeights: {
+      office: 0.8,
+      mall: 0.8,
+      university: 0.4,
+      health: 0.3,
+      bank: 0.6,
+      transit: 1.2,
+      residential: 1.5,
+      retail: 1.4,
+    },
+  },
 ];
 
 export const ANCHOR_SIGNALS: AnchorSignal[] = [
