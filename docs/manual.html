@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Gran Santo Domingo · Provincia de Puerto Plata<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 2.2</div>
+    <div><strong>Versión:</strong> 2.3</div>
     <div><strong>Fecha:</strong> Julio 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -102,7 +102,7 @@ celular) y no necesita cuentas, claves ni configuración.
 <h2>2. Pantalla principal</h2>
 <p>La aplicación se divide en dos áreas:</p>
 <ul>
-  <li><strong>Panel lateral (izquierda):</strong> búsqueda, selección de tipo de negocio, análisis del punto seleccionado, comparación de zonas y ranking Top 10.</li>
+  <li><strong>Panel lateral (izquierda):</strong> búsqueda, selección de tipo de negocio, análisis del punto seleccionado, comparación de zonas, ranking Top 10 y totalizador por tipo de negocio.</li>
   <li><strong>Mapa interactivo (derecha):</strong> mapa de calor, cuadrícula de puntuación, competidores, tráfico, capa censal y controles de capas.</li>
 </ul>
 
@@ -173,11 +173,28 @@ celular) y no necesita cuentas, claves ni configuración.
 <p>
 El panel <em>“Top 10 zonas recomendadas”</em> lista las celdas con mayor score para el rubro
 seleccionado, con sus coordenadas, número de competidores cercanos y una etiqueta de
-<strong>saturación de mercado</strong> (ver sección 9). Haz clic en cualquier zona de la lista para
+<strong>saturación de mercado</strong> (ver sección 10). Haz clic en cualquier zona de la lista para
 centrar el análisis en ella.
 </p>
 
-<h2>8. Comparación de zonas</h2>
+<h2>8. Totalizador por tipo de negocio <span class="newfeature">NUEVO</span></h2>
+<p>
+Panel debajo del Top 10 que muestra, para <strong>las 12 categorías de negocio</strong>, cuántos
+establecimientos de cada tipo existen en toda la ciudad activa (Santo Domingo o Puerto Plata) —
+independiente del rubro que tengas seleccionado en el menú principal.
+</p>
+<ul>
+  <li>La lista está ordenada de mayor a menor cantidad.</li>
+  <li>La categoría actualmente seleccionada aparece resaltada.</li>
+  <li>Haz clic en cualquier fila para cambiar el rubro seleccionado a esa categoría (equivale a elegirla en el menú <em>“Tipo de negocio”</em>).</li>
+  <li>Se recalcula automáticamente al cambiar de ciudad.</li>
+</ul>
+<div class="box">
+Sirve para tener una vista rápida de qué tan saturado o desatendido está cada rubro en la ciudad
+completa, antes de entrar al detalle por zona.
+</div>
+
+<h2>9. Comparación de zonas</h2>
 <p>Permite comparar <strong>hasta 2 zonas lado a lado</strong> antes de decidir:</p>
 <ol>
   <li>En el Top 10, presiona el botón <span class="kbd">+</span> junto a una zona para agregarla a la comparación (el botón cambia a <span class="kbd">✓</span>).</li>
@@ -194,7 +211,7 @@ centrar el análisis en ella.
   <li>Usa <span class="kbd">Quitar</span> en una tarjeta para sacarla, o <span class="kbd">Limpiar</span> para vaciar toda la comparación.</li>
 </ol>
 
-<h2>9. Saturación de mercado <span class="newfeature">NUEVO</span></h2>
+<h2>10. Saturación de mercado</h2>
 <p>
 Indica, para cada celda de la cuadrícula, si conviene abrir el negocio elegido según su propia
 proporción de competencia frente a la demanda disponible <strong>en esa misma celda</strong> (no se
@@ -215,13 +232,13 @@ compara contra el promedio del área). Se calcula así:
   <li><strong>Capa “Semáforo de saturación” del mapa:</strong> un círculo de color por celda (independiente de la capa de cuadrícula por score). Actívala desde el control de capas; al hacer clic en un círculo se muestra el detalle de demanda y competencia de esa celda.</li>
 </ul>
 
-<h2>10. Establecimientos agregados manualmente</h2>
+<h2>11. Establecimientos agregados manualmente</h2>
 <p>
 Algunos negocios reales aún no están mapeados en OpenStreetMap. La aplicación los incorpora
 manualmente con coordenadas verificadas (Google Maps / reporte directo) y los distingue con
 <strong style="color:#0B5FA5;">marcadores azules</strong>. Al hacer clic muestran una nota con su fuente.
 </p>
-<h3>10.1 Estaciones verificadas en Puerto Plata (zona Sosúa)</h3>
+<h3>11.1 Estaciones verificadas en Puerto Plata (zona Sosúa)</h3>
 <table>
   <tr><th>Establecimiento</th><th>Tipo</th><th>Ubicación</th></tr>
   <tr><td>Texaco Colonia Sosúa</td><td>Combustibles</td><td>Carretera Sosúa–Cabarete Km 1, El Batey</td></tr>
@@ -237,14 +254,14 @@ aplicación detecta automáticamente la coincidencia (mismo tipo a menos de 150 
 dos veces.
 </div>
 
-<h2>11. Datos, caché y rendimiento</h2>
+<h2>12. Datos, caché y rendimiento</h2>
 <ul>
   <li><strong>Datos en vivo:</strong> al abrir la app se consultan los POIs y vías desde la API de Overpass (OpenStreetMap).</li>
   <li><strong>Caché local (12 horas):</strong> los datos descargados se guardan en el navegador. Las recargas dentro de ese período son instantáneas y no dependen de la red.</li>
   <li><strong>Tolerancia a fallos:</strong> si la API está saturada (error 429) o sin conexión, la app usa automáticamente la última copia guardada, aunque esté vencida.</li>
 </ul>
 
-<h2>12. Fuentes de datos y limitaciones</h2>
+<h2>13. Fuentes de datos y limitaciones</h2>
 <ul>
   <li><strong>POIs y vías:</strong> © OpenStreetMap contributors (licencia ODbL). La cobertura depende de qué tan mapeada esté cada zona.</li>
   <li><strong>Socioeconómico:</strong> Censo ONE 2022 y SIUBEN/MEPyD (índice ICV y tasas de pobreza por sector). Algunos sectores usan estimaciones derivadas del estrato municipal — el panel lo indica en cada caso.</li>
@@ -255,9 +272,9 @@ dos veces.
 comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilidad formal</strong>.
 </div>
 
-<h2>13. Preguntas frecuentes</h2>
+<h2>14. Preguntas frecuentes</h2>
 <h3>¿Por qué no veo un negocio que sé que existe?</h3>
-<p>Probablemente aún no está mapeado en OpenStreetMap. Puede reportarse para incorporarlo manualmente con coordenadas verificadas (ver sección 10).</p>
+<p>Probablemente aún no está mapeado en OpenStreetMap. Puede reportarse para incorporarlo manualmente con coordenadas verificadas (ver sección 11).</p>
 <h3>¿Por qué la primera carga tarda unos segundos?</h3>
 <p>La app descarga miles de puntos desde Overpass. Las siguientes visitas usan la caché local y cargan al instante.</p>
 <h3>¿Funciona en el celular?</h3>
@@ -266,7 +283,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v2.2 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v2.3 · Julio 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

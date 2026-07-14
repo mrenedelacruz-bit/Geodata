@@ -30,6 +30,7 @@ interface Props {
   comparisonCells: GridCell[];
   onToggleComparison: (cell: GridCell) => void;
   location: string;
+  categoryTotals: { category: BusinessCategory; count: number }[];
 }
 
 export default function Sidebar({
@@ -47,8 +48,10 @@ export default function Sidebar({
   comparisonCells,
   onToggleComparison,
   location,
+  categoryTotals,
 }: Props) {
   const topZones = [...grid].sort((a, b) => b.score - a.score).slice(0, 10);
+  const totalAllCategories = categoryTotals.reduce((sum, t) => sum + t.count, 0);
 
   const isInComparison = (cell: GridCell) =>
     comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
@@ -291,6 +294,51 @@ export default function Sidebar({
             </li>
           ))}
         </ol>
+      </div>
+
+      <div className="panel">
+        <h2>Totalizador por tipo de negocio</h2>
+        <p className="hint">
+          {totalAllCategories.toLocaleString('es-DO')} negocios en {locationLabel}, por rubro
+        </p>
+        <ul className="totals-list">
+          {[...categoryTotals]
+            .sort((a, b) => b.count - a.count)
+            .map(({ category: c, count }) => (
+              <li
+                key={c.id}
+                onClick={() => onCategoryChange(c)}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '5px 4px',
+                  cursor: 'pointer',
+                  fontWeight: c.id === category.id ? 700 : 400,
+                  background: c.id === category.id ? '#f0f9ff' : 'transparent',
+                  borderRadius: '4px',
+                }}
+              >
+                <span>
+                  {c.icon} {c.label}
+                </span>
+                <span
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: '#0ea5e9',
+                    background: '#e0f2fe',
+                    borderRadius: '10px',
+                    padding: '1px 9px',
+                    minWidth: '28px',
+                    textAlign: 'center',
+                  }}
+                >
+                  {count.toLocaleString('es-DO')}
+                </span>
+              </li>
+            ))}
+        </ul>
       </div>
 
       <footer>

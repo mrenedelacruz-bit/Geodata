@@ -75,6 +75,13 @@ export default function App({ location }: AppProps) {
 
   const competitors = useMemo(() => pois.filter((p) => category.matchesCompetitor(p.tags)), [pois, category]);
 
+  // Totales por rubro para toda la ciudad activa, sin importar el rubro
+  // seleccionado en el selector principal.
+  const categoryTotals = useMemo(
+    () => BUSINESS_CATEGORIES.map((c) => ({ category: c, count: pois.filter((p) => c.matchesCompetitor(p.tags)).length })),
+    [pois],
+  );
+
   const pointAnalysis = useMemo(() => {
     if (!selectedPoint || !pois.length) return null;
     const result = scoreAtPoint(pois, category, selectedPoint.point);
@@ -134,6 +141,7 @@ export default function App({ location }: AppProps) {
         comparisonCells={comparisonCells}
         onToggleComparison={handleToggleComparison}
         location={location}
+        categoryTotals={categoryTotals}
       />
       <main className="map-area">
         <MapView
