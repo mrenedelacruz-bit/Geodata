@@ -235,6 +235,23 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
       retail: 0.8,
     },
   },
+  {
+    id: 'dealer_vehiculos',
+    label: 'Dealer / Importador de Vehículos',
+    icon: '🚗',
+    competitorLabel: 'Dealers e importadores de vehículos',
+    matchesCompetitor: (t) => has(t, 'shop', ['car']),
+    anchorWeights: {
+      office: 1.2,
+      mall: 1.0,
+      university: 0.5,
+      health: 0.3,
+      bank: 1.2,
+      transit: 0.8,
+      residential: 1.0,
+      retail: 1.2,
+    },
+  },
 ];
 
 export const ANCHOR_SIGNALS: AnchorSignal[] = [
