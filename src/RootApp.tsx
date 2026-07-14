@@ -7,6 +7,7 @@ export default function RootApp() {
       <Routes>
         <Route path="/santo-domingo" element={<App location="santo-domingo" />} />
         <Route path="/puerto-plata" element={<App location="puerto-plata" />} />
+        <Route path="/la-altagracia" element={<App location="la-altagracia" />} />
         <Route path="/" element={<Navigate to="/santo-domingo" replace />} />
       </Routes>
     </BrowserRouter>

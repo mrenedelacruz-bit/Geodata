@@ -38,6 +38,22 @@ export const LOCATIONS: Record<string, LocationConfig> = {
     // Centrado en San Felipe de Puerto Plata (centro histórico / Playa Dorada).
     center: { lat: 19.778, lon: -70.66 },
   },
+  'la-altagracia': {
+    id: 'la-altagracia',
+    label: 'La Altagracia',
+    title: 'Asesor de Ubicación · La Altagracia',
+    // Provincia completa: Higüey (cabecera, interior) al oeste, el polo
+    // turístico Punta Cana/Bávaro/Verón/Uvero Alto al este, y Bayahibe/San
+    // Rafael del Yuma al sur. (Higüey ≈ -68.71; Bávaro ≈ -68.40; Bayahibe ≈ -68.84.)
+    bbox: {
+      south: 18.3,
+      west: -68.95,
+      north: 18.85,
+      east: -68.3,
+    },
+    // Centrado entre Higüey y el corredor turístico (Verón).
+    center: { lat: 18.63, lon: -68.55 },
+  },
 };
 
 export function getLocation(id: string): LocationConfig {

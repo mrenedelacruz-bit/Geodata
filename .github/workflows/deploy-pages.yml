@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [claude/business-location-advisor-sd-30qgqk, main]
+    branches: [claude/business-location-advisor-sd-30qgqk, claude/business-location-advisor-la-altagracia, main]
   workflow_dispatch: {}
 
 permissions:

@@ -20,6 +20,12 @@ export default function LocationSwitcher({ currentLocation }: Props) {
       >
         Puerto Plata
       </Link>
+      <Link
+        to="/la-altagracia"
+        className={`location-link ${currentLocation === 'la-altagracia' ? 'active' : ''}`}
+      >
+        La Altagracia
+      </Link>
     </div>
   );
 }
