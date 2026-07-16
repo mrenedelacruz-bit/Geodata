@@ -28,7 +28,6 @@ export default function App({ location }: AppProps) {
   const [showGrid, setShowGrid] = useState(false);
   const [showCompetitors, setShowCompetitors] = useState(true);
   const [showCensus, setShowCensus] = useState(false);
-  const [showSaturation, setShowSaturation] = useState(false);
   const [showLiveTraffic, setShowLiveTraffic] = useState(false);
   const [isochroneMinutes, setIsochroneMinutes] = useState<number | null>(null);
   const [isochroneError, setIsochroneError] = useState<string | null>(null);
@@ -170,8 +169,6 @@ export default function App({ location }: AppProps) {
           onCompetitorsToggle={setShowCompetitors}
           showCensus={showCensus}
           onCensusToggle={setShowCensus}
-          showSaturation={showSaturation}
-          onSaturationToggle={setShowSaturation}
           showLiveTraffic={showLiveTraffic}
           onLiveTrafficToggle={setShowLiveTraffic}
           hasLiveTraffic={hasLiveTraffic}

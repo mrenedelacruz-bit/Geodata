@@ -4,7 +4,6 @@ import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import { getLocation } from '../data/locations';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
-import SaturationLayer from './SaturationLayer';
 import TomTomTrafficLayer from './TomTomTrafficLayer';
 import IsochroneLayer from './IsochroneLayer';
 import LayerControl from './LayerControl';
@@ -42,8 +41,6 @@ interface Props {
   onCompetitorsToggle: (show: boolean) => void;
   showCensus: boolean;
   onCensusToggle: (show: boolean) => void;
-  showSaturation: boolean;
-  onSaturationToggle: (show: boolean) => void;
   showLiveTraffic: boolean;
   onLiveTrafficToggle: (show: boolean) => void;
   hasLiveTraffic: boolean;
@@ -69,8 +66,6 @@ export default function MapView({
   onCompetitorsToggle,
   showCensus,
   onCensusToggle,
-  showSaturation,
-  onSaturationToggle,
   showLiveTraffic,
   onLiveTrafficToggle,
   hasLiveTraffic,
@@ -165,7 +160,6 @@ export default function MapView({
             })}
 
         {showCompetitors && competitorMarkers}
-        {showSaturation && <SaturationLayer grid={grid} />}
         {showLiveTraffic && hasLiveTraffic && <TomTomTrafficLayer />}
         {activePoint && isochroneMinutes && hasLiveTraffic && (
           <IsochroneLayer point={activePoint} minutes={isochroneMinutes} onError={onIsochroneError} />
@@ -181,8 +175,6 @@ export default function MapView({
         onCompetitorsToggle={onCompetitorsToggle}
         showCensus={showCensus}
         onCensusToggle={onCensusToggle}
-        showSaturation={showSaturation}
-        onSaturationToggle={onSaturationToggle}
         showLiveTraffic={showLiveTraffic}
         onLiveTrafficToggle={onLiveTrafficToggle}
         hasLiveTraffic={hasLiveTraffic}
