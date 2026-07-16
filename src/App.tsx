@@ -24,8 +24,8 @@ export default function App({ location }: AppProps) {
   const [selectedCell, setSelectedCell] = useState<GridCell | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<{ point: LatLon; label: string } | null>(null);
   const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
-  const [showHeatmap, setShowHeatmap] = useState(true);
-  const [showGrid, setShowGrid] = useState(true);
+  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [showGrid, setShowGrid] = useState(false);
   const [showCompetitors, setShowCompetitors] = useState(true);
   const [showCensus, setShowCensus] = useState(false);
   const [showSaturation, setShowSaturation] = useState(false);
