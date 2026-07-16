@@ -45,9 +45,3 @@ export interface GridCell {
   score: number;
   saturationLevel: SaturationLevel;
 }
-
-export interface TrafficWay {
-  id: number;
-  coords: LatLon[];
-  tags: Record<string, string>;
-}

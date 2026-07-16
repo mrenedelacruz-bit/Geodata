@@ -339,3 +339,9 @@ footer a {
   padding: 0 12px 8px 37px;
   margin-top: -6px;
 }
+
+/* Tráfico vehicular en vivo (TomTom): satura y contrasta los tiles para que
+   el verde/amarillo/rojo de congestión se vea más vívido sobre el mapa base. */
+.tomtom-traffic-tiles {
+  filter: saturate(1.9) contrast(1.25);
+}

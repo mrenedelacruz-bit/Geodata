@@ -5,8 +5,6 @@ interface Props {
   category: BusinessCategory;
   showHeatmap: boolean;
   onHeatmapToggle: (show: boolean) => void;
-  showTraffic: boolean;
-  onTrafficToggle: (show: boolean) => void;
   showGrid: boolean;
   onGridToggle: (show: boolean) => void;
   showCompetitors: boolean;
@@ -24,8 +22,6 @@ export default function LayerControl({
   category,
   showHeatmap,
   onHeatmapToggle,
-  showTraffic,
-  onTrafficToggle,
   showGrid,
   onGridToggle,
   showCompetitors,
@@ -85,16 +81,6 @@ export default function LayerControl({
           <div className="chk">{showGrid ? '✓' : ''}</div>
         </div>
         <div className="sub">Celdas de 450m con scores individuales</div>
-
-        <div
-          className={`layer-btn ${showTraffic ? '' : 'off'}`}
-          onClick={() => toggleLayer(onTrafficToggle, showTraffic)}
-        >
-          <div className="swatch" style={{ background: '#d32f2f' }} />
-          Análisis de tráfico
-          <div className="chk">{showTraffic ? '✓' : ''}</div>
-        </div>
-        <div className="sub">Red de vías principales (autopistas a secundarias)</div>
 
         <div
           className={`layer-btn ${showCompetitors ? '' : 'off'}`}

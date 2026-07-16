@@ -15,7 +15,8 @@ export default function TomTomTrafficLayer() {
     <TileLayer
       url={`https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${apiKey}`}
       attribution='Tráfico: &copy; <a href="https://www.tomtom.com" target="_blank" rel="noreferrer">TomTom</a>'
-      opacity={0.75}
+      opacity={0.95}
+      className="tomtom-traffic-tiles"
     />
   );
 }

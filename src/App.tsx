@@ -5,12 +5,11 @@ import Sidebar from './components/Sidebar';
 import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
 import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
-import { fetchTrafficWays } from './lib/traffic';
 import { mergeManualPois } from './data/manualPois';
 import { sectorAt } from './data/census';
 import { getLocation } from './data/locations';
 import { getTomTomApiKey } from './lib/tomtom';
-import type { GridCell, LatLon, OsmPOI, TrafficWay } from './types';
+import type { GridCell, LatLon, OsmPOI } from './types';
 import './App.css';
 
 interface AppProps {
@@ -19,7 +18,6 @@ interface AppProps {
 
 export default function App({ location }: AppProps) {
   const [pois, setPois] = useState<OsmPOI[]>([]);
-  const [trafficWays, setTrafficWays] = useState<TrafficWay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState(BUSINESS_CATEGORIES[0]);
@@ -28,7 +26,6 @@ export default function App({ location }: AppProps) {
   const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
   const [showHeatmap, setShowHeatmap] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
-  const [showTraffic, setShowTraffic] = useState(true);
   const [showCompetitors, setShowCompetitors] = useState(true);
   const [showCensus, setShowCensus] = useState(false);
   const [showSaturation, setShowSaturation] = useState(false);
@@ -43,19 +40,14 @@ export default function App({ location }: AppProps) {
     setLoading(true);
     setError(null);
     setPois([]);
-    setTrafficWays([]);
     setSelectedCell(null);
     setSelectedPoint(null);
     setComparisonCells([]);
     let cancelled = false;
-    Promise.all([
-      fetchOsmPOIs(locationConfig.bbox),
-      fetchTrafficWays(locationConfig.bbox),
-    ])
-      .then(([poiData, trafficData]) => {
+    fetchOsmPOIs(locationConfig.bbox)
+      .then((poiData) => {
         if (cancelled) return;
         setPois(mergeManualPois(poiData, location));
-        setTrafficWays(trafficData);
       })
       .catch((err) => {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -152,7 +144,6 @@ export default function App({ location }: AppProps) {
           grid={grid}
           category={category}
           competitors={competitors}
-          trafficWays={trafficWays}
           onMapClick={handleMapClick}
           selectedCell={selectedCell}
           onSelectCell={handleSelectCell}
@@ -161,8 +152,6 @@ export default function App({ location }: AppProps) {
           onHeatmapToggle={setShowHeatmap}
           showGrid={showGrid}
           onGridToggle={setShowGrid}
-          showTraffic={showTraffic}
-          onTrafficToggle={setShowTraffic}
           showCompetitors={showCompetitors}
           onCompetitorsToggle={setShowCompetitors}
           showCensus={showCensus}

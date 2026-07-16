@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 import { MapContainer, TileLayer, Rectangle, CircleMarker, Popup, useMapEvents } from 'react-leaflet';
-import type { BusinessCategory, GridCell, LatLon, OsmPOI, TrafficWay } from '../types';
+import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import { getLocation } from '../data/locations';
 import HeatmapLayerComponent from './HeatmapLayer';
-import TrafficLayer from './TrafficLayer';
 import CensusLayer from './CensusLayer';
 import SaturationLayer from './SaturationLayer';
 import TomTomTrafficLayer from './TomTomTrafficLayer';
@@ -30,7 +29,6 @@ interface Props {
   grid: GridCell[];
   category: BusinessCategory;
   competitors: OsmPOI[];
-  trafficWays: TrafficWay[];
   onMapClick: (p: LatLon) => void;
   selectedCell: GridCell | null;
   onSelectCell: (cell: GridCell) => void;
@@ -39,8 +37,6 @@ interface Props {
   onHeatmapToggle: (show: boolean) => void;
   showGrid: boolean;
   onGridToggle: (show: boolean) => void;
-  showTraffic: boolean;
-  onTrafficToggle: (show: boolean) => void;
   showCompetitors: boolean;
   onCompetitorsToggle: (show: boolean) => void;
   showCensus: boolean;
@@ -57,7 +53,6 @@ export default function MapView({
   grid,
   category,
   competitors,
-  trafficWays,
   onMapClick,
   selectedCell,
   onSelectCell,
@@ -66,8 +61,6 @@ export default function MapView({
   onHeatmapToggle,
   showGrid,
   onGridToggle,
-  showTraffic,
-  onTrafficToggle,
   showCompetitors,
   onCompetitorsToggle,
   showCensus,
@@ -132,7 +125,6 @@ export default function MapView({
         />
         <ClickHandler onClick={onMapClick} />
         {showHeatmap && <HeatmapLayerComponent grid={grid} />}
-        {showTraffic && <TrafficLayer ways={trafficWays} />}
         {showCensus && <CensusLayer location={location} />}
         {showGrid &&
           grid
@@ -175,8 +167,6 @@ export default function MapView({
         onHeatmapToggle={onHeatmapToggle}
         showGrid={showGrid}
         onGridToggle={onGridToggle}
-        showTraffic={showTraffic}
-        onTrafficToggle={onTrafficToggle}
         showCompetitors={showCompetitors}
         onCompetitorsToggle={onCompetitorsToggle}
         showCensus={showCensus}
