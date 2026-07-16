@@ -345,3 +345,20 @@ footer a {
 .tomtom-traffic-tiles {
   filter: saturate(1.9) contrast(1.25);
 }
+
+.tomtom-error-banner {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  max-width: min(90%, 480px);
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
