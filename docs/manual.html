@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Gran Santo Domingo · Provincia de Puerto Plata<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 2.9</div>
+    <div><strong>Versión:</strong> 3.0</div>
     <div><strong>Fecha:</strong> Julio 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -154,7 +154,21 @@ celular) y no necesita cuentas, claves ni configuración.
   <tr><td>⚪ Competidores</td><td>Cada negocio del rubro seleccionado. Los puntos <strong style="color:#0B5FA5;">azules</strong> son establecimientos agregados manualmente (verificados por el usuario, aún no mapeados en OpenStreetMap).</td></tr>
   <tr><td>🏘️ Censo</td><td>Sectores censales coloreados por poder adquisitivo (ICV / SIUBEN).</td></tr>
   <tr><td>🚦 Semáforo de saturación</td><td>Círculos verde/amarillo/rojo por celda según su propia proporción competencia/demanda (ver sección 9).</td></tr>
+  <tr><td>🚗 Tráfico vehicular en vivo</td><td>Congestión real en tiempo real (TomTom): verde = fluido, rojo = congestionado. Solo visible si el despliegue tiene configurada una API key de TomTom (ver sección 5.1).</td></tr>
 </table>
+
+<h3>5.1 Tráfico vehicular en vivo <span class="newfeature">NUEVO</span></h3>
+<p>
+A diferencia de la capa "Tráfico" (jerarquía de vías desde OpenStreetMap, siempre disponible), esta
+capa muestra <strong>congestión vehicular real en tiempo real</strong> usando la
+<a href="https://developer.tomtom.com/traffic-api/documentation" target="_blank" rel="noreferrer">Traffic Flow API de TomTom</a>.
+</p>
+<div class="box">
+Requiere que quien despliegue la app configure su propia API key de TomTom (gratuita, con límite de
+consultas) como secreto de GitHub Actions (<span class="kbd">TOMTOM_API_KEY</span>), restringida por
+dominio en el panel de TomTom. Si no está configurada, la opción aparece deshabilitada en el control
+de capas y el resto de la app funciona igual.
+</div>
 
 <h2>6. Analizar un punto específico</h2>
 <h3>6.1 Buscar por dirección</h3>
@@ -180,9 +194,9 @@ seleccionado, con sus coordenadas, número de competidores cercanos y una etique
 centrar el análisis en ella.
 </p>
 
-<h2>8. Totalizador por tipo de negocio <span class="newfeature">NUEVO</span></h2>
+<h2>8. Totalizador por tipo de negocio</h2>
 <p>
-Panel debajo del Top 10 que muestra, para <strong>las 12 categorías de negocio</strong>, cuántos
+Panel debajo del Top 10 que muestra, para <strong>todas las categorías de negocio</strong>, cuántos
 establecimientos de cada tipo existen en toda la ciudad activa (Santo Domingo o Puerto Plata) —
 independiente del rubro que tengas seleccionado en el menú principal.
 </p>
@@ -292,7 +306,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v2.9 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v3.0 · Julio 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

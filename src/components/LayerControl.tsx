@@ -15,6 +15,9 @@ interface Props {
   onCensusToggle: (show: boolean) => void;
   showSaturation: boolean;
   onSaturationToggle: (show: boolean) => void;
+  showLiveTraffic: boolean;
+  onLiveTrafficToggle: (show: boolean) => void;
+  hasLiveTraffic: boolean;
 }
 
 export default function LayerControl({
@@ -31,6 +34,9 @@ export default function LayerControl({
   onCensusToggle,
   showSaturation,
   onSaturationToggle,
+  showLiveTraffic,
+  onLiveTrafficToggle,
+  hasLiveTraffic,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -130,6 +136,23 @@ export default function LayerControl({
         <div className="sub">
           Competidores vs. demanda de cada celda: verde = oportunidad, amarillo = moderado, rojo =
           saturado.
+        </div>
+
+        <div
+          className={`layer-btn ${showLiveTraffic && hasLiveTraffic ? '' : 'off'} ${hasLiveTraffic ? '' : 'disabled'}`}
+          onClick={() => hasLiveTraffic && toggleLayer(onLiveTrafficToggle, showLiveTraffic)}
+        >
+          <div
+            className="swatch"
+            style={{ background: 'linear-gradient(135deg, #16a34a, #eab308, #dc2626)' }}
+          />
+          Tráfico vehicular en vivo
+          <div className="chk">{showLiveTraffic && hasLiveTraffic ? '✓' : ''}</div>
+        </div>
+        <div className="sub">
+          {hasLiveTraffic
+            ? 'Congestión vehicular en tiempo real (TomTom). Verde = fluido, rojo = congestionado.'
+            : 'No configurada en este despliegue (falta la API key de TomTom).'}
         </div>
       </div>
     </div>

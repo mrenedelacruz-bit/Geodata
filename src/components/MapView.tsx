@@ -6,6 +6,7 @@ import HeatmapLayerComponent from './HeatmapLayer';
 import TrafficLayer from './TrafficLayer';
 import CensusLayer from './CensusLayer';
 import SaturationLayer from './SaturationLayer';
+import TomTomTrafficLayer from './TomTomTrafficLayer';
 import LayerControl from './LayerControl';
 import LocationSwitcher from './LocationSwitcher';
 
@@ -46,6 +47,9 @@ interface Props {
   onCensusToggle: (show: boolean) => void;
   showSaturation: boolean;
   onSaturationToggle: (show: boolean) => void;
+  showLiveTraffic: boolean;
+  onLiveTrafficToggle: (show: boolean) => void;
+  hasLiveTraffic: boolean;
 }
 
 export default function MapView({
@@ -70,6 +74,9 @@ export default function MapView({
   onCensusToggle,
   showSaturation,
   onSaturationToggle,
+  showLiveTraffic,
+  onLiveTrafficToggle,
+  hasLiveTraffic,
 }: Props) {
   const locationConfig = getLocation(location);
 
@@ -160,6 +167,7 @@ export default function MapView({
 
         {showCompetitors && competitorMarkers}
         {showSaturation && <SaturationLayer grid={grid} />}
+        {showLiveTraffic && hasLiveTraffic && <TomTomTrafficLayer />}
       </MapContainer>
       <LayerControl
         category={category}
@@ -175,6 +183,9 @@ export default function MapView({
         onCensusToggle={onCensusToggle}
         showSaturation={showSaturation}
         onSaturationToggle={onSaturationToggle}
+        showLiveTraffic={showLiveTraffic}
+        onLiveTrafficToggle={onLiveTrafficToggle}
+        hasLiveTraffic={hasLiveTraffic}
       />
     </div>
   );

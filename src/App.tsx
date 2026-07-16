@@ -9,6 +9,7 @@ import { fetchTrafficWays } from './lib/traffic';
 import { mergeManualPois } from './data/manualPois';
 import { sectorAt } from './data/census';
 import { getLocation } from './data/locations';
+import { getTomTomApiKey } from './lib/tomtom';
 import type { GridCell, LatLon, OsmPOI, TrafficWay } from './types';
 import './App.css';
 
@@ -31,6 +32,8 @@ export default function App({ location }: AppProps) {
   const [showCompetitors, setShowCompetitors] = useState(true);
   const [showCensus, setShowCensus] = useState(false);
   const [showSaturation, setShowSaturation] = useState(false);
+  const [showLiveTraffic, setShowLiveTraffic] = useState(false);
+  const hasLiveTraffic = getTomTomApiKey() !== undefined;
 
   const locationConfig = getLocation(location);
 
@@ -166,6 +169,9 @@ export default function App({ location }: AppProps) {
           onCensusToggle={setShowCensus}
           showSaturation={showSaturation}
           onSaturationToggle={setShowSaturation}
+          showLiveTraffic={showLiveTraffic}
+          onLiveTrafficToggle={setShowLiveTraffic}
+          hasLiveTraffic={hasLiveTraffic}
         />
       </main>
     </div>
