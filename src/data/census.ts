@@ -4,33 +4,35 @@ export { powerLabel, powerColor } from './census-santo-domingo';
 import * as SD from './census-santo-domingo';
 import * as PP from './census-puerto-plata';
 import * as LA from './census-la-altagracia';
+import * as SC from './census-san-cristobal';
+import * as ST from './census-santiago';
+
+interface CensusModule {
+  CENSUS_SECTORS: SD.CensusSector[];
+  sectorAt: (point: { lat: number; lon: number }) => SD.CensusSector | null;
+  purchasingPowerAt: (point: { lat: number; lon: number }) => number;
+}
+
+const MODULES: Record<string, CensusModule> = {
+  'santo-domingo': SD,
+  'puerto-plata': PP,
+  'la-altagracia': LA,
+  'san-cristobal': SC,
+  'santiago': ST,
+};
+
+function moduleFor(location: string): CensusModule {
+  return MODULES[location] ?? SD;
+}
 
 export function getCensusSectors(location: string): SD.CensusSector[] {
-  if (location === 'puerto-plata') {
-    return PP.CENSUS_SECTORS;
-  }
-  if (location === 'la-altagracia') {
-    return LA.CENSUS_SECTORS;
-  }
-  return SD.CENSUS_SECTORS;
+  return moduleFor(location).CENSUS_SECTORS;
 }
 
 export function sectorAt(point: { lat: number; lon: number }, location: string): SD.CensusSector | null {
-  if (location === 'puerto-plata') {
-    return PP.sectorAt(point);
-  }
-  if (location === 'la-altagracia') {
-    return LA.sectorAt(point);
-  }
-  return SD.sectorAt(point);
+  return moduleFor(location).sectorAt(point);
 }
 
 export function purchasingPowerAt(point: { lat: number; lon: number }, location: string): number {
-  if (location === 'puerto-plata') {
-    return PP.purchasingPowerAt(point);
-  }
-  if (location === 'la-altagracia') {
-    return LA.purchasingPowerAt(point);
-  }
-  return SD.purchasingPowerAt(point);
+  return moduleFor(location).purchasingPowerAt(point);
 }

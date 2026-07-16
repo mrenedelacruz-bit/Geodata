@@ -2,15 +2,19 @@ import type { OsmPOI } from '../types';
 import { MANUAL_POIS as SD_POIS } from './manualPois-santo-domingo';
 import { MANUAL_POIS as PP_POIS } from './manualPois-puerto-plata';
 import { MANUAL_POIS as LA_POIS } from './manualPois-la-altagracia';
+import { MANUAL_POIS as SC_POIS } from './manualPois-san-cristobal';
+import { MANUAL_POIS as ST_POIS } from './manualPois-santiago';
+
+const POIS_BY_LOCATION: Record<string, OsmPOI[]> = {
+  'santo-domingo': SD_POIS,
+  'puerto-plata': PP_POIS,
+  'la-altagracia': LA_POIS,
+  'san-cristobal': SC_POIS,
+  'santiago': ST_POIS,
+};
 
 function getManualPOIs(location: string) {
-  if (location === 'puerto-plata') {
-    return PP_POIS;
-  }
-  if (location === 'la-altagracia') {
-    return LA_POIS;
-  }
-  return SD_POIS;
+  return POIS_BY_LOCATION[location] ?? SD_POIS;
 }
 
 const METERS_PER_DEG_LAT = 111_320;

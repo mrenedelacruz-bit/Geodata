@@ -54,6 +54,41 @@ export const LOCATIONS: Record<string, LocationConfig> = {
     // Centrado entre Higüey y el corredor turístico (Verón).
     center: { lat: 18.63, lon: -68.55 },
   },
+  'san-cristobal': {
+    id: 'san-cristobal',
+    label: 'San Cristóbal',
+    title: 'Asesor de Ubicación · San Cristóbal',
+    // Provincia completa: la ciudad de San Cristóbal y Bajos de Haina en el
+    // corredor industrial del este, Villa Altagracia al norte (Autopista
+    // Duarte), Yaguate/Sabana Grande de Palenque en la costa sur y
+    // Cambita/Los Cacaos en la sierra al oeste. (San Cristóbal ≈ -70.11;
+    // Haina ≈ -70.03; Villa Altagracia ≈ -70.17.)
+    bbox: {
+      south: 18.2,
+      west: -70.35,
+      north: 18.78,
+      east: -69.98,
+    },
+    // Centrado en la ciudad de San Cristóbal (cabecera provincial).
+    center: { lat: 18.42, lon: -70.11 },
+  },
+  'santiago': {
+    id: 'santiago',
+    label: 'Santiago',
+    title: 'Asesor de Ubicación · Santiago',
+    // Provincia completa: Santiago de los Caballeros al centro, el corredor
+    // Tamboril/Licey/Puñal al este, Villa González y Navarrete (Villa Bisonó)
+    // al noroeste, y San José de las Matas/Jánico en la sierra al suroeste.
+    // (Santiago ≈ -70.70; Tamboril ≈ -70.61; San José de las Matas ≈ -70.94.)
+    bbox: {
+      south: 19.15,
+      west: -71.15,
+      north: 19.65,
+      east: -70.45,
+    },
+    // Centrado en Santiago de los Caballeros (Monumento / centro histórico).
+    center: { lat: 19.45, lon: -70.7 },
+  },
 };
 
 export function getLocation(id: string): LocationConfig {
