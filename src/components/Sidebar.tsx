@@ -31,10 +31,6 @@ interface Props {
   onToggleComparison: (cell: GridCell) => void;
   location: string;
   categoryTotals: { category: BusinessCategory; count: number }[];
-  hasOrsKey: boolean;
-  isochroneMinutes: number | null;
-  onIsochroneChange: (minutes: number | null) => void;
-  isochroneError: string | null;
 }
 
 export default function Sidebar({
@@ -53,10 +49,6 @@ export default function Sidebar({
   onToggleComparison,
   location,
   categoryTotals,
-  hasOrsKey,
-  isochroneMinutes,
-  onIsochroneChange,
-  isochroneError,
 }: Props) {
   const topZones = [...grid].sort((a, b) => b.score - a.score).slice(0, 10);
   const totalAllCategories = categoryTotals.reduce((sum, t) => sum + t.count, 0);
@@ -184,43 +176,6 @@ export default function Sidebar({
           }}>
             {pointAnalysis.label}
           </p>
-
-          {hasOrsKey && (
-            <div style={{ marginBottom: '12px' }}>
-              <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#374151', marginBottom: '2px' }}>
-                Zona alcanzable en auto (OpenRouteService):
-              </p>
-              <p style={{ fontSize: '9.5px', color: '#9ca3af', marginBottom: '5px' }}>
-                Estimación según velocidades de vía de OpenStreetMap; puede no reflejar tráfico real
-                ni condiciones locales de la carretera.
-              </p>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                {[5, 10, 15].map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => onIsochroneChange(isochroneMinutes === m ? null : m)}
-                    style={{
-                      padding: '4px 10px',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      background: isochroneMinutes === m ? '#7c3aed' : '#f3f4f6',
-                      color: isochroneMinutes === m ? '#fff' : '#374151',
-                      border: isochroneMinutes === m ? '1px solid #7c3aed' : '1px solid #d1d5db',
-                      borderRadius: '999px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {m} min
-                  </button>
-                ))}
-              </div>
-              {isochroneError && (
-                <div style={{ marginTop: '6px', padding: '6px 8px', background: '#fef2f2', color: '#991b1b', border: '1px solid #fecaca', borderRadius: '4px', fontSize: '10.5px' }}>
-                  ⚠ {isochroneError}
-                </div>
-              )}
-            </div>
-          )}
 
           {pointAnalysis.score !== null && (
             <div style={{ marginBottom: '12px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '6px', borderLeft: '3px solid #0ea5e9' }}>

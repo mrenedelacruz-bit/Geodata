@@ -4,7 +4,6 @@ import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import { getLocation } from '../data/locations';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
-import IsochroneLayer from './IsochroneLayer';
 import LayerControl from './LayerControl';
 import LocationSwitcher from './LocationSwitcher';
 
@@ -40,10 +39,6 @@ interface Props {
   onCompetitorsToggle: (show: boolean) => void;
   showCensus: boolean;
   onCensusToggle: (show: boolean) => void;
-  activePoint: LatLon | null;
-  isochroneMinutes: number | null;
-  hasOrsKey: boolean;
-  onIsochroneError: (message: string | null) => void;
 }
 
 export default function MapView({
@@ -63,10 +58,6 @@ export default function MapView({
   onCompetitorsToggle,
   showCensus,
   onCensusToggle,
-  activePoint,
-  isochroneMinutes,
-  hasOrsKey,
-  onIsochroneError,
 }: Props) {
   const locationConfig = getLocation(location);
 
@@ -155,9 +146,6 @@ export default function MapView({
             })}
 
         {showCompetitors && competitorMarkers}
-        {activePoint && isochroneMinutes && hasOrsKey && (
-          <IsochroneLayer point={activePoint} minutes={isochroneMinutes} onError={onIsochroneError} />
-        )}
       </MapContainer>
       <LayerControl
         category={category}

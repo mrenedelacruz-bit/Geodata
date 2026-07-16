@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Gran Santo Domingo · Provincia de Puerto Plata<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 4.0</div>
+    <div><strong>Versión:</strong> 4.1</div>
     <div><strong>Fecha:</strong> Julio 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -163,6 +163,14 @@ lo que necesites revisar:
 para República Dominicana en las pruebas realizadas. No hay actualmente ningún proveedor gratuito
 conocido con mejor cobertura para esta región.
 </div>
+<div class="warn">
+<strong>Zona alcanzable en auto / isócrona (retirado):</strong> también se probó calcular el área
+alcanzable en auto en X minutos, primero con TomTom y luego con OpenRouteService (basado en
+OpenStreetMap). Ambos proveedores devolvían áreas mucho más grandes de lo realista para el tiempo
+seleccionado — calculan según límites de velocidad "de catálogo" sin reflejar tráfico real ni
+condiciones prácticas de manejo en el país. Se eliminó la funcionalidad; el análisis de un punto usa
+un radio fijo de 500 m (ver sección 6.2).
+</div>
 
 <h2>6. Analizar un punto específico</h2>
 <h3>6.1 Buscar por dirección</h3>
@@ -179,30 +187,6 @@ conocido con mejor cobertura para esta región.
   <li><strong>Competencia</strong>: cuántos negocios del mismo rubro hay en ese radio.</li>
   <li><strong>Recursos cercanos</strong>: desglose de las anclas encontradas (oficinas, bancos, transporte, etc.).</li>
 </ul>
-
-<h3>6.3 Zona alcanzable en auto (isócrona)</h3>
-<p>
-Con un punto seleccionado y una API key de OpenRouteService configurada en el despliegue, el panel
-<em>“Punto seleccionado”</em> muestra botones <strong>5 min / 10 min / 15 min</strong>. Al elegir uno,
-la app calcula (vía la <a href="https://openrouteservice.org/dev/#/api-docs/v2/isochrones" target="_blank" rel="noreferrer">Isochrones API de OpenRouteService</a>,
-que usa datos de ruteo de OpenStreetMap) y dibuja en el mapa el <strong>polígono de la zona a la que
-se puede llegar en auto</strong> en ese tiempo — considerando la red vial real, no un radio de línea
-recta como en el resto del análisis.
-</p>
-<div class="box">
-Útil para responder "¿qué tan lejos llegan mis clientes en auto en X minutos desde este punto?", en
-vez de asumir un círculo perfecto. Se recalcula automáticamente si cambias de punto o de minutos.
-</div>
-<div class="warn">
-La cobertura de datos de ruteo varía por zona; en áreas rurales o con poca información vial puede no
-devolver resultado. Si eso pasa, aparece un aviso en el panel explicándolo en vez de fallar en
-silencio.
-</div>
-<div class="warn">
-<strong>Es una estimación, no una medición exacta:</strong> se basa en los límites de velocidad
-registrados en OpenStreetMap para cada vía, no en tráfico en tiempo real — en zonas con carreteras
-rurales o no pavimentadas puede sobre o subestimar el área realmente alcanzable.
-</div>
 
 <h2>7. Top 10 zonas recomendadas</h2>
 <p>
@@ -320,7 +304,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v4.0 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v4.1 · Julio 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

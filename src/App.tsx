@@ -8,7 +8,6 @@ import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
 import { mergeManualPois } from './data/manualPois';
 import { sectorAt } from './data/census';
 import { getLocation } from './data/locations';
-import { getOrsApiKey } from './lib/ors';
 import type { GridCell, LatLon, OsmPOI } from './types';
 import './App.css';
 
@@ -28,9 +27,6 @@ export default function App({ location }: AppProps) {
   const [showGrid, setShowGrid] = useState(false);
   const [showCompetitors, setShowCompetitors] = useState(true);
   const [showCensus, setShowCensus] = useState(false);
-  const [isochroneMinutes, setIsochroneMinutes] = useState<number | null>(null);
-  const [isochroneError, setIsochroneError] = useState<string | null>(null);
-  const hasOrsKey = getOrsApiKey() !== undefined;
 
   const locationConfig = getLocation(location);
 
@@ -43,8 +39,6 @@ export default function App({ location }: AppProps) {
     setSelectedCell(null);
     setSelectedPoint(null);
     setComparisonCells([]);
-    setIsochroneMinutes(null);
-    setIsochroneError(null);
     let cancelled = false;
     fetchOsmPOIs(locationConfig.bbox)
       .then((poiData) => {
@@ -108,11 +102,6 @@ export default function App({ location }: AppProps) {
     setSelectedPoint({ point: cell.center, label: `Zona (${cell.center.lat.toFixed(4)}, ${cell.center.lon.toFixed(4)})` });
   }
 
-  function handleIsochroneChange(minutes: number | null) {
-    setIsochroneMinutes(minutes);
-    setIsochroneError(null);
-  }
-
   function handleToggleComparison(cell: GridCell) {
     setComparisonCells((prev) => {
       const isAlreadySelected = prev.some((c) => c.row === cell.row && c.col === cell.col);
@@ -144,10 +133,6 @@ export default function App({ location }: AppProps) {
         onToggleComparison={handleToggleComparison}
         location={location}
         categoryTotals={categoryTotals}
-        hasOrsKey={hasOrsKey}
-        isochroneMinutes={isochroneMinutes}
-        onIsochroneChange={handleIsochroneChange}
-        isochroneError={isochroneError}
       />
       <main className="map-area">
         <MapView
@@ -167,10 +152,6 @@ export default function App({ location }: AppProps) {
           onCompetitorsToggle={setShowCompetitors}
           showCensus={showCensus}
           onCensusToggle={setShowCensus}
-          activePoint={selectedPoint?.point ?? null}
-          isochroneMinutes={isochroneMinutes}
-          hasOrsKey={hasOrsKey}
-          onIsochroneError={setIsochroneError}
         />
       </main>
     </div>
