@@ -19,7 +19,10 @@ export async function fetchReachableRange(point: LatLon, timeBudgetSeconds: numb
   const apiKey = getTomTomApiKey();
   if (!apiKey) throw new Error('La API key de TomTom no está configurada en este despliegue.');
 
-  const url = `https://api.tomtom.com/routing/1/calculateReachableRange/${point.lat},${point.lon}/json?key=${apiKey}&timeBudgetInSec=${timeBudgetSeconds}&travelMode=car`;
+  // traffic=true: usa condiciones de tráfico reales al calcular el alcance
+  // en vez de asumir velocidad libre ideal (que sobreestima el área,
+  // sobre todo con congestión o vías rurales/no pavimentadas).
+  const url = `https://api.tomtom.com/routing/1/calculateReachableRange/${point.lat},${point.lon}/json?key=${apiKey}&timeBudgetInSec=${timeBudgetSeconds}&travelMode=car&traffic=true`;
   const res = await fetch(url);
   if (!res.ok) {
     let detail = '';

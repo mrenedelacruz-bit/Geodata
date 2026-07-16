@@ -187,8 +187,12 @@ export default function Sidebar({
 
           {hasTomTomKey && (
             <div style={{ marginBottom: '12px' }}>
-              <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#374151', marginBottom: '5px' }}>
+              <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#374151', marginBottom: '2px' }}>
                 Zona alcanzable en auto (TomTom):
+              </p>
+              <p style={{ fontSize: '9.5px', color: '#9ca3af', marginBottom: '5px' }}>
+                Estimación según velocidades de vía de TomTom; puede no reflejar tráfico real ni
+                condiciones locales de la carretera.
               </p>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {[5, 10, 15].map((m) => (
