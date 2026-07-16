@@ -3,17 +3,6 @@ import { purchasingPowerAt } from '../data/census';
 import { getLocation } from '../data/locations';
 import type { BBox, BusinessCategory, GridCell, LatLon, OsmPOI, SaturationLevel } from '../types';
 
-// Cobertura ampliada hasta la Circunvalación de Santo Domingo (Norte/Duarte y Este),
-// incluyendo Santo Domingo Este, Norte, Oeste (Los Alcarrizos) y el Distrito Nacional.
-export const SANTO_DOMINGO_BBOX: BBox = {
-  south: 18.4,
-  west: -70.15,
-  north: 18.62,
-  east: -69.75,
-};
-
-export const SANTO_DOMINGO_CENTER: LatLon = { lat: 18.4861, lon: -69.9312 };
-
 const CELL_METERS = 450;
 const METERS_PER_DEG_LAT = 111_320;
 
@@ -49,15 +38,42 @@ function cellKeyOf(lat: number, lon: number, bbox: BBox, latStep: number, lonSte
   return { row, col };
 }
 
-/** Buckets POIs into grid cells for fast neighborhood lookups. */
-function bucketPOIs(pois: OsmPOI[], bbox: BBox, latStep: number, lonStep: number) {
-  const buckets = new Map<string, OsmPOI[]>();
+/** Aporte precomputado de un POI: se evalúa una sola vez por cambio de rubro. */
+interface PoiContribution {
+  isCompetitor: boolean;
+  anchorWeight: number;
+}
+
+/**
+ * Buckets con el aporte de cada POI ya evaluado. Cada POI cae en la vecindad
+ * 3×3 de varias celdas, así que sin esto los matchers (incluidos los regex de
+ * marcas GLP) se ejecutarían hasta 9 veces por POI en cada cambio de rubro.
+ */
+function bucketContributions(
+  pois: OsmPOI[],
+  category: BusinessCategory,
+  bbox: BBox,
+  latStep: number,
+  lonStep: number,
+) {
+  const weights = category.anchorWeights || {};
+  const buckets = new Map<string, PoiContribution[]>();
   for (const poi of pois) {
+    let anchorWeight = 0;
+    for (const anchor of ANCHOR_SIGNALS) {
+      if (anchor.matches(poi.tags)) {
+        anchorWeight += weights[anchor.id] ?? anchor.weight;
+      }
+    }
+    const contribution: PoiContribution = {
+      isCompetitor: category.matchesCompetitor(poi.tags),
+      anchorWeight,
+    };
     const { row, col } = cellKeyOf(poi.lat, poi.lon, bbox, latStep, lonStep);
     const key = `${row}_${col}`;
     const arr = buckets.get(key);
-    if (arr) arr.push(poi);
-    else buckets.set(key, [poi]);
+    if (arr) arr.push(contribution);
+    else buckets.set(key, [contribution]);
   }
   return buckets;
 }
@@ -66,8 +82,7 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, location
   const locationConfig = getLocation(location);
   const bbox = locationConfig.bbox;
   const { latStep, lonStep, rows, cols } = buildGridDims(bbox);
-  const buckets = bucketPOIs(pois, bbox, latStep, lonStep);
-  const weights = category.anchorWeights || {};
+  const buckets = bucketContributions(pois, category, bbox, latStep, lonStep);
 
   const cells: GridCell[] = [];
   for (let row = 0; row < rows; row++) {
@@ -79,13 +94,8 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, location
           const bucket = buckets.get(`${row + dr}_${col + dc}`);
           if (!bucket) continue;
           for (const poi of bucket) {
-            if (category.matchesCompetitor(poi.tags)) competitorCount++;
-            for (const anchor of ANCHOR_SIGNALS) {
-              if (anchor.matches(poi.tags)) {
-                const weight = weights[anchor.id] ?? anchor.weight;
-                anchorScore += weight;
-              }
-            }
+            if (poi.isCompetitor) competitorCount++;
+            anchorScore += poi.anchorWeight;
           }
         }
       }
@@ -107,8 +117,14 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, location
     }
   }
 
-  const maxAnchor = Math.max(1, ...cells.map((c) => c.anchorScore));
-  const maxCompetitor = Math.max(1, ...cells.map((c) => c.competitorCount));
+  // reduce en vez de spread: con ~20k celdas, `Math.max(...)` con spread se
+  // acerca al límite de argumentos de la pila de llamadas.
+  let maxAnchor = 1;
+  let maxCompetitor = 1;
+  for (const c of cells) {
+    if (c.anchorScore > maxAnchor) maxAnchor = c.anchorScore;
+    if (c.competitorCount > maxCompetitor) maxCompetitor = c.competitorCount;
+  }
   for (const cell of cells) {
     const demand = cell.anchorScore / maxAnchor;
     const saturation = cell.competitorCount / maxCompetitor;

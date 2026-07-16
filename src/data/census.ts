@@ -1,7 +1,5 @@
 export type { CensusSector } from './census-santo-domingo';
-export { CENSUS_SECTORS as SANTO_DOMINGO_SECTORS, NEUTRAL_POWER, sectorAt as sectorAtSD, purchasingPowerAt as purchasingPowerAtSD, powerLabel, powerColor } from './census-santo-domingo';
-export { CENSUS_SECTORS as PUERTO_PLATA_SECTORS, NEUTRAL_POWER as PP_NEUTRAL_POWER, sectorAt as sectorAtPP, purchasingPowerAt as purchasingPowerAtPP } from './census-puerto-plata';
-export { CENSUS_SECTORS as LA_ALTAGRACIA_SECTORS, NEUTRAL_POWER as LA_NEUTRAL_POWER, sectorAt as sectorAtLA, purchasingPowerAt as purchasingPowerAtLA } from './census-la-altagracia';
+export { powerLabel, powerColor } from './census-santo-domingo';
 
 import * as SD from './census-santo-domingo';
 import * as PP from './census-puerto-plata';
