@@ -8,7 +8,7 @@ import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
 import { mergeManualPois } from './data/manualPois';
 import { sectorAt } from './data/census';
 import { getLocation } from './data/locations';
-import { getTomTomApiKey } from './lib/tomtom';
+import { getOrsApiKey } from './lib/ors';
 import type { GridCell, LatLon, OsmPOI } from './types';
 import './App.css';
 
@@ -28,11 +28,9 @@ export default function App({ location }: AppProps) {
   const [showGrid, setShowGrid] = useState(false);
   const [showCompetitors, setShowCompetitors] = useState(true);
   const [showCensus, setShowCensus] = useState(false);
-  const [showLiveTraffic, setShowLiveTraffic] = useState(false);
   const [isochroneMinutes, setIsochroneMinutes] = useState<number | null>(null);
   const [isochroneError, setIsochroneError] = useState<string | null>(null);
-  const hasLiveTraffic = getTomTomApiKey() !== undefined;
-  const hasTomTomKey = hasLiveTraffic;
+  const hasOrsKey = getOrsApiKey() !== undefined;
 
   const locationConfig = getLocation(location);
 
@@ -146,7 +144,7 @@ export default function App({ location }: AppProps) {
         onToggleComparison={handleToggleComparison}
         location={location}
         categoryTotals={categoryTotals}
-        hasTomTomKey={hasTomTomKey}
+        hasOrsKey={hasOrsKey}
         isochroneMinutes={isochroneMinutes}
         onIsochroneChange={handleIsochroneChange}
         isochroneError={isochroneError}
@@ -169,11 +167,9 @@ export default function App({ location }: AppProps) {
           onCompetitorsToggle={setShowCompetitors}
           showCensus={showCensus}
           onCensusToggle={setShowCensus}
-          showLiveTraffic={showLiveTraffic}
-          onLiveTrafficToggle={setShowLiveTraffic}
-          hasLiveTraffic={hasLiveTraffic}
           activePoint={selectedPoint?.point ?? null}
           isochroneMinutes={isochroneMinutes}
+          hasOrsKey={hasOrsKey}
           onIsochroneError={setIsochroneError}
         />
       </main>

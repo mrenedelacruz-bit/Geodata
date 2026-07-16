@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Polygon, Popup } from 'react-leaflet';
-import { fetchReachableRange } from '../lib/tomtomRouting';
+import { fetchReachableRange } from '../lib/orsRouting';
 import type { LatLon } from '../types';
 
 interface Props {
@@ -10,9 +10,10 @@ interface Props {
 }
 
 /**
- * Isócrona de tiempo real de manejo (TomTom Calculate Reachable Range):
- * dibuja el polígono de la zona alcanzable en auto desde el punto
- * seleccionado, considerando la red vial real (no un radio de línea recta).
+ * Isócrona de tiempo de manejo (OpenRouteService Isochrones, sobre datos de
+ * OpenStreetMap): dibuja el polígono de la zona alcanzable en auto desde el
+ * punto seleccionado, considerando la red vial real (no un radio de línea
+ * recta).
  */
 export default function IsochroneLayer({ point, minutes, onError }: Props) {
   const [boundary, setBoundary] = useState<LatLon[] | null>(null);
@@ -43,7 +44,7 @@ export default function IsochroneLayer({ point, minutes, onError }: Props) {
       pathOptions={{ color: '#7c3aed', weight: 2, fillColor: '#7c3aed', fillOpacity: 0.1, dashArray: '4 4' }}
     >
       <Popup>
-        <div style={{ fontSize: '12px' }}>Zona alcanzable en {minutes} min en auto (TomTom)</div>
+        <div style={{ fontSize: '12px' }}>Zona alcanzable en {minutes} min en auto (OpenRouteService)</div>
       </Popup>
     </Polygon>
   );

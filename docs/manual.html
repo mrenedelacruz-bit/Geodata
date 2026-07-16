@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Gran Santo Domingo · Provincia de Puerto Plata<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 3.6</div>
+    <div><strong>Versión:</strong> 4.0</div>
     <div><strong>Fecha:</strong> Julio 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -156,26 +156,12 @@ lo que necesites revisar:
   <tr><td>🟩 Cuadrícula</td><td>Celdas de ~450 m coloreadas por score. Clic en una celda muestra su detalle.</td></tr>
   <tr><td>⚪ Competidores</td><td>Cada negocio del rubro seleccionado. Los puntos <strong style="color:#0B5FA5;">azules</strong> son establecimientos agregados manualmente (verificados por el usuario, aún no mapeados en OpenStreetMap).</td></tr>
   <tr><td>🏘️ Censo</td><td>Sectores censales coloreados por poder adquisitivo (ICV / SIUBEN).</td></tr>
-  <tr><td>🚗 Tráfico vehicular en vivo</td><td>Congestión real en tiempo real (TomTom): verde = fluido, rojo = congestionado. Solo visible si el despliegue tiene configurada una API key de TomTom (ver sección 5.1).</td></tr>
 </table>
-
-<h3>5.1 Tráfico vehicular en vivo</h3>
-<p>
-Muestra <strong>congestión vehicular real en tiempo real</strong> (no una capa estática de
-jerarquía de vías) usando la
-<a href="https://developer.tomtom.com/traffic-api/documentation" target="_blank" rel="noreferrer">Traffic Flow API de TomTom</a>.
-</p>
-<div class="box">
-Requiere que quien despliegue la app configure su propia API key de TomTom (gratuita, con límite de
-consultas) como secreto de GitHub Actions (<span class="kbd">TOMTOM_API_KEY</span>), restringida por
-dominio en el panel de TomTom. Si no está configurada, la opción aparece deshabilitada en el control
-de capas y el resto de la app funciona igual.
-</div>
 <div class="warn">
-<strong>Diagnóstico sin herramientas de desarrollador:</strong> si la capa no logra cargar ningún
-tile en unos segundos (key inválida, producto no habilitado, dominio no autorizado, etc.), aparece un
-aviso rojo en la parte inferior del mapa explicándolo — útil en tablets/celulares donde no hay acceso
-a la pestaña "Network" del navegador.
+<strong>Tráfico vehicular en vivo (retirado):</strong> se probó una capa de congestión en tiempo real
+(TomTom Traffic Flow API), pero se eliminó porque TomTom no tiene cobertura útil de datos de tráfico
+para República Dominicana en las pruebas realizadas. No hay actualmente ningún proveedor gratuito
+conocido con mejor cobertura para esta región.
 </div>
 
 <h2>6. Analizar un punto específico</h2>
@@ -194,29 +180,28 @@ a la pestaña "Network" del navegador.
   <li><strong>Recursos cercanos</strong>: desglose de las anclas encontradas (oficinas, bancos, transporte, etc.).</li>
 </ul>
 
-<h3>6.3 Zona alcanzable en auto (isócrona) <span class="newfeature">NUEVO</span></h3>
+<h3>6.3 Zona alcanzable en auto (isócrona)</h3>
 <p>
-Con un punto seleccionado y una API key de TomTom configurada en el despliegue, el panel
+Con un punto seleccionado y una API key de OpenRouteService configurada en el despliegue, el panel
 <em>“Punto seleccionado”</em> muestra botones <strong>5 min / 10 min / 15 min</strong>. Al elegir uno,
-la app calcula (vía la <a href="https://developer.tomtom.com/routing-api/documentation/tomtom-maps/calculate-reachable-range" target="_blank" rel="noreferrer">Calculate Reachable Range API de TomTom</a>)
-y dibuja en el mapa el <strong>polígono real de la zona a la que se puede llegar en auto</strong> en
-ese tiempo — considerando la red vial real, no un radio de línea recta como en el resto del análisis.
+la app calcula (vía la <a href="https://openrouteservice.org/dev/#/api-docs/v2/isochrones" target="_blank" rel="noreferrer">Isochrones API de OpenRouteService</a>,
+que usa datos de ruteo de OpenStreetMap) y dibuja en el mapa el <strong>polígono de la zona a la que
+se puede llegar en auto</strong> en ese tiempo — considerando la red vial real, no un radio de línea
+recta como en el resto del análisis.
 </p>
 <div class="box">
 Útil para responder "¿qué tan lejos llegan mis clientes en auto en X minutos desde este punto?", en
 vez de asumir un círculo perfecto. Se recalcula automáticamente si cambias de punto o de minutos.
 </div>
 <div class="warn">
-La cobertura de datos de tráfico/ruteo de TomTom varía por zona; en áreas rurales o con poca
-información vial puede no devolver resultado. Si eso pasa, aparece un aviso en el panel explicándolo
-en vez de fallar en silencio.
+La cobertura de datos de ruteo varía por zona; en áreas rurales o con poca información vial puede no
+devolver resultado. Si eso pasa, aparece un aviso en el panel explicándolo en vez de fallar en
+silencio.
 </div>
 <div class="warn">
-<strong>Es una estimación, no una medición exacta:</strong> el cálculo usa condiciones de tráfico
-reales cuando TomTom tiene esos datos disponibles para la zona, pero de todas formas se basa en los
-límites de velocidad que TomTom tiene registrados por vía — en zonas con carreteras rurales o no
-pavimentadas puede sobreestimar el área realmente alcanzable. El panel muestra este aviso junto a los
-botones de minutos.
+<strong>Es una estimación, no una medición exacta:</strong> se basa en los límites de velocidad
+registrados en OpenStreetMap para cada vía, no en tráfico en tiempo real — en zonas con carreteras
+rurales o no pavimentadas puede sobre o subestimar el área realmente alcanzable.
 </div>
 
 <h2>7. Top 10 zonas recomendadas</h2>
@@ -335,7 +320,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v3.6 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v4.0 · Julio 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

@@ -31,7 +31,7 @@ interface Props {
   onToggleComparison: (cell: GridCell) => void;
   location: string;
   categoryTotals: { category: BusinessCategory; count: number }[];
-  hasTomTomKey: boolean;
+  hasOrsKey: boolean;
   isochroneMinutes: number | null;
   onIsochroneChange: (minutes: number | null) => void;
   isochroneError: string | null;
@@ -53,7 +53,7 @@ export default function Sidebar({
   onToggleComparison,
   location,
   categoryTotals,
-  hasTomTomKey,
+  hasOrsKey,
   isochroneMinutes,
   onIsochroneChange,
   isochroneError,
@@ -185,14 +185,14 @@ export default function Sidebar({
             {pointAnalysis.label}
           </p>
 
-          {hasTomTomKey && (
+          {hasOrsKey && (
             <div style={{ marginBottom: '12px' }}>
               <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#374151', marginBottom: '2px' }}>
-                Zona alcanzable en auto (TomTom):
+                Zona alcanzable en auto (OpenRouteService):
               </p>
               <p style={{ fontSize: '9.5px', color: '#9ca3af', marginBottom: '5px' }}>
-                Estimación según velocidades de vía de TomTom; puede no reflejar tráfico real ni
-                condiciones locales de la carretera.
+                Estimación según velocidades de vía de OpenStreetMap; puede no reflejar tráfico real
+                ni condiciones locales de la carretera.
               </p>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {[5, 10, 15].map((m) => (
