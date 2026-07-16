@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Gran Santo Domingo · Provincia de Puerto Plata<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 3.3</div>
+    <div><strong>Versión:</strong> 3.4</div>
     <div><strong>Fecha:</strong> Julio 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -160,7 +160,7 @@ lo que necesites revisar:
   <tr><td>🚗 Tráfico vehicular en vivo</td><td>Congestión real en tiempo real (TomTom): verde = fluido, rojo = congestionado. Solo visible si el despliegue tiene configurada una API key de TomTom (ver sección 5.1).</td></tr>
 </table>
 
-<h3>5.1 Tráfico vehicular en vivo <span class="newfeature">NUEVO</span></h3>
+<h3>5.1 Tráfico vehicular en vivo</h3>
 <p>
 Muestra <strong>congestión vehicular real en tiempo real</strong> (no una capa estática de
 jerarquía de vías) usando la
@@ -194,6 +194,24 @@ a la pestaña "Network" del navegador.
   <li><strong>Competencia</strong>: cuántos negocios del mismo rubro hay en ese radio.</li>
   <li><strong>Recursos cercanos</strong>: desglose de las anclas encontradas (oficinas, bancos, transporte, etc.).</li>
 </ul>
+
+<h3>6.3 Zona alcanzable en auto (isócrona) <span class="newfeature">NUEVO</span></h3>
+<p>
+Con un punto seleccionado y una API key de TomTom configurada en el despliegue, el panel
+<em>“Punto seleccionado”</em> muestra botones <strong>5 min / 10 min / 15 min</strong>. Al elegir uno,
+la app calcula (vía la <a href="https://developer.tomtom.com/routing-api/documentation/tomtom-maps/calculate-reachable-range" target="_blank" rel="noreferrer">Calculate Reachable Range API de TomTom</a>)
+y dibuja en el mapa el <strong>polígono real de la zona a la que se puede llegar en auto</strong> en
+ese tiempo — considerando la red vial real, no un radio de línea recta como en el resto del análisis.
+</p>
+<div class="box">
+Útil para responder "¿qué tan lejos llegan mis clientes en auto en X minutos desde este punto?", en
+vez de asumir un círculo perfecto. Se recalcula automáticamente si cambias de punto o de minutos.
+</div>
+<div class="warn">
+La cobertura de datos de tráfico/ruteo de TomTom varía por zona; en áreas rurales o con poca
+información vial puede no devolver resultado. Si eso pasa, aparece un aviso en el panel explicándolo
+en vez de fallar en silencio.
+</div>
 
 <h2>7. Top 10 zonas recomendadas</h2>
 <p>
@@ -315,7 +333,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v3.3 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v3.4 · Julio 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

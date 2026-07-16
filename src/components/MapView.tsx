@@ -6,6 +6,7 @@ import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
 import SaturationLayer from './SaturationLayer';
 import TomTomTrafficLayer from './TomTomTrafficLayer';
+import IsochroneLayer from './IsochroneLayer';
 import LayerControl from './LayerControl';
 import LocationSwitcher from './LocationSwitcher';
 
@@ -46,6 +47,9 @@ interface Props {
   showLiveTraffic: boolean;
   onLiveTrafficToggle: (show: boolean) => void;
   hasLiveTraffic: boolean;
+  activePoint: LatLon | null;
+  isochroneMinutes: number | null;
+  onIsochroneError: (message: string | null) => void;
 }
 
 export default function MapView({
@@ -70,6 +74,9 @@ export default function MapView({
   showLiveTraffic,
   onLiveTrafficToggle,
   hasLiveTraffic,
+  activePoint,
+  isochroneMinutes,
+  onIsochroneError,
 }: Props) {
   const locationConfig = getLocation(location);
 
@@ -160,6 +167,9 @@ export default function MapView({
         {showCompetitors && competitorMarkers}
         {showSaturation && <SaturationLayer grid={grid} />}
         {showLiveTraffic && hasLiveTraffic && <TomTomTrafficLayer />}
+        {activePoint && isochroneMinutes && hasLiveTraffic && (
+          <IsochroneLayer point={activePoint} minutes={isochroneMinutes} onError={onIsochroneError} />
+        )}
       </MapContainer>
       <LayerControl
         category={category}

@@ -30,7 +30,10 @@ export default function App({ location }: AppProps) {
   const [showCensus, setShowCensus] = useState(false);
   const [showSaturation, setShowSaturation] = useState(false);
   const [showLiveTraffic, setShowLiveTraffic] = useState(false);
+  const [isochroneMinutes, setIsochroneMinutes] = useState<number | null>(null);
+  const [isochroneError, setIsochroneError] = useState<string | null>(null);
   const hasLiveTraffic = getTomTomApiKey() !== undefined;
+  const hasTomTomKey = hasLiveTraffic;
 
   const locationConfig = getLocation(location);
 
@@ -43,6 +46,8 @@ export default function App({ location }: AppProps) {
     setSelectedCell(null);
     setSelectedPoint(null);
     setComparisonCells([]);
+    setIsochroneMinutes(null);
+    setIsochroneError(null);
     let cancelled = false;
     fetchOsmPOIs(locationConfig.bbox)
       .then((poiData) => {
@@ -106,6 +111,11 @@ export default function App({ location }: AppProps) {
     setSelectedPoint({ point: cell.center, label: `Zona (${cell.center.lat.toFixed(4)}, ${cell.center.lon.toFixed(4)})` });
   }
 
+  function handleIsochroneChange(minutes: number | null) {
+    setIsochroneMinutes(minutes);
+    setIsochroneError(null);
+  }
+
   function handleToggleComparison(cell: GridCell) {
     setComparisonCells((prev) => {
       const isAlreadySelected = prev.some((c) => c.row === cell.row && c.col === cell.col);
@@ -137,6 +147,10 @@ export default function App({ location }: AppProps) {
         onToggleComparison={handleToggleComparison}
         location={location}
         categoryTotals={categoryTotals}
+        hasTomTomKey={hasTomTomKey}
+        isochroneMinutes={isochroneMinutes}
+        onIsochroneChange={handleIsochroneChange}
+        isochroneError={isochroneError}
       />
       <main className="map-area">
         <MapView
@@ -161,6 +175,9 @@ export default function App({ location }: AppProps) {
           showLiveTraffic={showLiveTraffic}
           onLiveTrafficToggle={setShowLiveTraffic}
           hasLiveTraffic={hasLiveTraffic}
+          activePoint={selectedPoint?.point ?? null}
+          isochroneMinutes={isochroneMinutes}
+          onIsochroneError={setIsochroneError}
         />
       </main>
     </div>
