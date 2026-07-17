@@ -4,6 +4,8 @@ import { MANUAL_POIS as PP_POIS } from './manualPois-puerto-plata';
 import { MANUAL_POIS as LA_POIS } from './manualPois-la-altagracia';
 import { MANUAL_POIS as SC_POIS } from './manualPois-san-cristobal';
 import { MANUAL_POIS as ST_POIS } from './manualPois-santiago';
+import { MANUAL_POIS as LV_POIS } from './manualPois-la-vega';
+import { MANUAL_POIS as LR_POIS } from './manualPois-la-romana';
 
 const POIS_BY_LOCATION: Record<string, OsmPOI[]> = {
   'santo-domingo': SD_POIS,
@@ -11,6 +13,8 @@ const POIS_BY_LOCATION: Record<string, OsmPOI[]> = {
   'la-altagracia': LA_POIS,
   'san-cristobal': SC_POIS,
   'santiago': ST_POIS,
+  'la-vega': LV_POIS,
+  'la-romana': LR_POIS,
 };
 
 function getManualPOIs(location: string) {

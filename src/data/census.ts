@@ -6,6 +6,8 @@ import * as PP from './census-puerto-plata';
 import * as LA from './census-la-altagracia';
 import * as SC from './census-san-cristobal';
 import * as ST from './census-santiago';
+import * as LV from './census-la-vega';
+import * as LR from './census-la-romana';
 
 interface CensusModule {
   CENSUS_SECTORS: SD.CensusSector[];
@@ -19,6 +21,8 @@ const MODULES: Record<string, CensusModule> = {
   'la-altagracia': LA,
   'san-cristobal': SC,
   'santiago': ST,
+  'la-vega': LV,
+  'la-romana': LR,
 };
 
 function moduleFor(location: string): CensusModule {

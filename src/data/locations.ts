@@ -54,6 +54,40 @@ export const LOCATIONS: Record<string, LocationConfig> = {
     // Centrado entre Higüey y el corredor turístico (Verón).
     center: { lat: 18.63, lon: -68.55 },
   },
+  'la-vega': {
+    id: 'la-vega',
+    label: 'La Vega',
+    title: 'Asesor de Ubicación · La Vega',
+    // Provincia completa: Concepción de La Vega (cabecera, Autopista Duarte)
+    // al noreste, Jarabacoa (turismo de montaña) al centro-sur, Constanza
+    // (valle agrícola de altura) al suroeste y Jima Abajo al este.
+    // (La Vega ≈ -70.53; Jarabacoa ≈ -70.64; Constanza ≈ -70.75.)
+    bbox: {
+      south: 18.8,
+      west: -70.9,
+      north: 19.35,
+      east: -70.3,
+    },
+    // Centrado en Concepción de La Vega.
+    center: { lat: 19.22, lon: -70.53 },
+  },
+  'la-romana': {
+    id: 'la-romana',
+    label: 'La Romana',
+    title: 'Asesor de Ubicación · La Romana',
+    // Provincia completa: La Romana ciudad (puerto, zona franca) y Villa
+    // Hermosa al centro, Casa de Campo / Altos de Chavón al este y Guaymate
+    // con los bateyes cañeros al norte. (La Romana ≈ -68.97; Casa de
+    // Campo ≈ -68.90.)
+    bbox: {
+      south: 18.33,
+      west: -69.1,
+      north: 18.7,
+      east: -68.85,
+    },
+    // Centrado en La Romana ciudad.
+    center: { lat: 18.43, lon: -68.97 },
+  },
   'san-cristobal': {
     id: 'san-cristobal',
     label: 'San Cristóbal',
