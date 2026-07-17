@@ -406,6 +406,16 @@ export default function Sidebar({
       </div>
 
       <footer>
+        <p style={{ marginBottom: '8px' }}>
+          <a
+            href={`${import.meta.env.BASE_URL}manual.pdf`}
+            target="_blank"
+            rel="noreferrer"
+            style={{ fontWeight: 600, fontSize: '12.5px' }}
+          >
+            📖 Manual de usuario (PDF)
+          </a>
+        </p>
         <p>
           Datos: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>{' '}
           contributors (ODbL). Datos socioeconómicos: Censo ONE 2022 y SIUBEN/MEPyD (índice ICV y tasas de pobreza
