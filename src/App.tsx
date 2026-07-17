@@ -15,9 +15,18 @@ interface AppProps {
   location: string;
 }
 
+const METERS_PER_DEG_LAT = 111_320;
+
+/** Distancia en metros entre dos puntos (aproximación plana, suficiente a escala urbana). */
+function distanceMeters(a: LatLon, b: LatLon): number {
+  const dLat = (a.lat - b.lat) * METERS_PER_DEG_LAT;
+  const dLon = (a.lon - b.lon) * METERS_PER_DEG_LAT * Math.cos((a.lat * Math.PI) / 180);
+  return Math.sqrt(dLat * dLat + dLon * dLon);
+}
+
 /**
  * Estado inicial desde los parámetros de la URL, para que un enlace copiado
- * reproduzca el mismo análisis: ?cat=<rubro>&lat=..&lon=..&capas=a,b,c
+ * reproduzca el mismo análisis: ?cat=<rubro>&lat=..&lon=..&milat=..&milon=..&capas=a,b,c
  */
 function initialParams() {
   const p = new URLSearchParams(window.location.search);
@@ -28,10 +37,17 @@ function initialParams() {
     Number.isFinite(lat) && Number.isFinite(lon) && p.has('lat') && p.has('lon')
       ? { point: { lat, lon }, label: `Punto (${lat.toFixed(4)}, ${lon.toFixed(4)})` }
       : null;
+  const milat = Number(p.get('milat'));
+  const milon = Number(p.get('milon'));
+  const myLocation =
+    Number.isFinite(milat) && Number.isFinite(milon) && p.has('milat') && p.has('milon')
+      ? { lat: milat, lon: milon }
+      : null;
   const capas = p.get('capas')?.split(',') ?? ['competencia'];
   return {
     category,
     point,
+    myLocation,
     showHeatmap: capas.includes('calor'),
     showGrid: capas.includes('cuadricula'),
     showCompetitors: capas.includes('competencia'),
@@ -47,6 +63,7 @@ export default function App({ location }: AppProps) {
   const [category, setCategory] = useState(initial.category);
   const [selectedCell, setSelectedCell] = useState<GridCell | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<{ point: LatLon; label: string } | null>(initial.point);
+  const [myLocation, setMyLocation] = useState<LatLon | null>(initial.myLocation);
   const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
   const [showHeatmap, setShowHeatmap] = useState(initial.showHeatmap);
   const [showGrid, setShowGrid] = useState(initial.showGrid);
@@ -65,6 +82,10 @@ export default function App({ location }: AppProps) {
       p.set('lat', selectedPoint.point.lat.toFixed(6));
       p.set('lon', selectedPoint.point.lon.toFixed(6));
     }
+    if (myLocation) {
+      p.set('milat', myLocation.lat.toFixed(6));
+      p.set('milon', myLocation.lon.toFixed(6));
+    }
     const capas = [
       showHeatmap && 'calor',
       showGrid && 'cuadricula',
@@ -76,7 +97,7 @@ export default function App({ location }: AppProps) {
     if (capas !== 'competencia') p.set('capas', capas);
     const qs = p.toString();
     window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
-  }, [category, selectedPoint, showHeatmap, showGrid, showCompetitors, showCensus]);
+  }, [category, selectedPoint, myLocation, showHeatmap, showGrid, showCompetitors, showCensus]);
 
   useEffect(() => {
     // Al cambiar de ciudad (no en el primer montaje, para respetar el estado
@@ -85,6 +106,7 @@ export default function App({ location }: AppProps) {
       prevLocation.current = location;
       setSelectedCell(null);
       setSelectedPoint(null);
+      setMyLocation(null);
       setComparisonCells([]);
     }
     setLoading(true);
@@ -136,6 +158,30 @@ export default function App({ location }: AppProps) {
     return { point: selectedPoint.point, label: selectedPoint.label, score: cell?.score ?? null, sector, ...result };
   }, [selectedPoint, pois, category, grid, location]);
 
+  // Análisis fijo en "mi ubicación" (independiente del punto seleccionado).
+  const myAnalysis = useMemo(() => {
+    if (!myLocation || !pois.length) return null;
+    const result = scoreAtPoint(pois, category, myLocation);
+    const cell = grid.find(
+      (c) =>
+        myLocation.lat >= c.bounds[0][0] &&
+        myLocation.lat < c.bounds[1][0] &&
+        myLocation.lon >= c.bounds[0][1] &&
+        myLocation.lon < c.bounds[1][1],
+    );
+    const sector = sectorAt(myLocation, location);
+    return { score: cell?.score ?? null, sector, ...result };
+  }, [myLocation, pois, category, grid, location]);
+
+  // Competidores del rubro ordenados por distancia a mi ubicación.
+  const nearestCompetitors = useMemo(() => {
+    if (!myLocation) return [];
+    return competitors
+      .map((poi) => ({ poi, distance: distanceMeters(myLocation, poi) }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 8);
+  }, [myLocation, competitors]);
+
   function handleMapClick(p: LatLon) {
     const poi = findPoiAtPoint(pois, p);
     const label = poi?.tags.name || `Punto (${p.lat.toFixed(4)}, ${p.lon.toFixed(4)})`;
@@ -184,6 +230,10 @@ export default function App({ location }: AppProps) {
         onToggleComparison={handleToggleComparison}
         location={location}
         categoryTotals={categoryTotals}
+        myLocation={myLocation}
+        onSetMyLocation={setMyLocation}
+        myAnalysis={myAnalysis}
+        nearestCompetitors={nearestCompetitors}
       />
       <main className="map-area">
         <MapView
@@ -195,6 +245,8 @@ export default function App({ location }: AppProps) {
           selectedCell={selectedCell}
           onSelectCell={handleSelectCell}
           comparisonCells={comparisonCells}
+          myLocation={myLocation}
+          nearestCompetitors={nearestCompetitors}
           showHeatmap={showHeatmap}
           onHeatmapToggle={setShowHeatmap}
           showGrid={showGrid}

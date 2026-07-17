@@ -17,6 +17,18 @@ interface PointAnalysis {
   nearby: { anchor: string; count: number }[];
 }
 
+interface MyAnalysis {
+  score: number | null;
+  sector: CensusSector | null;
+  competitorCount: number;
+  anchorScore: number;
+  nearby: { anchor: string; count: number }[];
+}
+
+function formatDistance(meters: number): string {
+  return meters < 1000 ? `${Math.round(meters)} m` : `${(meters / 1000).toFixed(1)} km`;
+}
+
 interface Props {
   title: string;
   locationLabel: string;
@@ -33,6 +45,10 @@ interface Props {
   onToggleComparison: (cell: GridCell) => void;
   location: string;
   categoryTotals: { category: BusinessCategory; count: number }[];
+  myLocation: LatLon | null;
+  onSetMyLocation: (p: LatLon | null) => void;
+  myAnalysis: MyAnalysis | null;
+  nearestCompetitors: { poi: { id: number; tags: Record<string, string> }; distance: number }[];
 }
 
 export default function Sidebar({
@@ -51,6 +67,10 @@ export default function Sidebar({
   onToggleComparison,
   location,
   categoryTotals,
+  myLocation,
+  onSetMyLocation,
+  myAnalysis,
+  nearestCompetitors,
 }: Props) {
   const topZones = [...grid].sort((a, b) => b.score - a.score).slice(0, 10);
   const totalAllCategories = categoryTotals.reduce((sum, t) => sum + t.count, 0);
@@ -151,6 +171,85 @@ export default function Sidebar({
         </button>
       </div>
 
+      {myLocation && myAnalysis && (
+        <div className="panel" style={{ borderLeft: '3px solid #dc2626' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <h2 style={{ margin: 0 }}>📌 Mi ubicación vs. competidores</h2>
+            <button
+              onClick={() => onSetMyLocation(null)}
+              style={{
+                padding: '4px 8px',
+                fontSize: '11px',
+                background: '#fee2e2',
+                color: '#991b1b',
+                border: '1px solid #fecaca',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Quitar
+            </button>
+          </div>
+          <p style={{ fontSize: '11px', color: '#6b7280', margin: '0 0 8px' }}>
+            {myLocation.lat.toFixed(5)}, {myLocation.lon.toFixed(5)}
+          </p>
+          <ul className="stat-list">
+            {myAnalysis.score !== null && (
+              <li>
+                <strong>{myAnalysis.score}</strong> score de mi zona
+              </li>
+            )}
+            <li>
+              <strong>{myAnalysis.anchorScore.toFixed(1)}</strong> demanda en 500 m
+            </li>
+            <li>
+              <strong>{myAnalysis.competitorCount}</strong> {category.competitorLabel.toLowerCase()} en 500 m
+            </li>
+            {myAnalysis.sector && (
+              <li>
+                Poder adquisitivo:{' '}
+                <strong style={{ color: powerColor(myAnalysis.sector.purchasingPower) }}>
+                  {powerLabel(myAnalysis.sector.purchasingPower)}
+                </strong>
+              </li>
+            )}
+          </ul>
+          {nearestCompetitors.length > 0 ? (
+            <>
+              <p style={{ fontSize: '12px', fontWeight: 'bold', marginTop: '10px', marginBottom: '6px' }}>
+                {category.competitorLabel} más cercanos:
+              </p>
+              <ol className="zone-list">
+                {nearestCompetitors.map(({ poi, distance }) => (
+                  <li key={poi.id} style={{ cursor: 'default' }}>
+                    <span
+                      style={{
+                        minWidth: '58px',
+                        textAlign: 'right',
+                        fontWeight: 700,
+                        color: distance < 500 ? '#dc2626' : distance < 1500 ? '#d97706' : '#16a34a',
+                        marginRight: '8px',
+                      }}
+                    >
+                      {formatDistance(distance)}
+                    </span>
+                    <span>{poi.tags.name ?? category.competitorLabel}</span>
+                  </li>
+                ))}
+              </ol>
+              <p style={{ fontSize: '9.5px', color: '#9ca3af', marginTop: '4px' }}>
+                Distancias en línea recta. Rojo &lt; 500 m · naranja &lt; 1.5 km · verde más lejos. Los 5 más
+                cercanos se dibujan en el mapa con líneas punteadas.
+              </p>
+            </>
+          ) : (
+            <p style={{ fontSize: '12px', color: '#16a34a', marginTop: '8px' }}>
+              ✓ No hay {category.competitorLabel.toLowerCase()} registrados en esta ciudad.
+            </p>
+          )}
+        </div>
+      )}
+
       {comparisonCells.length > 0 && (
         <div className="panel" style={{ borderLeft: '3px solid #f59e0b' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -240,6 +339,24 @@ export default function Sidebar({
           }}>
             {pointAnalysis.label}
           </p>
+
+          <button
+            onClick={() => onSetMyLocation(pointAnalysis.point)}
+            style={{
+              width: '100%',
+              marginBottom: '10px',
+              padding: '6px 10px',
+              fontSize: '11.5px',
+              fontWeight: 600,
+              background: '#fef2f2',
+              color: '#b91c1c',
+              border: '1px solid #fecaca',
+              borderRadius: '6px',
+              cursor: 'pointer',
+            }}
+          >
+            📌 Marcar como mi ubicación (comparar vs. competidores)
+          </button>
 
           {pointAnalysis.score !== null && (
             <div style={{ marginBottom: '12px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '6px', borderLeft: '3px solid #0ea5e9' }}>

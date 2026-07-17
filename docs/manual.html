@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Santo Domingo · Puerto Plata · La Altagracia · San Cristóbal · Santiago · La Vega · La Romana<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 4.4</div>
+    <div><strong>Versión:</strong> 4.5</div>
     <div><strong>Fecha:</strong> Julio 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -192,7 +192,7 @@ un radio fijo de 500 m (ver sección 6.2).
   <li><strong>Recursos cercanos</strong>: desglose de las anclas encontradas (oficinas, bancos, transporte, etc.).</li>
 </ul>
 
-<h3>6.3 Compartir un análisis (enlace) <span class="newfeature">NUEVO</span></h3>
+<h3>6.3 Compartir un análisis (enlace)</h3>
 <p>
 La URL de la app guarda automáticamente el análisis actual: ciudad, tipo de negocio, punto
 seleccionado y capas activas. El botón <span class="kbd">🔗 Copiar enlace</span> del panel lateral
@@ -200,7 +200,7 @@ copia esa URL al portapapeles — quien la abra (por WhatsApp, correo, etc.) ver
 el mismo análisis</strong>: mismo rubro, mismo punto y mismas capas.
 </p>
 
-<h3>6.4 Exportar reporte (PDF) <span class="newfeature">NUEVO</span></h3>
+<h3>6.4 Exportar reporte (PDF)</h3>
 <p>
 El botón <span class="kbd">📄 Exportar reporte (PDF)</span> genera un reporte imprimible con el
 análisis actual y abre el diálogo de impresión del navegador (elige "Guardar como PDF"). Incluye:
@@ -215,6 +215,25 @@ análisis actual y abre el diálogo de impresión del navegador (elige "Guardar 
 Todo se genera en el navegador — sin backend ni servicios externos. Útil como entregable para un
 socio, un banco o un cliente.
 </div>
+
+<h3>6.5 Mis competidores vs. yo <span class="newfeature">NUEVO</span></h3>
+<p>
+Permite fijar tu ubicación (actual o propuesta) y ver cómo queda frente a la competencia del rubro:
+</p>
+<ol>
+  <li>Selecciona el punto en el mapa (clic o búsqueda) y presiona
+    <span class="kbd">📌 Marcar como mi ubicación</span> en el panel <em>"Punto seleccionado"</em>.</li>
+  <li>Aparece el panel <strong>"Mi ubicación vs. competidores"</strong> con el score, demanda,
+    competencia y poder adquisitivo <em>de tu punto fijo</em> — no cambia aunque sigas explorando
+    otros puntos del mapa.</li>
+  <li>Debajo, la lista de los <strong>competidores más cercanos con su distancia</strong> (rojo
+    &lt; 500 m, naranja &lt; 1.5 km, verde más lejos), en línea recta.</li>
+  <li>En el mapa, tu ubicación se marca con un <strong style="color:#dc2626;">punto rojo grande</strong>
+    y líneas punteadas hacia los 5 competidores más cercanos (clic en una línea muestra la distancia).</li>
+  <li>Al cambiar el tipo de negocio, la comparación se recalcula contra los competidores del nuevo rubro.</li>
+  <li>La ubicación fija <strong>se incluye en el enlace compartible</strong> — quien lo abra verá tu
+    misma comparación. Usa <span class="kbd">Quitar</span> para retirarla.</li>
+</ol>
 
 <h2>7. Top 10 zonas recomendadas</h2>
 <p>
@@ -332,7 +351,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v4.4 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v4.5 · Julio 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

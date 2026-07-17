@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { MapContainer, TileLayer, Rectangle, CircleMarker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Rectangle, CircleMarker, Polyline, Popup, useMapEvents } from 'react-leaflet';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import { getLocation } from '../data/locations';
 import HeatmapLayerComponent from './HeatmapLayer';
@@ -31,6 +31,8 @@ interface Props {
   selectedCell: GridCell | null;
   onSelectCell: (cell: GridCell) => void;
   comparisonCells: GridCell[];
+  myLocation: LatLon | null;
+  nearestCompetitors: { poi: OsmPOI; distance: number }[];
   showHeatmap: boolean;
   onHeatmapToggle: (show: boolean) => void;
   showGrid: boolean;
@@ -50,6 +52,8 @@ export default function MapView({
   selectedCell,
   onSelectCell,
   comparisonCells,
+  myLocation,
+  nearestCompetitors,
   showHeatmap,
   onHeatmapToggle,
   showGrid,
@@ -146,6 +150,39 @@ export default function MapView({
             })}
 
         {showCompetitors && competitorMarkers}
+
+        {myLocation && (
+          <>
+            {/* Líneas punteadas hacia los 5 competidores más cercanos, con la distancia. */}
+            {nearestCompetitors.slice(0, 5).map(({ poi, distance }) => (
+              <Polyline
+                key={`vs_${poi.id}`}
+                positions={[
+                  [myLocation.lat, myLocation.lon],
+                  [poi.lat, poi.lon],
+                ]}
+                pathOptions={{ color: '#dc2626', weight: 1.5, dashArray: '6 6', opacity: 0.7 }}
+              >
+                <Popup>
+                  <div style={{ fontSize: '12px' }}>
+                    {poi.tags.name ?? category.competitorLabel} —{' '}
+                    <strong>{distance < 1000 ? `${Math.round(distance)} m` : `${(distance / 1000).toFixed(1)} km`}</strong> de
+                    mi ubicación
+                  </div>
+                </Popup>
+              </Polyline>
+            ))}
+            <CircleMarker
+              center={[myLocation.lat, myLocation.lon]}
+              radius={9}
+              pathOptions={{ color: '#ffffff', weight: 3, fillColor: '#dc2626', fillOpacity: 1 }}
+            >
+              <Popup>
+                <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📌 Mi ubicación</div>
+              </Popup>
+            </CircleMarker>
+          </>
+        )}
       </MapContainer>
       <LayerControl
         category={category}
