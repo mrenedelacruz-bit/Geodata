@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { BUSINESS_CATEGORIES } from '../data/categories';
 import { powerLabel, powerColor, sectorAt, type CensusSector } from '../data/census';
 import { saturationLabel, saturationColor } from '../lib/saturation';
+import { openPrintReport } from '../lib/report';
 import type { BusinessCategory, GridCell } from '../types';
 import SearchBox from './SearchBox';
 import type { LatLon } from '../types';
@@ -52,9 +54,34 @@ export default function Sidebar({
 }: Props) {
   const topZones = [...grid].sort((a, b) => b.score - a.score).slice(0, 10);
   const totalAllCategories = categoryTotals.reduce((sum, t) => sum + t.count, 0);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const isInComparison = (cell: GridCell) =>
     comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
+
+  function handleCopyLink() {
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => {
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+      })
+      .catch(() => {
+        // Portapapeles no disponible (contexto inseguro): mostrar la URL para copiar a mano.
+        window.prompt('Copia el enlace:', window.location.href);
+      });
+  }
+
+  function handleExportReport() {
+    openPrintReport({
+      locationLabel,
+      category,
+      pointAnalysis,
+      topZones,
+      categoryTotals,
+      poiCount,
+    });
+  }
 
   return (
     <aside className="sidebar">
@@ -86,6 +113,43 @@ export default function Sidebar({
       {loading && <p className="status">Cargando datos de OpenStreetMap para {locationLabel}…</p>}
       {error && <p className="status error">{error}</p>}
       {!loading && !error && <p className="status">{poiCount.toLocaleString('es-DO')} puntos de interés cargados</p>}
+
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+        <button
+          onClick={handleExportReport}
+          disabled={loading || !!error}
+          style={{
+            flex: 1,
+            padding: '7px 10px',
+            fontSize: '12px',
+            fontWeight: 600,
+            background: loading || error ? '#e5e7eb' : '#0b5fa5',
+            color: loading || error ? '#9ca3af' : '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: loading || error ? 'not-allowed' : 'pointer',
+          }}
+        >
+          📄 Exportar reporte (PDF)
+        </button>
+        <button
+          onClick={handleCopyLink}
+          title="Copia un enlace que reproduce este mismo análisis (ciudad, rubro, punto y capas)"
+          style={{
+            padding: '7px 10px',
+            fontSize: '12px',
+            fontWeight: 600,
+            background: linkCopied ? '#dcfce7' : '#f3f4f6',
+            color: linkCopied ? '#166534' : '#374151',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {linkCopied ? '✓ Copiado' : '🔗 Copiar enlace'}
+        </button>
+      </div>
 
       {comparisonCells.length > 0 && (
         <div className="panel" style={{ borderLeft: '3px solid #f59e0b' }}>

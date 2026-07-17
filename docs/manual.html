@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Santo Domingo · Puerto Plata · La Altagracia · San Cristóbal · Santiago · La Vega · La Romana<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 4.3</div>
+    <div><strong>Versión:</strong> 4.4</div>
     <div><strong>Fecha:</strong> Julio 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -82,7 +82,7 @@
 <p>
 El Asesor de Ubicación es una aplicación web interactiva que ayuda a decidir <strong>dónde ubicar un
 negocio</strong> en el Gran Santo Domingo o en las provincias de Puerto Plata, La Altagracia, San
-Cristóbal y Santiago. Combina datos geográficos abiertos (OpenStreetMap), datos socioeconómicos oficiales
+Cristóbal, Santiago, La Vega y La Romana. Combina datos geográficos abiertos (OpenStreetMap), datos socioeconómicos oficiales
 (Censo ONE 2022, SIUBEN/MEPyD) y un modelo de puntuación que balancea <strong>demanda</strong>,
 <strong>poder adquisitivo</strong> y <strong>competencia</strong> en cada zona.
 </p>
@@ -107,8 +107,8 @@ celular) y no necesita cuentas, claves ni configuración.
 <h2>2. Pantalla principal</h2>
 <p>La aplicación se divide en dos áreas:</p>
 <ul>
-  <li><strong>Panel lateral (izquierda):</strong> búsqueda, selección de tipo de negocio, análisis del punto seleccionado, comparación de zonas, ranking Top 10 y totalizador por tipo de negocio.</li>
-  <li><strong>Mapa interactivo (derecha):</strong> mapa de calor, cuadrícula de puntuación, competidores, tráfico vehicular en vivo, capa censal y controles de capas.</li>
+  <li><strong>Panel lateral (izquierda):</strong> búsqueda, selección de tipo de negocio, exportar reporte / copiar enlace, análisis del punto seleccionado, comparación de zonas, ranking Top 10 y totalizador por tipo de negocio.</li>
+  <li><strong>Mapa interactivo (derecha):</strong> mapa de calor, cuadrícula de puntuación, competidores, capa censal y controles de capas.</li>
 </ul>
 
 <h2>3. Tipos de negocio</h2>
@@ -191,6 +191,30 @@ un radio fijo de 500 m (ver sección 6.2).
   <li><strong>Competencia</strong>: cuántos negocios del mismo rubro hay en ese radio.</li>
   <li><strong>Recursos cercanos</strong>: desglose de las anclas encontradas (oficinas, bancos, transporte, etc.).</li>
 </ul>
+
+<h3>6.3 Compartir un análisis (enlace) <span class="newfeature">NUEVO</span></h3>
+<p>
+La URL de la app guarda automáticamente el análisis actual: ciudad, tipo de negocio, punto
+seleccionado y capas activas. El botón <span class="kbd">🔗 Copiar enlace</span> del panel lateral
+copia esa URL al portapapeles — quien la abra (por WhatsApp, correo, etc.) verá <strong>exactamente
+el mismo análisis</strong>: mismo rubro, mismo punto y mismas capas.
+</p>
+
+<h3>6.4 Exportar reporte (PDF) <span class="newfeature">NUEVO</span></h3>
+<p>
+El botón <span class="kbd">📄 Exportar reporte (PDF)</span> genera un reporte imprimible con el
+análisis actual y abre el diálogo de impresión del navegador (elige "Guardar como PDF"). Incluye:
+</p>
+<ul>
+  <li>El <strong>punto analizado</strong> (si hay uno seleccionado): score, demanda, competencia, sector censal y poder adquisitivo.</li>
+  <li>La tabla del <strong>Top 10 de zonas recomendadas</strong> con score, saturación y coordenadas.</li>
+  <li>El <strong>totalizador por tipo de negocio</strong> de la ciudad completa.</li>
+  <li>Fecha, fuentes de datos y el <strong>enlace compartible</strong> para volver al análisis en vivo.</li>
+</ul>
+<div class="box">
+Todo se genera en el navegador — sin backend ni servicios externos. Útil como entregable para un
+socio, un banco o un cliente.
+</div>
 
 <h2>7. Top 10 zonas recomendadas</h2>
 <p>
@@ -308,7 +332,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v4.3 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v4.4 · Julio 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

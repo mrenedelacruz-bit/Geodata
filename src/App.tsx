@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import MapView from './components/MapView';
 import Sidebar from './components/Sidebar';
@@ -15,30 +15,81 @@ interface AppProps {
   location: string;
 }
 
+/**
+ * Estado inicial desde los parámetros de la URL, para que un enlace copiado
+ * reproduzca el mismo análisis: ?cat=<rubro>&lat=..&lon=..&capas=a,b,c
+ */
+function initialParams() {
+  const p = new URLSearchParams(window.location.search);
+  const category = BUSINESS_CATEGORIES.find((c) => c.id === p.get('cat')) ?? BUSINESS_CATEGORIES[0];
+  const lat = Number(p.get('lat'));
+  const lon = Number(p.get('lon'));
+  const point =
+    Number.isFinite(lat) && Number.isFinite(lon) && p.has('lat') && p.has('lon')
+      ? { point: { lat, lon }, label: `Punto (${lat.toFixed(4)}, ${lon.toFixed(4)})` }
+      : null;
+  const capas = p.get('capas')?.split(',') ?? ['competencia'];
+  return {
+    category,
+    point,
+    showHeatmap: capas.includes('calor'),
+    showGrid: capas.includes('cuadricula'),
+    showCompetitors: capas.includes('competencia'),
+    showCensus: capas.includes('censo'),
+  };
+}
+
 export default function App({ location }: AppProps) {
+  const [initial] = useState(initialParams);
   const [pois, setPois] = useState<OsmPOI[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [category, setCategory] = useState(BUSINESS_CATEGORIES[0]);
+  const [category, setCategory] = useState(initial.category);
   const [selectedCell, setSelectedCell] = useState<GridCell | null>(null);
-  const [selectedPoint, setSelectedPoint] = useState<{ point: LatLon; label: string } | null>(null);
+  const [selectedPoint, setSelectedPoint] = useState<{ point: LatLon; label: string } | null>(initial.point);
   const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
-  const [showHeatmap, setShowHeatmap] = useState(false);
-  const [showGrid, setShowGrid] = useState(false);
-  const [showCompetitors, setShowCompetitors] = useState(true);
-  const [showCensus, setShowCensus] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(initial.showHeatmap);
+  const [showGrid, setShowGrid] = useState(initial.showGrid);
+  const [showCompetitors, setShowCompetitors] = useState(initial.showCompetitors);
+  const [showCensus, setShowCensus] = useState(initial.showCensus);
 
   const locationConfig = getLocation(location);
+  const prevLocation = useRef(location);
+
+  // Mantiene la URL sincronizada con el análisis actual para poder compartirla.
+  // replaceState (no pushState) para no llenar el historial del navegador.
+  useEffect(() => {
+    const p = new URLSearchParams();
+    if (category.id !== BUSINESS_CATEGORIES[0].id) p.set('cat', category.id);
+    if (selectedPoint) {
+      p.set('lat', selectedPoint.point.lat.toFixed(6));
+      p.set('lon', selectedPoint.point.lon.toFixed(6));
+    }
+    const capas = [
+      showHeatmap && 'calor',
+      showGrid && 'cuadricula',
+      showCompetitors && 'competencia',
+      showCensus && 'censo',
+    ]
+      .filter(Boolean)
+      .join(',');
+    if (capas !== 'competencia') p.set('capas', capas);
+    const qs = p.toString();
+    window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
+  }, [category, selectedPoint, showHeatmap, showGrid, showCompetitors, showCensus]);
 
   useEffect(() => {
-    // Al cambiar de ciudad, descartar todo el estado de la anterior para no
-    // mostrar sus datos mientras cargan los nuevos.
+    // Al cambiar de ciudad (no en el primer montaje, para respetar el estado
+    // que venga en la URL compartida), descartar el análisis de la anterior.
+    if (prevLocation.current !== location) {
+      prevLocation.current = location;
+      setSelectedCell(null);
+      setSelectedPoint(null);
+      setComparisonCells([]);
+    }
     setLoading(true);
     setError(null);
     setPois([]);
-    setSelectedCell(null);
-    setSelectedPoint(null);
-    setComparisonCells([]);
     let cancelled = false;
     fetchOsmPOIs(locationConfig.bbox)
       .then((poiData) => {
