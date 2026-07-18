@@ -1,14 +1,10 @@
 import { ANCHOR_SIGNALS } from '../data/categories';
 import { purchasingPowerAt } from '../data/census';
 import { getLocation } from '../data/locations';
+import { METERS_PER_DEG_LAT, distanceMeters, metersPerDegLon } from './geo';
 import type { BBox, BusinessCategory, GridCell, LatLon, OsmPOI, SaturationLevel } from '../types';
 
 const CELL_METERS = 450;
-const METERS_PER_DEG_LAT = 111_320;
-
-function metersPerDegLon(lat: number): number {
-  return METERS_PER_DEG_LAT * Math.cos((lat * Math.PI) / 180);
-}
 
 export function buildGridDims(bbox: BBox) {
   const centerLat = (bbox.south + bbox.north) / 2;
@@ -143,9 +139,7 @@ export function findPoiAtPoint(pois: OsmPOI[], point: LatLon, radiusMeters = 30)
   let closestDist = radiusMeters;
 
   for (const poi of pois) {
-    const dLat = (poi.lat - point.lat) * METERS_PER_DEG_LAT;
-    const dLon = (poi.lon - point.lon) * metersPerDegLon(point.lat);
-    const dist = Math.sqrt(dLat * dLat + dLon * dLon);
+    const dist = distanceMeters(poi, point);
     if (dist < closestDist) {
       closestDist = dist;
       closest = poi;
@@ -162,10 +156,7 @@ export function scoreAtPoint(pois: OsmPOI[], category: BusinessCategory, point: 
   const weights = category.anchorWeights || {};
 
   for (const poi of pois) {
-    const dLat = (poi.lat - point.lat) * METERS_PER_DEG_LAT;
-    const dLon = (poi.lon - point.lon) * metersPerDegLon(point.lat);
-    const dist = Math.sqrt(dLat * dLat + dLon * dLon);
-    if (dist > radiusMeters) continue;
+    if (distanceMeters(poi, point) > radiusMeters) continue;
     if (category.matchesCompetitor(poi.tags)) competitorCount++;
     for (const anchor of ANCHOR_SIGNALS) {
       if (anchor.matches(poi.tags)) {

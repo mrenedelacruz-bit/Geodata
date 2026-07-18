@@ -330,3 +330,21 @@ footer a {
   padding: 0 12px 8px 37px;
   margin-top: -6px;
 }
+
+/* Botón rojo claro de "Quitar"/"Limpiar" (paneles de comparación y mi ubicación). */
+.btn-remove {
+  padding: 4px 8px;
+  font-size: 11px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-remove.full {
+  margin-top: 8px;
+  width: 100%;
+  padding: 4px;
+  font-size: 10px;
+}

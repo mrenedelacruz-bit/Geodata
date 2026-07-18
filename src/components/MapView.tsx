@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { MapContainer, TileLayer, Rectangle, CircleMarker, Polyline, Popup, useMapEvents } from 'react-leaflet';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import { getLocation } from '../data/locations';
+import { formatDistance } from '../lib/geo';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
 import LayerControl from './LayerControl';
@@ -165,8 +166,7 @@ export default function MapView({
               >
                 <Popup>
                   <div style={{ fontSize: '12px' }}>
-                    {poi.tags.name ?? category.competitorLabel} —{' '}
-                    <strong>{distance < 1000 ? `${Math.round(distance)} m` : `${(distance / 1000).toFixed(1)} km`}</strong> de
+                    {poi.tags.name ?? category.competitorLabel} — <strong>{formatDistance(distance)}</strong> de
                     mi ubicación
                   </div>
                 </Popup>

@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
 import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
+import { distanceMeters } from './lib/geo';
 import { mergeManualPois } from './data/manualPois';
 import { sectorAt } from './data/census';
 import { getLocation } from './data/locations';
@@ -15,13 +16,11 @@ interface AppProps {
   location: string;
 }
 
-const METERS_PER_DEG_LAT = 111_320;
-
-/** Distancia en metros entre dos puntos (aproximación plana, suficiente a escala urbana). */
-function distanceMeters(a: LatLon, b: LatLon): number {
-  const dLat = (a.lat - b.lat) * METERS_PER_DEG_LAT;
-  const dLon = (a.lon - b.lon) * METERS_PER_DEG_LAT * Math.cos((a.lat * Math.PI) / 180);
-  return Math.sqrt(dLat * dLat + dLon * dLon);
+/** Celda de la cuadrícula que contiene un punto (o undefined si cae fuera). */
+function cellAt(grid: GridCell[], p: LatLon): GridCell | undefined {
+  return grid.find(
+    (c) => p.lat >= c.bounds[0][0] && p.lat < c.bounds[1][0] && p.lon >= c.bounds[0][1] && p.lon < c.bounds[1][1],
+  );
 }
 
 /**
@@ -149,11 +148,7 @@ export default function App({ location }: AppProps) {
   const pointAnalysis = useMemo(() => {
     if (!selectedPoint || !pois.length) return null;
     const result = scoreAtPoint(pois, category, selectedPoint.point);
-    const { lat, lon } = selectedPoint.point;
-    const cell = grid.find(
-      (c) =>
-        lat >= c.bounds[0][0] && lat < c.bounds[1][0] && lon >= c.bounds[0][1] && lon < c.bounds[1][1],
-    );
+    const cell = cellAt(grid, selectedPoint.point);
     const sector = sectorAt(selectedPoint.point, location);
     return { point: selectedPoint.point, label: selectedPoint.label, score: cell?.score ?? null, sector, ...result };
   }, [selectedPoint, pois, category, grid, location]);
@@ -162,13 +157,7 @@ export default function App({ location }: AppProps) {
   const myAnalysis = useMemo(() => {
     if (!myLocation || !pois.length) return null;
     const result = scoreAtPoint(pois, category, myLocation);
-    const cell = grid.find(
-      (c) =>
-        myLocation.lat >= c.bounds[0][0] &&
-        myLocation.lat < c.bounds[1][0] &&
-        myLocation.lon >= c.bounds[0][1] &&
-        myLocation.lon < c.bounds[1][1],
-    );
+    const cell = cellAt(grid, myLocation);
     const sector = sectorAt(myLocation, location);
     return { score: cell?.score ?? null, sector, ...result };
   }, [myLocation, pois, category, grid, location]);

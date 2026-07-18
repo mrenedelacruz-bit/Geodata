@@ -1,21 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { BUSINESS_CATEGORIES } from '../data/categories';
 import { powerLabel, powerColor, sectorAt, type CensusSector } from '../data/census';
 import { saturationLabel, saturationColor } from '../lib/saturation';
+import { formatDistance } from '../lib/geo';
 import { openPrintReport } from '../lib/report';
-import type { BusinessCategory, GridCell } from '../types';
+import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import SearchBox from './SearchBox';
-import type { LatLon } from '../types';
-
-interface PointAnalysis {
-  point: LatLon;
-  label: string;
-  score: number | null;
-  sector: CensusSector | null;
-  competitorCount: number;
-  anchorScore: number;
-  nearby: { anchor: string; count: number }[];
-}
 
 interface MyAnalysis {
   score: number | null;
@@ -25,8 +15,9 @@ interface MyAnalysis {
   nearby: { anchor: string; count: number }[];
 }
 
-function formatDistance(meters: number): string {
-  return meters < 1000 ? `${Math.round(meters)} m` : `${(meters / 1000).toFixed(1)} km`;
+interface PointAnalysis extends MyAnalysis {
+  point: LatLon;
+  label: string;
 }
 
 interface Props {
@@ -48,7 +39,7 @@ interface Props {
   myLocation: LatLon | null;
   onSetMyLocation: (p: LatLon | null) => void;
   myAnalysis: MyAnalysis | null;
-  nearestCompetitors: { poi: { id: number; tags: Record<string, string> }; distance: number }[];
+  nearestCompetitors: { poi: OsmPOI; distance: number }[];
 }
 
 export default function Sidebar({
@@ -72,8 +63,9 @@ export default function Sidebar({
   myAnalysis,
   nearestCompetitors,
 }: Props) {
-  const topZones = [...grid].sort((a, b) => b.score - a.score).slice(0, 10);
-  const totalAllCategories = categoryTotals.reduce((sum, t) => sum + t.count, 0);
+  // Ordenar toda la cuadrícula (miles de celdas) solo cuando cambie, no en cada render.
+  const topZones = useMemo(() => [...grid].sort((a, b) => b.score - a.score).slice(0, 10), [grid]);
+  const totalAllCategories = useMemo(() => categoryTotals.reduce((sum, t) => sum + t.count, 0), [categoryTotals]);
   const [linkCopied, setLinkCopied] = useState(false);
 
   const isInComparison = (cell: GridCell) =>
@@ -175,18 +167,7 @@ export default function Sidebar({
         <div className="panel" style={{ borderLeft: '3px solid #dc2626' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <h2 style={{ margin: 0 }}>📌 Mi ubicación vs. competidores</h2>
-            <button
-              onClick={() => onSetMyLocation(null)}
-              style={{
-                padding: '4px 8px',
-                fontSize: '11px',
-                background: '#fee2e2',
-                color: '#991b1b',
-                border: '1px solid #fecaca',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
+            <button className="btn-remove" onClick={() => onSetMyLocation(null)}>
               Quitar
             </button>
           </div>
@@ -255,17 +236,9 @@ export default function Sidebar({
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
             <h2 style={{ margin: 0 }}>Comparación de zonas</h2>
             <button
+              className="btn-remove"
               onClick={() => {
                 comparisonCells.forEach(onToggleComparison);
-              }}
-              style={{
-                padding: '4px 8px',
-                fontSize: '11px',
-                background: '#fee2e2',
-                color: '#991b1b',
-                border: '1px solid #fecaca',
-                borderRadius: '4px',
-                cursor: 'pointer',
               }}
             >
               Limpiar
@@ -306,20 +279,7 @@ export default function Sidebar({
                       </div>
                     </div>
                   )}
-                  <button
-                    onClick={() => onToggleComparison(cell)}
-                    style={{
-                      marginTop: '8px',
-                      width: '100%',
-                      padding: '4px',
-                      fontSize: '10px',
-                      background: '#fee2e2',
-                      color: '#991b1b',
-                      border: '1px solid #fecaca',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                    }}
-                  >
+                  <button className="btn-remove full" onClick={() => onToggleComparison(cell)}>
                     Quitar
                   </button>
                 </div>
