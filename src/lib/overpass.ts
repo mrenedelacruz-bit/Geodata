@@ -9,7 +9,7 @@ const ENDPOINTS = [
 
 // Solo las etiquetas que la app usa (matchers de categorías, anclas y popups);
 // recortar el resto reduce varias veces el peso del JSON en localStorage.
-const KEEP_TAGS = ['amenity', 'shop', 'leisure', 'office', 'highway', 'landuse', 'fuel:lpg', 'name', 'brand', 'source'];
+const KEEP_TAGS = ['amenity', 'shop', 'leisure', 'office', 'highway', 'landuse', 'tourism', 'fuel:lpg', 'name', 'brand', 'source'];
 
 function slimPois(pois: OsmPOI[]): OsmPOI[] {
   return pois.map((p) => {
@@ -34,6 +34,8 @@ function buildQuery(bbox: BBox): string {
   node["office"](${b});
   node["highway"="bus_stop"](${b});
   way["landuse"="residential"](${b});
+  node["tourism"="travel_agency"](${b});
+  way["tourism"="travel_agency"](${b});
 );
 out center tags;`;
 }
@@ -47,7 +49,9 @@ interface OverpassElement {
 }
 
 export async function fetchOsmPOIs(bbox: BBox): Promise<OsmPOI[]> {
-  const cacheKey = `osm_pois_v1_${bbox.south}_${bbox.west}_${bbox.north}_${bbox.east}`;
+  // v2: se agregó la etiqueta tourism (agencias de viaje/transporte turístico);
+  // subir la versión invalida la caché vieja que no la traía.
+  const cacheKey = `osm_pois_v2_${bbox.south}_${bbox.west}_${bbox.north}_${bbox.east}`;
   const cached = readCache<OsmPOI[]>(cacheKey);
   if (cached && !cached.stale) return cached.value;
 

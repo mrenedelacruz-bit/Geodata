@@ -258,9 +258,10 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
     icon: '🔩',
     competitorLabel: 'Tiendas de repuestos',
     // shop=car_parts es el tag de OSM para tiendas de piezas/repuestos.
-    // Excluye a propósito shop=car_repair (talleres de servicio, no venta de
-    // piezas) para no mezclarlos con "Dealer / Importador de Vehículos".
-    matchesCompetitor: (t) => has(t, 'shop', ['car_parts', 'tyres']),
+    // Excluye shop=car_repair (talleres, categoría propia "Taller / Centro de
+    // Servicio Automotriz") y shop=tyres (categoría propia "Neumáticos/Gomas")
+    // para no contarlos dos veces entre categorías.
+    matchesCompetitor: (t) => has(t, 'shop', ['car_parts']),
     anchorWeights: {
       office: 0.8,
       mall: 0.8,
@@ -270,6 +271,81 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
       transit: 1.2,
       residential: 1.5,
       retail: 1.4,
+    },
+  },
+  {
+    id: 'taller_automotriz',
+    label: 'Taller / Centro de Servicio Automotriz',
+    icon: '🛠️',
+    competitorLabel: 'Talleres y centros de servicio',
+    // shop=car_repair es el tag de OSM para talleres mecánicos/centros de servicio.
+    matchesCompetitor: (t) => has(t, 'shop', ['car_repair']),
+    anchorWeights: {
+      office: 0.8,
+      mall: 0.6,
+      university: 0.4,
+      health: 0.3,
+      bank: 0.6,
+      transit: 1.0,
+      residential: 1.8,
+      retail: 1.2,
+    },
+  },
+  {
+    id: 'neumaticos',
+    label: 'Venta de Neumáticos / Gomas',
+    icon: '🛞',
+    competitorLabel: 'Tiendas de neumáticos/gomas',
+    // shop=tyres es el tag de OSM para gomeras/venteras de neumáticos.
+    matchesCompetitor: (t) => has(t, 'shop', ['tyres']),
+    anchorWeights: {
+      office: 0.6,
+      mall: 0.6,
+      university: 0.3,
+      health: 0.2,
+      bank: 0.5,
+      transit: 1.0,
+      residential: 1.6,
+      retail: 1.2,
+    },
+  },
+  {
+    id: 'transporte_carga',
+    label: 'Transporte de Carga',
+    icon: '🚛',
+    competitorLabel: 'Empresas de transporte de carga',
+    // office=logistics es el tag de OSM para empresas de logística/carga/flete.
+    matchesCompetitor: (t) => has(t, 'office', ['logistics']),
+    anchorWeights: {
+      office: 1.0,
+      mall: 0.3,
+      university: 0.2,
+      health: 0.2,
+      bank: 0.6,
+      transit: 1.5,
+      residential: 0.6,
+      retail: 0.8,
+    },
+  },
+  {
+    id: 'transporte_pasajeros',
+    label: 'Transporte de Pasajeros / Turístico',
+    icon: '🚌',
+    competitorLabel: 'Empresas de transporte de pasajeros y turístico',
+    // amenity=bus_station cubre terminales de autobuses interurbanos;
+    // office=travel_agent y tourism=travel_agency cubren agencias de viajes
+    // y operadores de transporte turístico.
+    matchesCompetitor: (t) =>
+      has(t, 'amenity', ['bus_station']) || has(t, 'office', ['travel_agent']) || has(t, 'tourism', ['travel_agency']),
+    anchorWeights: {
+      office: 0.8,
+      mall: 0.8,
+      university: 0.4,
+      health: 0.3,
+      bank: 0.6,
+      transit: 2.5,
+      residential: 0.8,
+      retail: 0.8,
     },
   },
 ];

@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Santo Domingo · Puerto Plata · La Altagracia · San Cristóbal · Santiago · La Vega · La Romana<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 4.6</div>
+    <div><strong>Versión:</strong> 4.7</div>
     <div><strong>Fecha:</strong> Julio 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -128,8 +128,20 @@ celular) y no necesita cuentas, claves ni configuración.
   <tr><td>🧺 Lavandería</td><td>Lavanderías</td></tr>
   <tr><td>🦷 Clínica dental</td><td>Clínicas dentales</td></tr>
   <tr><td>🚗 Dealer / Importador de Vehículos</td><td>Dealers e importadores de vehículos (concesionarias)</td></tr>
-  <tr><td>🔩 Tienda de Repuestos</td><td>Tiendas de piezas/repuestos automotrices y de neumáticos</td></tr>
+  <tr><td>🔩 Tienda de Repuestos</td><td>Tiendas de piezas/repuestos automotrices</td></tr>
+  <tr><td>🛠️ Taller / Centro de Servicio Automotriz</td><td>Talleres y centros de servicio automotriz</td></tr>
+  <tr><td>🛞 Venta de Neumáticos / Gomas</td><td>Gomeras y tiendas de neumáticos</td></tr>
+  <tr><td>🚛 Transporte de Carga</td><td>Empresas de logística/transporte de carga</td></tr>
+  <tr><td>🚌 Transporte de Pasajeros / Turístico</td><td>Terminales de autobuses y agencias de transporte turístico</td></tr>
 </table>
+<p style="font-size:10px;color:#7a8a99;">
+Nota sobre transporte: OpenStreetMap identifica empresas de logística/carga con la etiqueta
+<span class="kbd">office=logistics</span>, terminales de autobuses con
+<span class="kbd">amenity=bus_station</span> y agencias de viajes/transporte turístico con
+<span class="kbd">office=travel_agent</span> / <span class="kbd">tourism=travel_agency</span>.
+La cobertura depende de qué tan mapeada esté cada empresa en OSM; si falta alguna verificada,
+puede agregarse manualmente igual que con las estaciones de combustible.
+</p>
 
 <h2>4. El modelo de puntuación (Score 0–100)</h2>
 <p>El área de estudio se divide en <strong>celdas de ~450 × 450 metros</strong>. Cada celda recibe un puntaje de 0 a 100:</p>
@@ -351,7 +363,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v4.6 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v4.7 · Julio 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>
