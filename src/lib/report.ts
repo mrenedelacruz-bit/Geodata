@@ -20,6 +20,7 @@ interface ReportData {
   topZones: GridCell[];
   categoryTotals: { category: BusinessCategory; count: number }[];
   poiCount: number;
+  population2022: number | null;
 }
 
 function esc(s: string): string {
@@ -32,7 +33,7 @@ function esc(s: string): string {
  * cliente — sin librerías extra ni backend.
  */
 export function openPrintReport(data: ReportData): void {
-  const { locationLabel, category, pointAnalysis, topZones, categoryTotals, poiCount } = data;
+  const { locationLabel, category, pointAnalysis, topZones, categoryTotals, poiCount, population2022 } = data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
   const appUrl = window.location.href;
 
@@ -102,7 +103,9 @@ export function openPrintReport(data: ReportData): void {
 <body>
   <h1>Asesor de Ubicación de Negocios</h1>
   <div class="meta">Reporte de análisis · ${esc(locationLabel)} · ${esc(category.icon)} ${esc(category.label)} · ${fecha}</div>
-  <div class="meta">${poiCount.toLocaleString('es-DO')} puntos de interés analizados (OpenStreetMap)</div>
+  <div class="meta">${poiCount.toLocaleString('es-DO')} puntos de interés analizados (OpenStreetMap)${
+    population2022 !== null ? ` · ${population2022.toLocaleString('es-DO')} habitantes (Censo ONE 2022)` : ''
+  }</div>
 
   ${puntoHtml}
 
@@ -120,9 +123,9 @@ export function openPrintReport(data: ReportData): void {
 
   <div class="pie">
     Generado con el Asesor de Ubicación de Negocios — <a href="${esc(appUrl)}">${esc(appUrl)}</a><br>
-    Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD. El puntaje es un modelo
-    aproximado (demanda por anclas ajustada por poder adquisitivo, menos densidad de competencia);
-    no sustituye un estudio de mercado formal.
+    Datos: © OpenStreetMap contributors (ODbL) · Población: X Censo Nacional 2022 (ONE) · Poder adquisitivo:
+    estimaciones por estrato ICV municipal (SIUBEN/MEPyD). El puntaje es un modelo aproximado (demanda por
+    anclas ajustada por poder adquisitivo, menos densidad de competencia); no sustituye un estudio de mercado formal.
   </div>
   <script>window.onload = () => window.print();</script>
 </body>

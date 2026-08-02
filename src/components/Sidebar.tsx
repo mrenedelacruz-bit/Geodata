@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { BUSINESS_CATEGORIES } from '../data/categories';
-import { powerLabel, powerColor, sectorAt, type CensusSector } from '../data/census';
+import { powerLabel, powerColor, sectorAt, populationFor, type CensusSector } from '../data/census';
 import { saturationLabel, saturationColor } from '../lib/saturation';
 import { formatDistance } from '../lib/geo';
 import { openPrintReport } from '../lib/report';
@@ -68,6 +68,8 @@ export default function Sidebar({
   const totalAllCategories = useMemo(() => categoryTotals.reduce((sum, t) => sum + t.count, 0), [categoryTotals]);
   const [linkCopied, setLinkCopied] = useState(false);
 
+  const population = populationFor(location);
+
   const isInComparison = (cell: GridCell) =>
     comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
 
@@ -92,6 +94,7 @@ export default function Sidebar({
       topZones,
       categoryTotals,
       poiCount,
+      population2022: population,
     });
   }
 
@@ -125,6 +128,11 @@ export default function Sidebar({
       {loading && <p className="status">Cargando datos de OpenStreetMap para {locationLabel}…</p>}
       {error && <p className="status error">{error}</p>}
       {!loading && !error && <p className="status">{poiCount.toLocaleString('es-DO')} puntos de interés cargados</p>}
+      {population !== null && (
+        <p className="status" style={{ marginTop: '-6px' }}>
+          👥 {population.toLocaleString('es-DO')} habitantes (Censo ONE 2022)
+        </p>
+      )}
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
         <button
@@ -495,8 +503,9 @@ export default function Sidebar({
         </p>
         <p>
           Datos: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>{' '}
-          contributors (ODbL). Datos socioeconómicos: Censo ONE 2022 y SIUBEN/MEPyD (índice ICV y tasas de pobreza
-          por sector; algunos sectores usan estimaciones derivadas del estrato municipal). El puntaje es un modelo
+          contributors (ODbL). Población provincial: X Censo Nacional de Población y Vivienda 2022 (ONE). Poder
+          adquisitivo por sector: estimaciones derivadas de los estratos ICV municipales (SIUBEN/MEPyD); la
+          calibración sector por sector con el modelo ICV-3 (SIUBEN, 2024) está en proceso. El puntaje es un modelo
           aproximado (demanda por anclas ajustada por poder adquisitivo, menos densidad de competencia); no sustituye
           un estudio de mercado formal.
         </p>

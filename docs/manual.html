@@ -71,8 +71,8 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Santo Domingo · Puerto Plata · La Altagracia · San Cristóbal · Santiago · La Vega · La Romana<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 4.7</div>
-    <div><strong>Fecha:</strong> Julio 2026</div>
+    <div><strong>Versión:</strong> 4.8</div>
+    <div><strong>Fecha:</strong> Agosto 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
   </div>
@@ -150,7 +150,7 @@ puede agregarse manualmente igual que con las estaciones de combustible.
 </div>
 <ul>
   <li><strong>Demanda:</strong> suma ponderada de “anclas” que atraen público — oficinas (×1.0), centros comerciales (×2.0), universidades y colegios (×1.3), hospitales/clínicas (×1.0), bancos (×1.0), paradas de transporte (×1.4), zonas residenciales (×1.2) y actividad comercial general (×0.6).</li>
-  <li><strong>Factor socioeconómico:</strong> índice de poder adquisitivo (0–1) del sector censal donde cae la celda, derivado del ICV (SIUBEN/MEPyD) y el Censo ONE 2022.</li>
+  <li><strong>Factor socioeconómico:</strong> índice de poder adquisitivo (0–1) del sector censal donde cae la celda, estimado a partir de los estratos ICV municipales (SIUBEN/MEPyD). La calibración sector por sector con el modelo actualizado ICV-3 (SIUBEN, 2024) está en proceso.</li>
   <li><strong>Saturación:</strong> penalización por cada competidor del mismo rubro ya presente en la zona.</li>
 </ul>
 <p>Interpretación del color en el mapa:</p>
@@ -344,7 +344,19 @@ dos veces.
 <h2>13. Fuentes de datos y limitaciones</h2>
 <ul>
   <li><strong>POIs y vías:</strong> © OpenStreetMap contributors (licencia ODbL). La cobertura depende de qué tan mapeada esté cada zona.</li>
-  <li><strong>Socioeconómico:</strong> Censo ONE 2022 y SIUBEN/MEPyD (índice ICV y tasas de pobreza por sector). Algunos sectores usan estimaciones derivadas del estrato municipal — el panel lo indica en cada caso.</li>
+  <li><strong>Población:</strong> X Censo Nacional de Población y Vivienda 2022 (ONE) — cifras oficiales por provincia, mostradas en el panel lateral y en el reporte exportado:
+    <table style="margin-top:6px;">
+      <tr><th>Provincia</th><th>Población (Censo 2022)</th></tr>
+      <tr><td>Gran Santo Domingo (prov. Santo Domingo + Distrito Nacional)</td><td>3,798,699</td></tr>
+      <tr><td>Santiago</td><td>1,074,648</td></tr>
+      <tr><td>San Cristóbal</td><td>689,828</td></tr>
+      <tr><td>La Altagracia</td><td>446,060</td></tr>
+      <tr><td>La Vega</td><td>442,720</td></tr>
+      <tr><td>Puerto Plata</td><td>338,354</td></tr>
+      <tr><td>La Romana</td><td>287,915</td></tr>
+    </table>
+  </li>
+  <li><strong>Poder adquisitivo:</strong> estimaciones por sector derivadas de los estratos ICV municipales (SIUBEN/MEPyD). El panel indica en cada caso si el dato es oficial o estimado. <strong>Nota de transparencia:</strong> el ICV municipal de base proviene del Mapa de la Pobreza 2014; la migración al modelo ICV-3 (SIUBEN, 2024, con cartografía del Censo 2022) está en proceso y requiere los datos por sector del Portal Interactivo de Pobreza de la ONE (pip.one.gob.do).</li>
   <li><strong>Geocodificación:</strong> Nominatim (OpenStreetMap).</li>
 </ul>
 <div class="warn">
@@ -360,10 +372,10 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <h3>¿Funciona en el celular?</h3>
 <p>Sí, es una aplicación web adaptable; solo se necesita un navegador moderno y conexión a internet en la primera carga.</p>
 <h3>¿Los datos de poder adquisitivo son exactos?</h3>
-<p>Se basan en fuentes oficiales (ICV/SIUBEN, Censo ONE 2022) a nivel de sector censal. Cuando el dato exacto del sector no está disponible, se usa una estimación del estrato municipal y la app lo indica.</p>
+<p>La población provincial proviene del X Censo Nacional 2022 (ONE, cifras oficiales). El poder adquisitivo por sector es una estimación derivada de los estratos ICV municipales (SIUBEN/MEPyD, base Mapa de la Pobreza 2014); cuando el dato exacto del sector no está disponible, la app lo indica. La migración al modelo ICV-3 con cartografía del Censo 2022 está en proceso.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v4.7 · Julio 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v4.8 · Agosto 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>
