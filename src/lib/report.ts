@@ -8,6 +8,8 @@ import { formatRD, SATURATION_META } from './market';
 import type { MarketAnalysis, SavedSpot } from './market';
 import { dgiiCountFor, DGII_CUTOFF, DGII_COLMADOS } from '../data/dgii';
 import type { VehicularExposure } from './roads';
+import { PEAJES_CUTOFF } from '../data/peajes';
+import type { PeajeStation } from '../data/peajes';
 
 interface ReportPointAnalysis {
   label: string;
@@ -39,6 +41,7 @@ interface ReportData {
   market?: MarketAnalysis | null;
   exposure?: VehicularExposure | null;
   savedSpots?: SavedSpot[];
+  peajes?: PeajeStation[];
 }
 
 function esc(s: string): string {
@@ -67,6 +70,7 @@ export function openPrintReport(data: ReportData): void {
     market = null,
     exposure = null,
     savedSpots = [],
+    peajes = [],
   } = data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
   const appUrl = window.location.href;
@@ -268,6 +272,26 @@ export function openPrintReport(data: ReportData): void {
           .join(' · ')}</p>`
       : ''
   }`
+      : ''
+  }
+
+  ${
+    peajes.length
+      ? `<h2>Flujo vehicular real — estaciones de peaje (RD Vial, corte ${esc(PEAJES_CUTOFF)})</h2>
+  <table class="lista">
+    <tr><th>Estación</th><th>Corredor</th><th>Vehículos/día (prom. 2025)</th><th>Crecimiento del tráfico anual</th><th>Vehículos/día (ene-jun 2026)</th></tr>
+    ${peajes
+      .map(
+        (p) =>
+          `<tr><td>${esc(p.name)}</td><td>${esc(p.corridor)}</td><td>${p.daily2025.toLocaleString('es-DO')}</td><td>${
+            p.growthPct !== null ? `${p.growthPct >= 0 ? '+' : ''}${p.growthPct}% desde ${p.baseYear}` : '—'
+          }</td><td>${p.daily2026.toLocaleString('es-DO')}</td></tr>`,
+      )
+      .join('')}
+  </table>
+  <p class="mini">Tráfico real medido en los peajes del corredor que sirve a la provincia (dataset "Tráfico
+  Estaciones de Peaje", RD Vial/INTRANT, datos.gob.do). No cubre calles urbanas; para el entorno inmediato del
+  punto se usa el índice de exposición vehicular (jerarquía vial OSM).</p>`
       : ''
   }
 

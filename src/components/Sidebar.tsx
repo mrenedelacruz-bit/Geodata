@@ -18,6 +18,7 @@ import { openPrintReport } from '../lib/report';
 import { powerFromBarrio } from '../lib/barrios';
 import type { BarrioFeature, BarrioIndex } from '../lib/barrios';
 import { dgiiCountFor, DGII_CUTOFF } from '../data/dgii';
+import { peajesFor, PEAJES_CUTOFF } from '../data/peajes';
 import { formatRD, SATURATION_META, CATCHMENT_MINUTES } from '../lib/market';
 import type { MarketAnalysis, SavedSpot, TravelMode } from '../lib/market';
 import type { VehicularExposure } from '../lib/roads';
@@ -144,6 +145,7 @@ export default function Sidebar({
   }, [barrioIndex, grid]);
   const poverty = regionalPovertyFor(location);
   const siubenIcv = siubenIcvFor(location);
+  const peajes = peajesFor(location);
 
   const isInComparison = (cell: GridCell) =>
     comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
@@ -177,6 +179,7 @@ export default function Sidebar({
       market,
       exposure,
       savedSpots,
+      peajes,
       topBarrios: topBarrios
         ? {
             byScore: topBarrios.byScore.map(({ b, score }) => ({ name: b.n, muni: b.m, score })),
@@ -917,6 +920,44 @@ export default function Sidebar({
               </ol>
             </>
           )}
+        </div>
+      )}
+
+      {peajes.length > 0 && (
+        <div className="panel">
+          <h2>🛣️ Flujo vehicular real (peajes)</h2>
+          <p className="hint">RD Vial · datos abiertos, corte {PEAJES_CUTOFF} · vehículos/día promedio 2025</p>
+          <ul className="totals-list">
+            {peajes.map((p) => (
+              <li key={p.name} style={{ padding: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{p.name}</span>
+                  <span style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#0ea5e9', display: 'block' }}>
+                      {p.daily2025.toLocaleString('es-DO')}/día
+                    </span>
+                    {p.growthPct !== null && (
+                      <span
+                        style={{
+                          fontSize: '9.5px',
+                          color: p.growthPct >= 0 ? '#16a34a' : '#dc2626',
+                          display: 'block',
+                        }}
+                      >
+                        {p.growthPct >= 0 ? '+' : ''}
+                        {p.growthPct}% desde {p.baseYear}
+                      </span>
+                    )}
+                  </span>
+                </div>
+                <div style={{ fontSize: '9.5px', color: '#9ca3af' }}>{p.corridor}</div>
+              </li>
+            ))}
+          </ul>
+          <p style={{ fontSize: '9.5px', color: '#9ca3af', marginTop: '4px' }}>
+            Tráfico real medido en las estaciones de peaje del corredor que sirve a esta provincia (no incluye
+            calles urbanas). Fuente: dataset "Tráfico Estaciones de Peaje" de RD Vial en datos.gob.do.
+          </p>
         </div>
       )}
 
