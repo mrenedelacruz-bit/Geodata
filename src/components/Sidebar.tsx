@@ -20,6 +20,7 @@ import type { BarrioFeature, BarrioIndex } from '../lib/barrios';
 import { dgiiCountFor, DGII_CUTOFF } from '../data/dgii';
 import { formatRD, SATURATION_META, CATCHMENT_MINUTES } from '../lib/market';
 import type { MarketAnalysis, SavedSpot, TravelMode } from '../lib/market';
+import type { VehicularExposure } from '../lib/roads';
 import type { TargetSegment } from '../lib/grid';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import SearchBox from './SearchBox';
@@ -69,6 +70,7 @@ interface Props {
   myAnalysis: MyAnalysis | null;
   nearestCompetitors: { poi: OsmPOI; distance: number }[];
   market: MarketAnalysis | null;
+  exposure: VehicularExposure | null;
   marketMode: TravelMode;
   onMarketModeChange: (m: TravelMode) => void;
   marketMinutes: number;
@@ -102,6 +104,7 @@ export default function Sidebar({
   myAnalysis,
   nearestCompetitors,
   market,
+  exposure,
   marketMode,
   onMarketModeChange,
   marketMinutes,
@@ -172,6 +175,7 @@ export default function Sidebar({
       siubenIcv,
       targetLabel: target !== 'todos' ? TARGET_LABELS[target] : null,
       market,
+      exposure,
       savedSpots,
       topBarrios: topBarrios
         ? {
@@ -403,6 +407,7 @@ export default function Sidebar({
                     'Saturación',
                     (s: SavedSpot) => (s.market.saturation ? SATURATION_META[s.market.saturation].label : '—'),
                   ],
+                  ['Exposición vehicular', (s: SavedSpot) => s.exposure?.label ?? '—'],
                   ['Cuota Huff', (s: SavedSpot) => (s.market.huffShare !== null ? `${Math.round(s.market.huffShare * 100)}%` : '—')],
                   [
                     'Ventas potenciales/mes',
@@ -617,6 +622,18 @@ export default function Sidebar({
                     </>
                   )}
                 </div>
+                {exposure && (
+                  <div>
+                    🚦 Exposición vehicular:{' '}
+                    <strong style={{ color: exposure.color }}>{exposure.label}</strong>
+                    {exposure.nearest && (
+                      <span style={{ display: 'block', fontSize: '10px', color: '#6b7280' }}>
+                        {exposure.nearest.name ?? exposure.nearest.clsLabel} ({exposure.nearest.clsLabel}) a{' '}
+                        {formatDistance(exposure.nearest.distM)}
+                      </span>
+                    )}
+                  </div>
+                )}
                 {market.huffShare !== null && (
                   <div>
                     📈 Cuota de captura (Huff): <strong>{Math.round(market.huffShare * 100)}%</strong>
@@ -654,7 +671,8 @@ export default function Sidebar({
               <p style={{ fontSize: '9.5px', color: '#9ca3af', margin: '6px 0 0' }}>
                 Captación aproximada (círculo equivalente por velocidad media urbana, no red vial). Demanda: hogares
                 × gasto estimado del rubro (ENGIH aprox.) ajustado por nivel socioeconómico. Huff: atractividad
-                igual entre locales, fricción distancia². Cifras orientativas.
+                igual entre locales, fricción distancia². Exposición vehicular: cercanía a la jerarquía vial OSM
+                (proxy de tráfico, no un aforo). Cifras orientativas.
               </p>
             </div>
           )}

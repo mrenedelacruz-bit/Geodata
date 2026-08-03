@@ -8,6 +8,8 @@ import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
 import type { TargetSegment } from './lib/grid';
 import { computeMarket, catchmentRadiusM, CATCHMENT_MINUTES } from './lib/market';
 import type { TravelMode, SavedSpot } from './lib/market';
+import { fetchMajorRoads, exposureAt } from './lib/roads';
+import type { RoadIndex } from './lib/roads';
 import { loadBarrios, barrioAt } from './lib/barrios';
 import type { BarrioIndex } from './lib/barrios';
 import { distanceMeters } from './lib/geo';
@@ -78,6 +80,7 @@ export default function App({ location }: AppProps) {
   const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
   const [target, setTarget] = useState<TargetSegment>(initial.target);
   const [barrioIndex, setBarrioIndex] = useState<BarrioIndex | null>(null);
+  const [roadIndex, setRoadIndex] = useState<RoadIndex | null>(null);
   const [marketMode, setMarketMode] = useState<TravelMode>('walk');
   const [marketMinutes, setMarketMinutes] = useState(10);
   const [savedSpots, setSavedSpots] = useState<SavedSpot[]>([]);
@@ -129,6 +132,19 @@ export default function App({ location }: AppProps) {
       cancelled = true;
     };
   }, [location]);
+
+  // Vías principales OSM para el índice de exposición vehicular (proxy de
+  // tráfico); en paralelo a los POIs y con su propia caché local.
+  useEffect(() => {
+    let cancelled = false;
+    setRoadIndex(null);
+    fetchMajorRoads(locationConfig.bbox).then((idx) => {
+      if (!cancelled) setRoadIndex(idx);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [location, locationConfig.bbox]);
 
   useEffect(() => {
     // Al cambiar de ciudad (no en el primer montaje, para respetar el estado
@@ -210,6 +226,12 @@ export default function App({ location }: AppProps) {
     });
   }, [selectedPoint, pois.length, marketMode, marketMinutes, barrioIndex, competitors, category, location]);
 
+  // Exposición vehicular del punto (jerarquía vial OSM).
+  const exposure = useMemo(() => {
+    if (!selectedPoint || !roadIndex) return null;
+    return exposureAt(roadIndex, selectedPoint.point);
+  }, [selectedPoint, roadIndex]);
+
   // Radios 5/10/15 min del modo activo, para los anillos de captación del mapa.
   const catchmentRadii = useMemo(
     () => CATCHMENT_MINUTES.map((m) => catchmentRadiusM(marketMode, m)),
@@ -283,6 +305,7 @@ export default function App({ location }: AppProps) {
           score: pointAnalysis.score,
           barrio: pointAnalysis.barrio ? `${pointAnalysis.barrio.n} (${pointAnalysis.barrio.m})` : null,
           market,
+          exposure,
         },
       ];
     });
@@ -331,6 +354,7 @@ export default function App({ location }: AppProps) {
         myAnalysis={myAnalysis}
         nearestCompetitors={nearestCompetitors}
         market={market}
+        exposure={exposure}
         marketMode={marketMode}
         onMarketModeChange={setMarketMode}
         marketMinutes={marketMinutes}

@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Santo Domingo · Puerto Plata · La Altagracia · San Cristóbal · Santiago · La Vega · La Romana<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 7.6</div>
+    <div><strong>Versión:</strong> 7.7</div>
     <div><strong>Fecha:</strong> Agosto 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -269,7 +269,12 @@ Permite fijar tu ubicación (actual o propuesta) y ver cómo queda frente a la c
   <li><strong>Cuota de captura (modelo de Huff):</strong> probabilidad media de que los hogares de la captación
   elijan el nuevo local frente a los competidores existentes (modelo gravitacional clásico: atractividad igual,
   fricción distancia²), y las <strong>ventas potenciales</strong> = demanda × cuota.</li>
-  <li><strong>Canibalización:</strong> % de solape del área de captación propia con la de los 3 competidores más
+  <li><strong>Exposición vehicular:</strong> Alta / Media / Baja / Mínima según la cercanía del punto a la
+  jerarquía vial de OpenStreetMap (autopistas, troncales, avenidas primarias y vías secundarias, ponderadas por
+  el flujo típico de cada clase y con decaimiento hasta 600 m), indicando la vía principal más cercana y su
+  distancia. Es un <em>proxy</em> gratuito del tráfico — correlaciona con los aforos pero no es un conteo real;
+  la app está preparada para incorporar los aforos oficiales (peajes RD Vial, INTRANT/MOPC) cuando se obtengan.</li>
+<li><strong>Canibalización:</strong> % de solape del área de captación propia con la de los 3 competidores más
   cercanos — cuánto mercado compartirían.</li>
 </ul>
 <p><strong>Comparador de ubicaciones:</strong> con <span class="kbd">⚖️ Guardar en el comparador</span> puedes
@@ -434,7 +439,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>La población provincial proviene del X Censo Nacional 2022 (ONE, Informe General con cifras definitivas). El poder adquisitivo por sector es una estimación derivada de los estratos ICV municipales (SIUBEN/MEPyD, base Mapa de la Pobreza 2014); cuando el dato exacto del sector no está disponible, la app lo indica. La migración al modelo ICV-3 con cartografía del Censo 2022 está en proceso.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v7.6 · Agosto 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v7.7 · Agosto 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

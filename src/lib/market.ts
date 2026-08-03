@@ -1,5 +1,6 @@
 import { census2022For, purchasingPowerAt, POVERTY_CONTEXT_2025 } from '../data/census';
 import { distanceMeters } from './geo';
+import type { VehicularExposure } from './roads';
 import { barrioAt, barrioAreaKm2, powerFromBarrio } from './barrios';
 import type { BarrioFeature, BarrioIndex } from './barrios';
 import type { BusinessCategory, LatLon, OsmPOI } from '../types';
@@ -262,6 +263,7 @@ export interface SavedSpot {
   score: number | null;
   barrio: string | null;
   market: MarketAnalysis;
+  exposure: VehicularExposure | null;
 }
 
 /** RD$ compacto: 1.4 M, 850 mil, 12,500. */

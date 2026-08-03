@@ -7,6 +7,7 @@ import { saturationLabel } from './saturation';
 import { formatRD, SATURATION_META } from './market';
 import type { MarketAnalysis, SavedSpot } from './market';
 import { dgiiCountFor, DGII_CUTOFF, DGII_COLMADOS } from '../data/dgii';
+import type { VehicularExposure } from './roads';
 
 interface ReportPointAnalysis {
   label: string;
@@ -36,6 +37,7 @@ interface ReportData {
     byStratum: { name: string; muni: string; aPct: number }[];
   } | null;
   market?: MarketAnalysis | null;
+  exposure?: VehicularExposure | null;
   savedSpots?: SavedSpot[];
 }
 
@@ -63,6 +65,7 @@ export function openPrintReport(data: ReportData): void {
     targetLabel,
     topBarrios,
     market = null,
+    exposure = null,
     savedSpots = [],
   } = data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -112,6 +115,15 @@ export function openPrintReport(data: ReportData): void {
         ? ` — <strong>${esc(SATURATION_META[market.saturation].label)}</strong> (${market.per10k.toFixed(1)} por 10k hab. vs. ${market.provincialPer10k.toFixed(1)} promedio provincial)`
         : ''
     }</td></tr>
+    ${
+      exposure
+        ? `<tr><th>Exposición vehicular</th><td><strong>${esc(exposure.label)}</strong>${
+            exposure.nearest
+              ? ` — ${esc(exposure.nearest.name ?? exposure.nearest.clsLabel)} (${esc(exposure.nearest.clsLabel)}) a ${exposure.nearest.distM.toLocaleString('es-DO')} m`
+              : ''
+          } (cercanía a la jerarquía vial OSM; proxy de tráfico, no un aforo)</td></tr>`
+        : ''
+    }
     ${market.huffShare !== null ? `<tr><th>Cuota de captura (modelo Huff)</th><td><strong>${Math.round(market.huffShare * 100)}%</strong>${market.salesPotentialRD !== null ? ` — ventas potenciales <strong>${esc(formatRD(market.salesPotentialRD))}/mes</strong>` : ''}</td></tr>` : ''}
     ${
       market.overlaps.filter((o) => o.overlapPct > 0).length
@@ -130,7 +142,7 @@ export function openPrintReport(data: ReportData): void {
     ? `
   <h2>Comparador de ubicaciones</h2>
   <table class="lista">
-    <tr><th>Ubicación</th><th>Score</th><th>Barrio</th><th>Hogares</th><th>Demanda/mes</th><th>Compet.</th><th>Saturación</th><th>Huff</th><th>Ventas pot./mes</th></tr>
+    <tr><th>Ubicación</th><th>Score</th><th>Barrio</th><th>Hogares</th><th>Demanda/mes</th><th>Compet.</th><th>Saturación</th><th>Expos. vehicular</th><th>Huff</th><th>Ventas pot./mes</th></tr>
     ${savedSpots
       .map(
         (s, i) =>
@@ -140,7 +152,9 @@ export function openPrintReport(data: ReportData): void {
             s.market.demandRD !== null ? esc(formatRD(s.market.demandRD)) : '—'
           }</td><td>${s.market.competitorsIn}</td><td>${
             s.market.saturation ? esc(SATURATION_META[s.market.saturation].label) : '—'
-          }</td><td>${s.market.huffShare !== null ? `${Math.round(s.market.huffShare * 100)}%` : '—'}</td><td>${
+          }</td><td>${s.exposure ? esc(s.exposure.label) : '—'}</td><td>${
+            s.market.huffShare !== null ? `${Math.round(s.market.huffShare * 100)}%` : '—'
+          }</td><td>${
             s.market.salesPotentialRD !== null ? esc(formatRD(s.market.salesPotentialRD)) : '—'
           }</td></tr>`,
       )
