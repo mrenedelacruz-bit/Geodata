@@ -133,6 +133,9 @@ const ALTO_OVERRIDES = new Set([
   'Los Cacicazgos|Santo Domingo De Guzmán',
   'La Julia|Santo Domingo De Guzmán',
   'Julieta Morales|Santo Domingo De Guzmán',
+  'Viejo Arroyo Hondo|Santo Domingo De Guzmán',
+  'Altos De Arroyo Hondo|Santo Domingo De Guzmán',
+  'Cerros De Arroyo Hondo|Santo Domingo De Guzmán',
 ]);
 
 /**
