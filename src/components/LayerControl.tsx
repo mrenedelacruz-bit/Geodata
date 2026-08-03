@@ -100,8 +100,9 @@ export default function LayerControl({
         <div className="sub">
           Barrios oficiales SIUBEN: <span style={{ color: '#6d28d9', fontWeight: 700 }}>violeta</span> = alto
           ingreso, <span style={{ color: '#0f766e', fontWeight: 700 }}>turquesa</span> = ingreso medio,{' '}
-          <span style={{ color: '#db2777', fontWeight: 700 }}>magenta</span> = pobreza. Tono más oscuro = mayor
-          grado. Clic en un barrio para el detalle.
+          <span style={{ color: '#e879b9', fontWeight: 700 }}>magenta claro</span> = popular / ingreso bajo,{' '}
+          <span style={{ color: '#be185d', fontWeight: 700 }}>magenta oscuro</span> = pobreza. Tono más oscuro =
+          mayor grado. Clic en un barrio para el detalle.
         </div>
 
         <div

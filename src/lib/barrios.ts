@@ -132,6 +132,19 @@ export type BarrioCategory = 'alto' | 'medio' | 'pobreza' | 'sin-dato';
  */
 const ELITE_MUNS = new Set(['Santo Domingo De Guzmán', 'Santiago']);
 
+/**
+ * Barrios populares donde el suelo abierto (parques, cañadas, lotes rurales)
+ * abarata la densidad del registro y la señal automática falla. Validación
+ * local: son barrios populares de ingreso bajo, no de ingreso medio.
+ */
+const POPULAR_OVERRIDES = new Set([
+  'Los Tres Ojos|Santo Domingo Este',
+  'San Isidro Adentro|Santo Domingo Este',
+  'Cancino|Santo Domingo Este',
+  'Cancino Afuera|Santo Domingo Este',
+  'Cancino Adentro|Santo Domingo Este',
+]);
+
 export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: string; color: string } {
   const p = b.p;
   const a = b.a ?? 0;
@@ -145,8 +158,18 @@ export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: 
     return { cat: 'alto', label: 'Alto ingreso', color: `hsl(262, 60%, ${Math.round(l)}%)` };
   }
   if (p >= 35) {
-    const l = 62 - Math.min(1, (p - 35) / 50) * 27; // magenta: 62% → 35%
+    const l = 55 - Math.min(1, (p - 35) / 50) * 25; // magenta oscuro: 55% → 30%
     return { cat: 'pobreza', label: 'Pobreza', color: `hsl(330, 60%, ${Math.round(l)}%)` };
+  }
+  // Barrio popular consolidado: pobreza moderada, no extrema. La señal es la
+  // penetración masiva del registro SIUBEN (≥1.200 hogares/km², o ≥800 con
+  // pobreza ICV ≥20%), más la lista de validación local para barrios cuyo
+  // suelo abierto engaña a la densidad.
+  const isPopular =
+    density >= 1200 || (p >= 20 && density >= 800) || POPULAR_OVERRIDES.has(`${b.n}|${b.m}`);
+  if (isPopular) {
+    const l = 74 - (p / 35) * 16; // magenta claro: 74% → 58%
+    return { cat: 'pobreza', label: 'Popular / ingreso bajo', color: `hsl(330, 55%, ${Math.round(l)}%)` };
   }
   const l = 40 + (p / 35) * 28; // turquesa: oscuro = media sólida
   return { cat: 'medio', label: 'Ingreso medio', color: `hsl(180, 45%, ${Math.round(l)}%)` };
@@ -156,16 +179,18 @@ export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: 
  * Poder adquisitivo 0-1 desde la composición ICV oficial del barrio.
  * Curva logística sobre el % de hogares pobres, calibrada contra sectores
  * conocidos (Piantini ~0.95, Capotillo ~0.27, La Zurza ~0.1), con impulso por
- * % ICV-4. El tope 0.78 aplica a barrios populares consolidados: solo los
- * clasificados como élite (ICV-4 alto + baja penetración del registro) pueden
- * superar ese techo — corrige el sesgo de composición del registro SIUBEN.
+ * % ICV-4. Topes por categoría (corrigen el sesgo de composición del registro
+ * SIUBEN): élite hasta 0.97, ingreso medio hasta 0.78 y barrios populares /
+ * pobreza hasta 0.55 — un barrio popular consolidado no puede puntuar como
+ * uno de clase media aunque sus registrados alcancen ICV-4.
  */
 export function powerFromBarrio(b: BarrioFeature): number | null {
   if (b.p === null) return null;
   const base = 0.05 + 0.9 / (1 + Math.exp((b.p - 20) / 7));
   const boost = b.a !== null ? Math.min(0.15, b.a * 0.0025) : 0;
   const raw = Math.min(0.97, Math.max(0.05, base + boost));
-  const cap = classifyBarrio(b).cat === 'alto' ? 0.97 : 0.78;
+  const cat = classifyBarrio(b).cat;
+  const cap = cat === 'alto' ? 0.97 : cat === 'pobreza' ? 0.55 : 0.78;
   return Math.min(cap, raw);
 }
 

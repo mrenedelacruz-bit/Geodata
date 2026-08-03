@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Santo Domingo · Puerto Plata · La Altagracia · San Cristóbal · Santiago · La Vega · La Romana<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 7.2</div>
+    <div><strong>Versión:</strong> 7.3</div>
     <div><strong>Fecha:</strong> Agosto 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -166,7 +166,7 @@ puede agregarse manualmente igual que con las estaciones de combustible.
 <p>
 El control de capas (esquina del mapa) permite activar/desactivar cada una. Por defecto, al abrir la
 app <strong>solo "Puntos de competencia" está activa</strong>; el resto se activa manualmente según
-lo que necesites revisar. El <em>mapa de calor</em> y la <em>cuadrícula</em> son dos vistas del mismo análisis, por lo que son <strong>excluyentes</strong>: activar una apaga la otra. Cada familia de color tiene un solo significado en toda la app: azul = potencial (calor), verde→rojo = score de oportunidad (cuadrícula y ranking), violeta/turquesa/magenta = nivel socioeconómico (censo: alto ingreso / medio / pobreza), ámbar = riesgo climático (IVACC):
+lo que necesites revisar. El <em>mapa de calor</em> y la <em>cuadrícula</em> son dos vistas del mismo análisis, por lo que son <strong>excluyentes</strong>: activar una apaga la otra. Cada familia de color tiene un solo significado en toda la app: azul = potencial (calor), verde→rojo = score de oportunidad (cuadrícula y ranking), violeta/turquesa/magenta = nivel socioeconómico (censo: alto ingreso / medio / popular-pobreza), ámbar = riesgo climático (IVACC):
 </p>
 <table>
   <tr><th>Capa</th><th>Qué muestra</th></tr>
@@ -175,7 +175,7 @@ lo que necesites revisar. El <em>mapa de calor</em> y la <em>cuadrícula</em> so
   <tr><td>⚪ Competidores</td><td>Cada negocio del rubro seleccionado. Los puntos <strong style="color:#0B5FA5;">azules</strong> son establecimientos agregados manualmente (verificados por el usuario, aún no mapeados en OpenStreetMap).</td></tr>
   <tr><td>🌀 Riesgo climático (IVACC)</td><td>Municipios coloreados en ámbar según el % de hogares con vulnerabilidad alta ante huracanes e inundaciones (IVACC, SIUBEN). Ámbar oscuro = mayor riesgo. Clic en un municipio para el detalle.</td></tr>
   <tr><td>🗺️ Límites provincial y municipales</td><td>Contorno oficial de la provincia (línea punteada gris) y de sus municipios (líneas finas gris claro), tomados de los polígonos del portal de datos abiertos de SIUBEN y simplificados para uso web. Siempre visibles.</td></tr>
-  <tr><td>🏘️ Censo / Barrios ICV</td><td>En las 7 provincias: los <strong>barrios oficiales de SIUBEN</strong> (polígonos reales del dataset ICV_BARRIOS) clasificados en tres categorías con familias de color propias: <strong>violeta = alto ingreso</strong>, <strong>turquesa = ingreso medio</strong> y <strong>magenta = pobreza</strong>; dentro de cada categoría, el tono más oscuro indica mayor grado. La categoría "Alto ingreso" corrige el sesgo del registro SIUBEN (que sobre-representa hogares vulnerables): exige a la vez ICV-4 dominante entre los hogares registrados y baja penetración del registro (pocos hogares SIUBEN por km², la firma de los barrios de élite como Piantini, con solo 22 hogares registrados), con umbrales más estrictos fuera del Distrito Nacional y Santiago. Barrios populares consolidados con muchos hogares ICV-4 (p. ej. Los Mameyes o Hainamosa en SDE) clasifican correctamente como ingreso medio. El popup de cada barrio indica su categoría y cifras ICV, con detalle por barrio al hacer clic. Cobertura completa en las 7 provincias: 3,986 barrios y parajes oficiales.</td></tr>
+  <tr><td>🏘️ Censo / Barrios ICV</td><td>En las 7 provincias: los <strong>barrios oficiales de SIUBEN</strong> (polígonos reales del dataset ICV_BARRIOS) clasificados en tres categorías con familias de color propias: <strong>violeta = alto ingreso</strong>, <strong>turquesa = ingreso medio</strong> y <strong>magenta = pobreza</strong>; dentro de cada categoría, el tono más oscuro indica mayor grado. La categoría "Alto ingreso" corrige el sesgo del registro SIUBEN (que sobre-representa hogares vulnerables): exige a la vez ICV-4 dominante entre los hogares registrados y baja penetración del registro (pocos hogares SIUBEN por km², la firma de los barrios de élite como Piantini, con solo 22 hogares registrados), con umbrales más estrictos fuera del Distrito Nacional y Santiago. La familia magenta distingue dos grados: <strong>magenta oscuro = pobreza</strong> (≥35% de hogares ICV-1+2) y <strong>magenta claro = popular / ingreso bajo</strong> — barrios populares consolidados (p. ej. Los Mameyes, Hainamosa, Villa Faro, Las Caobas, Pantoja o el Ensanche Espaillat) detectados por la penetración masiva del registro SIUBEN (≥1.200 hogares/km², o ≥800 con pobreza ICV ≥20%) aunque muchos de sus registrados alcancen ICV-4; se complementa con una lista de validación local para barrios cuyo suelo abierto (parques, lotes) engaña a la densidad, como Los Tres Ojos o Cancino. El poder adquisitivo usado por el score respeta estas categorías: élite hasta 0.97, ingreso medio hasta 0.78 y popular/pobreza hasta 0.55. El popup de cada barrio indica su categoría y cifras ICV, con detalle por barrio al hacer clic. Cobertura completa en las 7 provincias: 3,986 barrios y parajes oficiales.</td></tr>
 </table>
 <div class="warn">
 <strong>Tráfico vehicular en vivo (retirado):</strong> se probó una capa de congestión en tiempo real
@@ -401,7 +401,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>La población provincial proviene del X Censo Nacional 2022 (ONE, Informe General con cifras definitivas). El poder adquisitivo por sector es una estimación derivada de los estratos ICV municipales (SIUBEN/MEPyD, base Mapa de la Pobreza 2014); cuando el dato exacto del sector no está disponible, la app lo indica. La migración al modelo ICV-3 con cartografía del Censo 2022 está en proceso.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v7.2 · Agosto 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v7.3 · Agosto 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>
