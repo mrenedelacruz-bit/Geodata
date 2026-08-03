@@ -127,6 +127,25 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
     },
   },
   {
+    id: 'tienda_cafe',
+    label: 'Tienda de Café',
+    icon: '🫘',
+    competitorLabel: 'Tiendas de café',
+    // shop=coffee es el tag de OSM para tostadurías y venteras de café en
+    // grano/molido (venta para llevar, no consumo en mesa como amenity=cafe).
+    matchesCompetitor: (t) => has(t, 'shop', ['coffee']),
+    anchorWeights: {
+      office: 1.2,
+      mall: 1.6,
+      university: 1.0,
+      health: 0.2,
+      bank: 0.6,
+      transit: 1.2,
+      residential: 1.4,
+      retail: 1.4,
+    },
+  },
+  {
     id: 'farmacia',
     label: 'Farmacia',
     icon: '💊',
