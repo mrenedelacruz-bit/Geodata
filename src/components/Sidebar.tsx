@@ -556,6 +556,11 @@ export default function Sidebar({
                         {m.urbanPct !== undefined ? ` · ${m.urbanPct}% urb.` : ''}
                       </span>
                     )}
+                    {m.icvPoorPct !== undefined && (
+                      <span style={{ fontSize: '9.5px', color: '#9ca3af', display: 'block' }}>
+                        ICV: {m.icvPoorPct}% pobres · {m.icvHighPct}% alto
+                      </span>
+                    )}
                   </span>
                 </div>
                 {m.dms && (
