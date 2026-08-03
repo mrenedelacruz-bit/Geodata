@@ -156,15 +156,15 @@ export function openPrintReport(data: ReportData): void {
     municipios.length
       ? `<h2>Población por municipio (Censo ONE 2022, cifras definitivas)</h2>
   <table class="lista">
-    <tr><th>Municipio</th><th>Población</th><th>Viviendas ocupadas</th><th>% urbana</th><th>% hogares pobres (ICV)</th></tr>
+    <tr><th>Municipio</th><th>Población</th><th>Viviendas ocupadas</th><th>% urbana</th><th>% hogares pobres (ICV)</th><th>% vulnerab. climática alta (IVACC)</th></tr>
     ${municipios
       .map(
         (m) =>
-          `<tr><td>${esc(m.name)}</td><td>${m.population.toLocaleString('es-DO')}</td><td>${m.viviendas !== undefined ? m.viviendas.toLocaleString('es-DO') : '—'}</td><td>${m.urbanPct !== undefined ? `${m.urbanPct}%` : '—'}</td><td>${m.icvPoorPct !== undefined ? `${m.icvPoorPct}%` : '—'}</td></tr>` +
+          `<tr><td>${esc(m.name)}</td><td>${m.population.toLocaleString('es-DO')}</td><td>${m.viviendas !== undefined ? m.viviendas.toLocaleString('es-DO') : '—'}</td><td>${m.urbanPct !== undefined ? `${m.urbanPct}%` : '—'}</td><td>${m.icvPoorPct !== undefined ? `${m.icvPoorPct}%` : '—'}</td><td>${m.ivaccHighPct !== undefined ? `${m.ivaccHighPct}%` : '—'}</td></tr>` +
           (m.dms ?? [])
             .map(
               (dm) =>
-                `<tr><td style="padding-left:22px;color:#6b7280;">└ ${esc(dm.name)} (DM)</td><td style="color:#6b7280;">${dm.population.toLocaleString('es-DO')}</td><td style="color:#6b7280;">—</td><td style="color:#6b7280;">—</td><td style="color:#6b7280;">—</td></tr>`,
+                `<tr><td style="padding-left:22px;color:#6b7280;">└ ${esc(dm.name)} (DM)</td><td style="color:#6b7280;">${dm.population.toLocaleString('es-DO')}</td><td style="color:#6b7280;">—</td><td style="color:#6b7280;">—</td><td style="color:#6b7280;">—</td><td style="color:#6b7280;">—</td></tr>`,
             )
             .join(''),
       )
