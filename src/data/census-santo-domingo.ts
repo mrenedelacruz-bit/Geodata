@@ -125,13 +125,13 @@ export function powerLabel(power: number): string {
   return 'Bajo (ICV-1/2)';
 }
 
-// Familia violeta exclusiva del nivel socioeconómico: oscuro = estrato alto,
-// claro = bajo. El verde→rojo queda reservado para el score de oportunidad y
-// el azul para el mapa de calor — cada color significa una sola cosa en la app.
+// Tres familias del nivel socioeconómico, con tonos por grado (mismo esquema
+// que la capa de barrios): violeta = alto ingreso, turquesa = ingreso medio,
+// magenta = pobreza. Verde→rojo queda para el score y azul para el calor.
 export function powerColor(power: number): string {
-  if (power >= 0.8) return '#4c1d95';
-  if (power >= 0.6) return '#6d28d9';
-  if (power >= 0.45) return '#8b5cf6';
-  if (power >= 0.28) return '#a78bfa';
-  return '#c084fc';
+  if (power >= 0.8) return '#4c1d95'; // alto ingreso, grado alto
+  if (power >= 0.6) return '#7c3aed'; // alto ingreso
+  if (power >= 0.45) return '#0f766e'; // ingreso medio
+  if (power >= 0.28) return '#db2777'; // pobreza moderada
+  return '#9d174d'; // pobreza, grado alto
 }

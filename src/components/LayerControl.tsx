@@ -92,14 +92,16 @@ export default function LayerControl({
         >
           <div
             className="swatch"
-            style={{ background: 'linear-gradient(135deg, #ddd0f5, #4c1d95)' }}
+            style={{ background: 'linear-gradient(135deg, #6d28d9 33%, #14b8a6 33% 66%, #db2777 66%)' }}
           />
           Nivel socioeconómico
           <div className="chk">{showCensus ? '✓' : ''}</div>
         </div>
         <div className="sub">
-          Barrios oficiales SIUBEN por nivel socioeconómico: violeta oscuro = estrato alto, claro =
-          pobreza alta. Clic en un barrio para el detalle.
+          Barrios oficiales SIUBEN: <span style={{ color: '#6d28d9', fontWeight: 700 }}>violeta</span> = alto
+          ingreso, <span style={{ color: '#0f766e', fontWeight: 700 }}>turquesa</span> = ingreso medio,{' '}
+          <span style={{ color: '#db2777', fontWeight: 700 }}>magenta</span> = pobreza. Tono más oscuro = mayor
+          grado. Clic en un barrio para el detalle.
         </div>
 
         <div
