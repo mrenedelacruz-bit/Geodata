@@ -17,6 +17,8 @@ import { formatDistance } from '../lib/geo';
 import { openPrintReport } from '../lib/report';
 import { powerFromBarrio } from '../lib/barrios';
 import type { BarrioFeature, BarrioIndex } from '../lib/barrios';
+import { formatRD, SATURATION_META, CATCHMENT_MINUTES } from '../lib/market';
+import type { MarketAnalysis, SavedSpot, TravelMode } from '../lib/market';
 import type { TargetSegment } from '../lib/grid';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import SearchBox from './SearchBox';
@@ -65,6 +67,14 @@ interface Props {
   onSetMyLocation: (p: LatLon | null) => void;
   myAnalysis: MyAnalysis | null;
   nearestCompetitors: { poi: OsmPOI; distance: number }[];
+  market: MarketAnalysis | null;
+  marketMode: TravelMode;
+  onMarketModeChange: (m: TravelMode) => void;
+  marketMinutes: number;
+  onMarketMinutesChange: (m: number) => void;
+  savedSpots: SavedSpot[];
+  onSaveSpot: () => void;
+  onRemoveSpot: (id: number) => void;
 }
 
 export default function Sidebar({
@@ -90,6 +100,14 @@ export default function Sidebar({
   onSetMyLocation,
   myAnalysis,
   nearestCompetitors,
+  market,
+  marketMode,
+  onMarketModeChange,
+  marketMinutes,
+  onMarketMinutesChange,
+  savedSpots,
+  onSaveSpot,
+  onRemoveSpot,
 }: Props) {
   // Ordenar toda la cuadrícula (miles de celdas) solo cuando cambie, no en cada render.
   const topZones = useMemo(() => [...grid].sort((a, b) => b.score - a.score).slice(0, 10), [grid]);
@@ -152,6 +170,8 @@ export default function Sidebar({
       poverty,
       siubenIcv,
       targetLabel: target !== 'todos' ? TARGET_LABELS[target] : null,
+      market,
+      savedSpots,
       topBarrios: topBarrios
         ? {
             byScore: topBarrios.byScore.map(({ b, score }) => ({ name: b.n, muni: b.m, score })),
@@ -341,6 +361,83 @@ export default function Sidebar({
         </div>
       )}
 
+      {savedSpots.length > 0 && (
+        <div className="panel" style={{ borderLeft: '3px solid #f59e0b' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+            <h2 style={{ margin: 0 }}>⚖️ Comparador de ubicaciones</h2>
+            <button className="btn-remove" onClick={() => savedSpots.forEach((s) => onRemoveSpot(s.id))}>
+              Limpiar
+            </button>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', fontSize: '11px', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'left', padding: '3px 4px', borderBottom: '1px solid #e5e7eb' }}></th>
+                  {savedSpots.map((s, i) => (
+                    <th key={s.id} style={{ textAlign: 'center', padding: '3px 4px', borderBottom: '1px solid #e5e7eb' }}>
+                      <span
+                        style={{
+                          display: 'inline-block', width: '18px', height: '18px', lineHeight: '18px',
+                          borderRadius: '50%', background: '#f59e0b', color: '#fff', fontWeight: 700, fontSize: '11px',
+                        }}
+                      >
+                        {String.fromCharCode(65 + i)}
+                      </span>
+                      <div style={{ fontSize: '9px', fontWeight: 400, color: '#6b7280', maxWidth: '90px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: '0 auto' }}>
+                        {s.label}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {([
+                  ['Score', (s: SavedSpot) => (s.score !== null ? String(s.score) : '—')],
+                  ['Barrio', (s: SavedSpot) => s.barrio ?? '—'],
+                  ['Hogares en captación', (s: SavedSpot) => s.market.households?.toLocaleString('es-DO') ?? '—'],
+                  ['Demanda/mes', (s: SavedSpot) => (s.market.demandRD !== null ? formatRD(s.market.demandRD) : '—')],
+                  ['Competencia', (s: SavedSpot) => String(s.market.competitorsIn)],
+                  [
+                    'Saturación',
+                    (s: SavedSpot) => (s.market.saturation ? SATURATION_META[s.market.saturation].label : '—'),
+                  ],
+                  ['Cuota Huff', (s: SavedSpot) => (s.market.huffShare !== null ? `${Math.round(s.market.huffShare * 100)}%` : '—')],
+                  [
+                    'Ventas potenciales/mes',
+                    (s: SavedSpot) => (s.market.salesPotentialRD !== null ? formatRD(s.market.salesPotentialRD) : '—'),
+                  ],
+                ] as [string, (s: SavedSpot) => string][]).map(([label, fn]) => (
+                  <tr key={label}>
+                    <td style={{ padding: '3px 4px', color: '#6b7280', borderBottom: '1px solid #f3f4f6' }}>{label}</td>
+                    {savedSpots.map((s) => (
+                      <td key={s.id} style={{ padding: '3px 4px', textAlign: 'center', fontWeight: 600, borderBottom: '1px solid #f3f4f6' }}>
+                        {fn(s)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+                <tr>
+                  <td></td>
+                  {savedSpots.map((s) => (
+                    <td key={s.id} style={{ padding: '4px', textAlign: 'center' }}>
+                      <button className="btn-remove" onClick={() => onRemoveSpot(s.id)}>
+                        Quitar
+                      </button>
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style={{ fontSize: '9.5px', color: '#9ca3af', margin: '4px 0 0' }}>
+            Captación de {savedSpots[0].market.minutes} min{' '}
+            {savedSpots[0].market.mode === 'walk' ? 'a pie' : 'en carro'} al momento de guardar cada punto. Los
+            puntos guardados se marcan A/B/C en el mapa.
+          </p>
+        </div>
+      )}
+
       {comparisonCells.length > 0 && (
         <div className="panel" style={{ borderLeft: '3px solid #f59e0b' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -436,6 +533,128 @@ export default function Sidebar({
               <div style={{ fontSize: '12px', color: '#666' }}>
                 Score de la zona: demanda por anclas × poder adquisitivo, menos competencia
               </div>
+            </div>
+          )}
+
+          {market && (
+            <div style={{ marginBottom: '10px', padding: '10px', backgroundColor: '#f0fdfa', borderRadius: '6px', border: '1px solid #ccfbf1', fontSize: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <strong>🎯 Análisis de mercado</strong>
+                <span style={{ display: 'flex', gap: '4px' }}>
+                  <button
+                    onClick={() => onMarketModeChange('walk')}
+                    style={{
+                      padding: '2px 7px', fontSize: '11px', borderRadius: '4px', cursor: 'pointer',
+                      border: '1px solid ' + (marketMode === 'walk' ? '#0b5fa5' : '#d1d5db'),
+                      background: marketMode === 'walk' ? '#e0f2fe' : '#fff',
+                      fontWeight: marketMode === 'walk' ? 700 : 400,
+                    }}
+                  >
+                    🚶 pie
+                  </button>
+                  <button
+                    onClick={() => onMarketModeChange('car')}
+                    style={{
+                      padding: '2px 7px', fontSize: '11px', borderRadius: '4px', cursor: 'pointer',
+                      border: '1px solid ' + (marketMode === 'car' ? '#0b5fa5' : '#d1d5db'),
+                      background: marketMode === 'car' ? '#e0f2fe' : '#fff',
+                      fontWeight: marketMode === 'car' ? 700 : 400,
+                    }}
+                  >
+                    🚗 carro
+                  </button>
+                </span>
+              </div>
+              <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
+                {CATCHMENT_MINUTES.map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => onMarketMinutesChange(m)}
+                    style={{
+                      flex: 1, padding: '2px 0', fontSize: '11px', borderRadius: '4px', cursor: 'pointer',
+                      border: '1px solid ' + (marketMinutes === m ? '#0b5fa5' : '#d1d5db'),
+                      background: marketMinutes === m ? '#e0f2fe' : '#fff',
+                      fontWeight: marketMinutes === m ? 700 : 400,
+                    }}
+                  >
+                    {m} min
+                  </button>
+                ))}
+              </div>
+              <div style={{ lineHeight: 1.7 }}>
+                <div>
+                  Captación estimada: <strong>{(market.radiusM / 1000).toLocaleString('es-DO', { maximumFractionDigits: 1 })} km</strong>{' '}
+                  a la redonda ({marketMinutes} min {marketMode === 'walk' ? 'a pie' : 'en carro'})
+                </div>
+                {market.households !== null && (
+                  <div>
+                    🏠 <strong>{market.households.toLocaleString('es-DO')}</strong> hogares
+                    {market.populationEst !== null && <> · ~{market.populationEst.toLocaleString('es-DO')} personas</>}
+                  </div>
+                )}
+                {market.demandRD !== null && (
+                  <div>
+                    💰 Demanda del rubro: <strong>{formatRD(market.demandRD)}/mes</strong>
+                  </div>
+                )}
+                <div>
+                  🏢 <strong>{market.competitorsIn}</strong> {category.competitorLabel.toLowerCase()} en la captación
+                  {market.saturation !== null && market.per10k !== null && market.provincialPer10k !== null && (
+                    <>
+                      {' '}
+                      <span
+                        style={{
+                          fontSize: '9.5px', fontWeight: 700, color: '#fff', borderRadius: '8px', padding: '1px 7px',
+                          background: SATURATION_META[market.saturation].color,
+                        }}
+                      >
+                        {SATURATION_META[market.saturation].label}
+                      </span>
+                      <span style={{ display: 'block', fontSize: '10px', color: '#6b7280' }}>
+                        {market.per10k.toFixed(1)} /10k hab. vs. {market.provincialPer10k.toFixed(1)} promedio provincial
+                      </span>
+                    </>
+                  )}
+                </div>
+                {market.huffShare !== null && (
+                  <div>
+                    📈 Cuota de captura (Huff): <strong>{Math.round(market.huffShare * 100)}%</strong>
+                    {market.salesPotentialRD !== null && (
+                      <> · ventas potenciales <strong>{formatRD(market.salesPotentialRD)}/mes</strong></>
+                    )}
+                  </div>
+                )}
+                {market.overlaps.length > 0 && market.overlaps[0].overlapPct > 0 && (
+                  <div style={{ marginTop: '4px' }}>
+                    <span style={{ fontWeight: 700 }}>Solape de captación (canibalización):</span>
+                    {market.overlaps
+                      .filter((o) => o.overlapPct > 0)
+                      .map((o, i) => (
+                        <span key={i} style={{ display: 'block', fontSize: '11px', color: '#6b7280' }}>
+                          {o.name} — {formatDistance(o.distanceM)} · <strong>{o.overlapPct}%</strong> de solape
+                        </span>
+                      ))}
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={onSaveSpot}
+                disabled={savedSpots.length >= 3}
+                style={{
+                  width: '100%', marginTop: '8px', padding: '5px 10px', fontSize: '11.5px', fontWeight: 600,
+                  background: savedSpots.length >= 3 ? '#e5e7eb' : '#fffbeb',
+                  color: savedSpots.length >= 3 ? '#9ca3af' : '#b45309',
+                  border: '1px solid ' + (savedSpots.length >= 3 ? '#d1d5db' : '#fde68a'),
+                  borderRadius: '6px', cursor: savedSpots.length >= 3 ? 'not-allowed' : 'pointer',
+                }}
+              >
+                ⚖️ Guardar en el comparador ({savedSpots.length}/3)
+              </button>
+              <p style={{ fontSize: '9.5px', color: '#9ca3af', margin: '6px 0 0' }}>
+                Captación aproximada (círculo equivalente por velocidad media urbana, no red vial). Demanda: hogares
+                × gasto estimado del rubro (ENGIH aprox.) ajustado por nivel socioeconómico. Huff: atractividad
+                igual entre locales, fricción distancia². Cifras orientativas.
+              </p>
             </div>
           )}
 

@@ -6,6 +6,8 @@ import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
 import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
 import type { TargetSegment } from './lib/grid';
+import { computeMarket, catchmentRadiusM, CATCHMENT_MINUTES } from './lib/market';
+import type { TravelMode, SavedSpot } from './lib/market';
 import { loadBarrios, barrioAt } from './lib/barrios';
 import type { BarrioIndex } from './lib/barrios';
 import { distanceMeters } from './lib/geo';
@@ -76,6 +78,9 @@ export default function App({ location }: AppProps) {
   const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
   const [target, setTarget] = useState<TargetSegment>(initial.target);
   const [barrioIndex, setBarrioIndex] = useState<BarrioIndex | null>(null);
+  const [marketMode, setMarketMode] = useState<TravelMode>('walk');
+  const [marketMinutes, setMarketMinutes] = useState(10);
+  const [savedSpots, setSavedSpots] = useState<SavedSpot[]>([]);
   const [showHeatmap, setShowHeatmap] = useState(initial.showHeatmap);
   const [showGrid, setShowGrid] = useState(initial.showGrid);
   const [showCompetitors, setShowCompetitors] = useState(initial.showCompetitors);
@@ -134,6 +139,7 @@ export default function App({ location }: AppProps) {
       setSelectedPoint(null);
       setMyLocation(null);
       setComparisonCells([]);
+      setSavedSpots([]);
     }
     setLoading(true);
     setError(null);
@@ -156,9 +162,10 @@ export default function App({ location }: AppProps) {
   }, [location, locationConfig.bbox]);
 
   // Los scores de la comparación dependen del rubro: al cambiarlo dejan de
-  // ser comparables y se vacía la selección.
+  // ser comparables y se vacía la selección (celdas y ubicaciones guardadas).
   useEffect(() => {
     setComparisonCells([]);
+    setSavedSpots([]);
   }, [category]);
 
   const grid = useMemo(
@@ -190,6 +197,24 @@ export default function App({ location }: AppProps) {
       ...result,
     };
   }, [selectedPoint, pois, category, grid, location, barrioIndex]);
+
+  // Análisis de mercado de la captación del punto (isócrona estimada, demanda,
+  // Huff, saturación, canibalización).
+  const market = useMemo(() => {
+    if (!selectedPoint || !pois.length) return null;
+    return computeMarket(selectedPoint.point, marketMode, marketMinutes, {
+      barrios: barrioIndex,
+      competitors,
+      category,
+      location,
+    });
+  }, [selectedPoint, pois.length, marketMode, marketMinutes, barrioIndex, competitors, category, location]);
+
+  // Radios 5/10/15 min del modo activo, para los anillos de captación del mapa.
+  const catchmentRadii = useMemo(
+    () => CATCHMENT_MINUTES.map((m) => catchmentRadiusM(marketMode, m)),
+    [marketMode],
+  );
 
   // Análisis fijo en "mi ubicación" (independiente del punto seleccionado).
   const myAnalysis = useMemo(() => {
@@ -237,6 +262,36 @@ export default function App({ location }: AppProps) {
     if (show) setShowHeatmap(false);
   }
 
+  // Comparador de ubicaciones: guarda una instantánea del punto analizado
+  // (hasta 3) para verlas lado a lado.
+  function handleSaveSpot() {
+    if (!pointAnalysis || !market) return;
+    setSavedSpots((prev) => {
+      if (prev.length >= 3) return prev;
+      const exists = prev.some(
+        (s) =>
+          Math.abs(s.point.lat - pointAnalysis.point.lat) < 1e-6 &&
+          Math.abs(s.point.lon - pointAnalysis.point.lon) < 1e-6,
+      );
+      if (exists) return prev;
+      return [
+        ...prev,
+        {
+          id: Date.now(),
+          label: pointAnalysis.label,
+          point: pointAnalysis.point,
+          score: pointAnalysis.score,
+          barrio: pointAnalysis.barrio ? `${pointAnalysis.barrio.n} (${pointAnalysis.barrio.m})` : null,
+          market,
+        },
+      ];
+    });
+  }
+
+  function handleRemoveSpot(id: number) {
+    setSavedSpots((prev) => prev.filter((s) => s.id !== id));
+  }
+
   function handleToggleComparison(cell: GridCell) {
     setComparisonCells((prev) => {
       const isAlreadySelected = prev.some((c) => c.row === cell.row && c.col === cell.col);
@@ -275,6 +330,14 @@ export default function App({ location }: AppProps) {
         onSetMyLocation={setMyLocation}
         myAnalysis={myAnalysis}
         nearestCompetitors={nearestCompetitors}
+        market={market}
+        marketMode={marketMode}
+        onMarketModeChange={setMarketMode}
+        marketMinutes={marketMinutes}
+        onMarketMinutesChange={setMarketMinutes}
+        savedSpots={savedSpots}
+        onSaveSpot={handleSaveSpot}
+        onRemoveSpot={handleRemoveSpot}
       />
       <main className="map-area">
         <MapView
@@ -286,6 +349,11 @@ export default function App({ location }: AppProps) {
           selectedCell={selectedCell}
           onSelectCell={handleSelectCell}
           comparisonCells={comparisonCells}
+          selectedPoint={selectedPoint?.point ?? null}
+          catchmentRadii={catchmentRadii}
+          marketMinutes={marketMinutes}
+          marketMode={marketMode}
+          savedSpots={savedSpots}
           myLocation={myLocation}
           nearestCompetitors={nearestCompetitors}
           showHeatmap={showHeatmap}

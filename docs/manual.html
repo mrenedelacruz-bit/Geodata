@@ -71,7 +71,7 @@
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Santo Domingo · Puerto Plata · La Altagracia · San Cristóbal · Santiago · La Vega · La Romana<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 7.4</div>
+    <div><strong>Versión:</strong> 7.5</div>
     <div><strong>Fecha:</strong> Agosto 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
@@ -251,7 +251,34 @@ Permite fijar tu ubicación (actual o propuesta) y ver cómo queda frente a la c
     misma comparación. Usa <span class="kbd">Quitar</span> para retirarla.</li>
 </ol>
 
-<h2>7. Top 10 zonas recomendadas</h2>
+<h2>7. Análisis de mercado del punto (captación, demanda, Huff)</h2>
+<p>Al analizar un punto, el bloque <em>“🎯 Análisis de mercado”</em> añade el estudio de mercado de su
+área de captación:</p>
+<ul>
+  <li><strong>Área de captación (isócrona estimada):</strong> elige el modo (🚶 a pie / 🚗 en carro) y el
+  tiempo (5, 10 o 15 min). El radio se estima con velocidad media urbana (4.5 km/h a pie, 20 km/h en carro)
+  dividida por el factor de desvío de la trama vial (~1.3). Los tres anillos se dibujan en el mapa alrededor
+  del punto; el anillo activo se resalta. Es un círculo equivalente, no un cálculo sobre la red vial.</li>
+  <li><strong>Hogares y personas en la captación:</strong> suma de los hogares SIUBEN de los barrios cubiertos
+  (fracción de área cubierta por barrio), calibrada al total de hogares del Censo 2022 de la provincia.</li>
+  <li><strong>Demanda potencial del rubro (RD$/mes):</strong> hogares × gasto mensual estimado del hogar en el
+  rubro (fracciones alineadas a la estructura de gasto ENGIH, aprox.) ajustado por el nivel socioeconómico de la
+  captación. En rubros B2B (transporte de carga, dealers) no se proyecta.</li>
+  <li><strong>Saturación relativa:</strong> competidores por 10,000 habitantes dentro de la captación comparados
+  con el promedio provincial — Oportunidad (verde, &lt;0.8×), Moderado (ámbar) o Saturado (rojo, &gt;1.3×).</li>
+  <li><strong>Cuota de captura (modelo de Huff):</strong> probabilidad media de que los hogares de la captación
+  elijan el nuevo local frente a los competidores existentes (modelo gravitacional clásico: atractividad igual,
+  fricción distancia²), y las <strong>ventas potenciales</strong> = demanda × cuota.</li>
+  <li><strong>Canibalización:</strong> % de solape del área de captación propia con la de los 3 competidores más
+  cercanos — cuánto mercado compartirían.</li>
+</ul>
+<p><strong>Comparador de ubicaciones:</strong> con <span class="kbd">⚖️ Guardar en el comparador</span> puedes
+fijar hasta 3 puntos (marcados A/B/C en el mapa) y verlos lado a lado: score, barrio, hogares, demanda,
+competencia, saturación, cuota Huff y ventas potenciales. El comparador se vacía al cambiar de rubro o ciudad, y
+se incluye en el reporte PDF junto con el análisis de mercado del punto activo. Todas estas cifras son
+orientativas: apoyan la decisión, no sustituyen un estudio de mercado formal.</p>
+
+<h2>8. Top 10 zonas recomendadas</h2>
 <p>
 El panel <em>“Top 10 zonas recomendadas”</em> lista las celdas con mayor score para el rubro
 seleccionado, con sus coordenadas, número de competidores cercanos y una etiqueta de
@@ -259,7 +286,7 @@ seleccionado, con sus coordenadas, número de competidores cercanos y una etique
 centrar el análisis en ella.
 </p>
 
-<h2>8. Totalizador por tipo de negocio</h2>
+<h2>9. Totalizador por tipo de negocio</h2>
 <p>
 Panel debajo del Top 10 que muestra, para <strong>todas las categorías de negocio</strong>, cuántos
 establecimientos de cada tipo existen en toda la ciudad activa —
@@ -276,7 +303,7 @@ Sirve para tener una vista rápida de qué tan saturado o desatendido está cada
 completa, antes de entrar al detalle por zona.
 </div>
 
-<h2>9. Comparación de zonas</h2>
+<h2>10. Comparación de zonas</h2>
 <p>Permite comparar <strong>hasta 2 zonas lado a lado</strong> antes de decidir:</p>
 <ol>
   <li>En el Top 10, presiona el botón <span class="kbd">+</span> junto a una zona para agregarla a la comparación (el botón cambia a <span class="kbd">✓</span>).</li>
@@ -293,7 +320,7 @@ completa, antes de entrar al detalle por zona.
   <li>Usa <span class="kbd">Quitar</span> en una tarjeta para sacarla, o <span class="kbd">Limpiar</span> para vaciar toda la comparación.</li>
 </ol>
 
-<h2>10. Saturación de mercado</h2>
+<h2>11. Saturación de mercado</h2>
 <p>
 Indica, para cada celda de la cuadrícula, si conviene abrir el negocio elegido según su propia
 proporción de competencia frente a la demanda disponible <strong>en esa misma celda</strong> (no se
@@ -310,7 +337,7 @@ compara contra el promedio del área). Se calcula así:
 </table>
 <p>La etiqueta aparece junto al score de cada zona en el panel <strong>Top 10 zonas recomendadas</strong>, como una píldora de color.</p>
 
-<h2>11. Establecimientos agregados manualmente</h2>
+<h2>12. Establecimientos agregados manualmente</h2>
 <p>
 Algunos negocios reales aún no están mapeados en OpenStreetMap. La aplicación los incorpora
 manualmente con coordenadas verificadas (Google Maps / reporte directo) y los distingue con
@@ -338,14 +365,14 @@ aplicación detecta automáticamente la coincidencia (mismo tipo a menos de 150 
 dos veces.
 </div>
 
-<h2>12. Datos, caché y rendimiento</h2>
+<h2>13. Datos, caché y rendimiento</h2>
 <ul>
   <li><strong>Datos en vivo:</strong> al abrir la app se consultan los POIs y vías desde la API de Overpass (OpenStreetMap).</li>
   <li><strong>Caché local (12 horas):</strong> los datos descargados se guardan en el navegador. Las recargas dentro de ese período son instantáneas y no dependen de la red.</li>
   <li><strong>Tolerancia a fallos:</strong> si la API está saturada (error 429) o sin conexión, la app usa automáticamente la última copia guardada, aunque esté vencida.</li>
 </ul>
 
-<h2>13. Fuentes de datos y limitaciones</h2>
+<h2>14. Fuentes de datos y limitaciones</h2>
 <ul>
   <li><strong>POIs y vías:</strong> © OpenStreetMap contributors (licencia ODbL). La cobertura depende de qué tan mapeada esté cada zona.</li>
   <li><strong>Población:</strong> X Censo Nacional de Población y Vivienda 2022 — <em>cifras definitivas</em> del Informe General (ONE, ajustadas por la Encuesta de Control de Cobertura y Calidad), mostradas en el panel lateral y en el reporte exportado:
@@ -390,7 +417,7 @@ dos veces.
 comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilidad formal</strong>.
 </div>
 
-<h2>14. Preguntas frecuentes</h2>
+<h2>15. Preguntas frecuentes</h2>
 <h3>¿Por qué no veo un negocio que sé que existe?</h3>
 <p>Probablemente aún no está mapeado en OpenStreetMap. Puede reportarse para incorporarlo manualmente con coordenadas verificadas (ver sección 11).</p>
 <h3>¿Por qué la primera carga tarda unos segundos?</h3>
@@ -401,7 +428,7 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <p>La población provincial proviene del X Censo Nacional 2022 (ONE, Informe General con cifras definitivas). El poder adquisitivo por sector es una estimación derivada de los estratos ICV municipales (SIUBEN/MEPyD, base Mapa de la Pobreza 2014); cuando el dato exacto del sector no está disponible, la app lo indica. La migración al modelo ICV-3 con cartografía del Censo 2022 está en proceso.</p>
 
 <div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v7.4 · Agosto 2026 —
+Asesor de Ubicación de Negocios · Manual de Usuario v7.5 · Agosto 2026 —
 Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
 Herramienta orientativa; no sustituye un estudio de mercado formal.
 </div>

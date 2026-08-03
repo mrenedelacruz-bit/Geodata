@@ -4,6 +4,8 @@ import type { Census2022, CensusSector, RegionalPoverty } from '../data/census';
 import type { MunicipioPop } from '../data/census2022-municipios';
 import { powerLabel } from '../data/census';
 import { saturationLabel } from './saturation';
+import { formatRD, SATURATION_META } from './market';
+import type { MarketAnalysis, SavedSpot } from './market';
 
 interface ReportPointAnalysis {
   label: string;
@@ -32,6 +34,8 @@ interface ReportData {
     byScore: { name: string; muni: string; score: number }[];
     byStratum: { name: string; muni: string; aPct: number }[];
   } | null;
+  market?: MarketAnalysis | null;
+  savedSpots?: SavedSpot[];
 }
 
 function esc(s: string): string {
@@ -57,6 +61,8 @@ export function openPrintReport(data: ReportData): void {
     siubenIcv,
     targetLabel,
     topBarrios,
+    market = null,
+    savedSpots = [],
   } = data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
   const appUrl = window.location.href;
@@ -91,6 +97,57 @@ export function openPrintReport(data: ReportData): void {
           .join(' · ')}</p>`
       : ''
   }`
+    : '';
+
+  const mercadoHtml = market
+    ? `
+  <h2>Análisis de mercado del punto (captación ${market.minutes} min ${market.mode === 'walk' ? 'a pie' : 'en carro'})</h2>
+  <table>
+    <tr><th>Radio de captación estimado</th><td>${(market.radiusM / 1000).toLocaleString('es-DO', { maximumFractionDigits: 1 })} km (círculo equivalente por velocidad media urbana)</td></tr>
+    ${market.households !== null ? `<tr><th>Hogares en la captación</th><td><strong>${market.households.toLocaleString('es-DO')}</strong>${market.populationEst !== null ? ` (~${market.populationEst.toLocaleString('es-DO')} personas)` : ''} — barrios SIUBEN calibrados al Censo 2022</td></tr>` : ''}
+    ${market.demandRD !== null ? `<tr><th>Demanda potencial del rubro</th><td><strong>${esc(formatRD(market.demandRD))}/mes</strong> (hogares × gasto estimado del rubro, ajustado por nivel socioeconómico)</td></tr>` : ''}
+    <tr><th>Competidores en la captación</th><td>${market.competitorsIn}${
+      market.saturation && market.per10k !== null && market.provincialPer10k !== null
+        ? ` — <strong>${esc(SATURATION_META[market.saturation].label)}</strong> (${market.per10k.toFixed(1)} por 10k hab. vs. ${market.provincialPer10k.toFixed(1)} promedio provincial)`
+        : ''
+    }</td></tr>
+    ${market.huffShare !== null ? `<tr><th>Cuota de captura (modelo Huff)</th><td><strong>${Math.round(market.huffShare * 100)}%</strong>${market.salesPotentialRD !== null ? ` — ventas potenciales <strong>${esc(formatRD(market.salesPotentialRD))}/mes</strong>` : ''}</td></tr>` : ''}
+    ${
+      market.overlaps.filter((o) => o.overlapPct > 0).length
+        ? `<tr><th>Canibalización (solape de captación)</th><td>${market.overlaps
+            .filter((o) => o.overlapPct > 0)
+            .map((o) => `${esc(o.name)} (${o.distanceM.toLocaleString('es-DO')} m, ${o.overlapPct}%)`)
+            .join(' · ')}</td></tr>`
+        : ''
+    }
+  </table>
+  <p class="mini">Captación aproximada (no red vial). Demanda: gasto de hogares estimado (estructura ENGIH aprox.).
+  Huff: atractividad igual entre locales, fricción distancia². Cifras orientativas — no sustituyen un estudio formal.</p>`
+    : '';
+
+  const comparadorHtml = savedSpots.length
+    ? `
+  <h2>Comparador de ubicaciones</h2>
+  <table class="lista">
+    <tr><th>Ubicación</th><th>Score</th><th>Barrio</th><th>Hogares</th><th>Demanda/mes</th><th>Compet.</th><th>Saturación</th><th>Huff</th><th>Ventas pot./mes</th></tr>
+    ${savedSpots
+      .map(
+        (s, i) =>
+          `<tr><td><strong>${String.fromCharCode(65 + i)}</strong> · ${esc(s.label)}</td><td>${s.score ?? '—'}</td><td>${
+            s.barrio ? esc(s.barrio) : '—'
+          }</td><td>${s.market.households?.toLocaleString('es-DO') ?? '—'}</td><td>${
+            s.market.demandRD !== null ? esc(formatRD(s.market.demandRD)) : '—'
+          }</td><td>${s.market.competitorsIn}</td><td>${
+            s.market.saturation ? esc(SATURATION_META[s.market.saturation].label) : '—'
+          }</td><td>${s.market.huffShare !== null ? `${Math.round(s.market.huffShare * 100)}%` : '—'}</td><td>${
+            s.market.salesPotentialRD !== null ? esc(formatRD(s.market.salesPotentialRD)) : '—'
+          }</td></tr>`,
+      )
+      .join('')}
+  </table>
+  <p class="mini">Captación de ${savedSpots[0].market.minutes} min ${
+    savedSpots[0].market.mode === 'walk' ? 'a pie' : 'en carro'
+  } al momento de guardar cada ubicación.</p>`
     : '';
 
   const zonasHtml = topZones
@@ -159,6 +216,8 @@ export function openPrintReport(data: ReportData): void {
   }
 
   ${puntoHtml}
+  ${mercadoHtml}
+  ${comparadorHtml}
 
   <h2>Top 10 zonas recomendadas para ${esc(category.label.toLowerCase())}</h2>
   <table class="lista">

@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
-import { MapContainer, TileLayer, Rectangle, CircleMarker, Polyline, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Rectangle, Circle, CircleMarker, Polyline, Popup, useMapEvents } from 'react-leaflet';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
+import { CATCHMENT_MINUTES } from '../lib/market';
+import type { SavedSpot, TravelMode } from '../lib/market';
 import { getLocation } from '../data/locations';
 import { PROVINCE_BOUNDARIES } from '../data/province-boundaries';
 import { MUNICIPIO_BOUNDARIES } from '../data/municipio-boundaries';
@@ -35,6 +37,11 @@ interface Props {
   selectedCell: GridCell | null;
   onSelectCell: (cell: GridCell) => void;
   comparisonCells: GridCell[];
+  selectedPoint: LatLon | null;
+  catchmentRadii: number[];
+  marketMinutes: number;
+  marketMode: TravelMode;
+  savedSpots: SavedSpot[];
   myLocation: LatLon | null;
   nearestCompetitors: { poi: OsmPOI; distance: number }[];
   showHeatmap: boolean;
@@ -58,6 +65,11 @@ export default function MapView({
   selectedCell,
   onSelectCell,
   comparisonCells,
+  selectedPoint,
+  catchmentRadii,
+  marketMinutes,
+  marketMode,
+  savedSpots,
   myLocation,
   nearestCompetitors,
   showHeatmap,
@@ -177,6 +189,54 @@ export default function MapView({
             })}
 
         {showCompetitors && competitorMarkers}
+
+        {/* Anillos de captación estimada (5/10/15 min) alrededor del punto analizado. */}
+        {selectedPoint &&
+          catchmentRadii.map((r, i) => (
+            <Circle
+              key={`catch_${i}`}
+              center={[selectedPoint.lat, selectedPoint.lon]}
+              radius={r}
+              pathOptions={{
+                color: CATCHMENT_MINUTES[i] === marketMinutes ? '#0b5fa5' : '#64748b',
+                weight: CATCHMENT_MINUTES[i] === marketMinutes ? 2 : 1,
+                dashArray: '6 6',
+                fillColor: '#0b5fa5',
+                fillOpacity: CATCHMENT_MINUTES[i] === marketMinutes ? 0.05 : 0.015,
+                interactive: false,
+              }}
+            />
+          ))}
+        {selectedPoint && (
+          <CircleMarker
+            center={[selectedPoint.lat, selectedPoint.lon]}
+            radius={6}
+            pathOptions={{ color: '#ffffff', weight: 2, fillColor: '#0b5fa5', fillOpacity: 1 }}
+          >
+            <Popup>
+              <div style={{ fontSize: '12px' }}>
+                🎯 Punto analizado — anillos de captación estimada a{' '}
+                {marketMode === 'walk' ? 'pie' : 'carro'} ({CATCHMENT_MINUTES.join('/')} min)
+              </div>
+            </Popup>
+          </CircleMarker>
+        )}
+
+        {/* Ubicaciones guardadas en el comparador (A, B, C). */}
+        {savedSpots.map((s, i) => (
+          <CircleMarker
+            key={`spot_${s.id}`}
+            center={[s.point.lat, s.point.lon]}
+            radius={9}
+            pathOptions={{ color: '#ffffff', weight: 2.5, fillColor: '#f59e0b', fillOpacity: 1 }}
+          >
+            <Popup>
+              <div style={{ fontSize: '12px', fontWeight: 'bold' }}>
+                {String.fromCharCode(65 + i)} · {s.label}
+              </div>
+            </Popup>
+          </CircleMarker>
+        ))}
 
         {myLocation && (
           <>
