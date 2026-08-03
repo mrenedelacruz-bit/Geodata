@@ -88,14 +88,14 @@ export default function LayerControl({
         >
           <div
             className="swatch"
-            style={{ background: 'linear-gradient(135deg, #d32f2f, #fbc02d, #1b5e20)' }}
+            style={{ background: 'linear-gradient(135deg, #ddd0f5, #4c1d95)' }}
           />
           Nivel socioeconómico
           <div className="chk">{showCensus ? '✓' : ''}</div>
         </div>
         <div className="sub">
-          Poder adquisitivo por sector (Censo ONE 2022 + SIUBEN/MEPyD). Verde = alto, rojo = bajo.
-          Borde punteado = estimación.
+          Barrios oficiales SIUBEN por nivel socioeconómico: violeta oscuro = estrato alto, claro =
+          pobreza alta. Clic en un barrio para el detalle.
         </div>
       </div>
     </div>

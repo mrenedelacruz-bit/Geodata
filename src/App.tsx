@@ -43,12 +43,14 @@ function initialParams() {
       ? { lat: milat, lon: milon }
       : null;
   const capas = p.get('capas')?.split(',') ?? ['competencia'];
+  const grid = capas.includes('cuadricula');
   return {
     category,
     point,
     myLocation,
-    showHeatmap: capas.includes('calor'),
-    showGrid: capas.includes('cuadricula'),
+    // calor y cuadrícula son excluyentes; en enlaces viejos con ambas gana la cuadrícula
+    showHeatmap: capas.includes('calor') && !grid,
+    showGrid: grid,
     showCompetitors: capas.includes('competencia'),
     showCensus: capas.includes('censo'),
   };
@@ -188,6 +190,17 @@ export default function App({ location }: AppProps) {
     setSelectedPoint({ point: cell.center, label: `Zona (${cell.center.lat.toFixed(4)}, ${cell.center.lon.toFixed(4)})` });
   }
 
+  // Calor y cuadrícula son dos vistas del mismo score: excluyentes entre sí.
+  function handleHeatmapToggle(show: boolean) {
+    setShowHeatmap(show);
+    if (show) setShowGrid(false);
+  }
+
+  function handleGridToggle(show: boolean) {
+    setShowGrid(show);
+    if (show) setShowHeatmap(false);
+  }
+
   function handleToggleComparison(cell: GridCell) {
     setComparisonCells((prev) => {
       const isAlreadySelected = prev.some((c) => c.row === cell.row && c.col === cell.col);
@@ -237,9 +250,9 @@ export default function App({ location }: AppProps) {
           myLocation={myLocation}
           nearestCompetitors={nearestCompetitors}
           showHeatmap={showHeatmap}
-          onHeatmapToggle={setShowHeatmap}
+          onHeatmapToggle={handleHeatmapToggle}
           showGrid={showGrid}
-          onGridToggle={setShowGrid}
+          onGridToggle={handleGridToggle}
           showCompetitors={showCompetitors}
           onCompetitorsToggle={setShowCompetitors}
           showCensus={showCensus}

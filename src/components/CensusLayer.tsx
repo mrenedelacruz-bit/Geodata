@@ -32,11 +32,14 @@ const OFFICIAL_BARRIOS = new Set([
   'la-romana',
 ]);
 
-/** Verde (poca pobreza) → rojo (mucha), por % de hogares pobres ICV-1+2. */
+/**
+ * Familia violeta del nivel socioeconómico (misma que powerColor): oscuro =
+ * estrato alto (poca pobreza), claro = pobreza alta. % de hogares pobres ICV-1+2.
+ */
 function poorColor(p: number | null): string {
   if (p === null) return '#94a3b8';
-  const hue = Math.max(0, Math.min(120, 120 - (p / 85) * 120));
-  return `hsl(${hue}, 65%, 42%)`;
+  const l = 30 + Math.max(0, Math.min(1, p / 85)) * 55; // 30% (rico) → 85% (pobre)
+  return `hsl(262, 55%, ${Math.round(l)}%)`;
 }
 
 export default function CensusLayer({ location }: Props) {
