@@ -34,27 +34,27 @@ export interface CensusSector {
 export const CENSUS_SECTORS: CensusSector[] = [
   // ── San Cristóbal (cabecera provincial) ──
   { id: 'sc_centro', name: 'Centro / Parque Colón', municipio: 'San Cristóbal', center: { lat: 18.416, lon: -70.106 }, radiusKm: 1.0, purchasingPower: 0.5, dataQuality: 'estimated' },
-  { id: 'sc_madre_vieja', name: 'Madre Vieja Norte y Sur', municipio: 'San Cristóbal', center: { lat: 18.43, lon: -70.12 }, radiusKm: 1.2, purchasingPower: 0.38, dataQuality: 'estimated' },
-  { id: 'sc_canastica', name: 'Canastica / Jeringa', municipio: 'San Cristóbal', center: { lat: 18.4, lon: -70.1 }, radiusKm: 1.0, purchasingPower: 0.33, dataQuality: 'estimated' },
-  { id: 'sc_urbanizaciones', name: 'Urbanizaciones Norte (Villa Fundación / 5to Centenario)', municipio: 'San Cristóbal', center: { lat: 18.435, lon: -70.1 }, radiusKm: 1.0, purchasingPower: 0.52, dataQuality: 'estimated' },
-  { id: 'sc_hato_damas', name: 'Hato Damas / zona agrícola', municipio: 'San Cristóbal', center: { lat: 18.47, lon: -70.13 }, radiusKm: 1.4, purchasingPower: 0.3, dataQuality: 'estimated' },
+  { id: 'sc_madre_vieja', name: 'Madre Vieja Norte y Sur', municipio: 'San Cristóbal', center: { lat: 18.43, lon: -70.12 }, radiusKm: 1.2, purchasingPower: 0.38, povertyRate: 33.9, dataQuality: 'sourced' },
+  { id: 'sc_canastica', name: 'Canastica / Jeringa', municipio: 'San Cristóbal', center: { lat: 18.4, lon: -70.1 }, radiusKm: 1.0, purchasingPower: 0.33, povertyRate: 41.7, dataQuality: 'sourced' },
+  { id: 'sc_urbanizaciones', name: 'Urbanizaciones Norte (Villa Fundación / 5to Centenario)', municipio: 'San Cristóbal', center: { lat: 18.435, lon: -70.1 }, radiusKm: 1.0, purchasingPower: 0.52, povertyRate: 45.7, dataQuality: 'sourced' },
+  { id: 'sc_hato_damas', name: 'Hato Damas / zona agrícola', municipio: 'San Cristóbal', center: { lat: 18.47, lon: -70.13 }, radiusKm: 1.4, purchasingPower: 0.3, povertyRate: 44.6, dataQuality: 'sourced' },
 
   // ── Bajos de Haina y Nigua (corredor industrial/portuario) ──
   { id: 'haina_centro', name: 'Haina Centro / Puerto', municipio: 'Bajos de Haina', center: { lat: 18.415, lon: -70.034 }, radiusKm: 1.2, purchasingPower: 0.42, dataQuality: 'estimated' },
-  { id: 'haina_barrios', name: 'Barrios de Haina (El Carril / Gringo)', municipio: 'Bajos de Haina', center: { lat: 18.44, lon: -70.05 }, radiusKm: 1.2, purchasingPower: 0.3, dataQuality: 'estimated' },
+  { id: 'haina_barrios', name: 'Barrios de Haina (El Carril / Gringo)', municipio: 'Bajos de Haina', center: { lat: 18.44, lon: -70.05 }, radiusKm: 1.2, purchasingPower: 0.3, povertyRate: 36.4, dataQuality: 'sourced' },
   { id: 'nigua', name: 'San Gregorio de Nigua', municipio: 'San Gregorio de Nigua', center: { lat: 18.386, lon: -70.087 }, radiusKm: 1.2, purchasingPower: 0.35, dataQuality: 'estimated' },
 
   // ── Villa Altagracia (norte, Autopista Duarte) ──
   { id: 'villa_altagracia', name: 'Villa Altagracia Centro', municipio: 'Villa Altagracia', center: { lat: 18.672, lon: -70.17 }, radiusKm: 1.4, purchasingPower: 0.35, dataQuality: 'estimated' },
-  { id: 'medina', name: 'Medina / San José del Puerto', municipio: 'Villa Altagracia', center: { lat: 18.62, lon: -70.22 }, radiusKm: 1.4, purchasingPower: 0.27, dataQuality: 'estimated' },
+  { id: 'medina', name: 'Medina / San José del Puerto', municipio: 'Villa Altagracia', center: { lat: 18.62, lon: -70.22 }, radiusKm: 1.4, purchasingPower: 0.27, povertyRate: 65.0, dataQuality: 'sourced' },
 
   // ── Costa sur y valle ──
   { id: 'yaguate', name: 'Yaguate Centro', municipio: 'Yaguate', center: { lat: 18.335, lon: -70.183 }, radiusKm: 1.3, purchasingPower: 0.3, dataQuality: 'estimated' },
-  { id: 'palenque', name: 'Sabana Grande de Palenque / Playa', municipio: 'Sabana Grande de Palenque', center: { lat: 18.272, lon: -70.152 }, radiusKm: 1.3, purchasingPower: 0.32, dataQuality: 'estimated' },
+  { id: 'palenque', name: 'Sabana Grande de Palenque / Playa', municipio: 'Sabana Grande de Palenque', center: { lat: 18.272, lon: -70.152 }, radiusKm: 1.3, purchasingPower: 0.32, povertyRate: 24.1, dataQuality: 'sourced' },
 
   // ── Sierra (oeste) ──
   { id: 'cambita', name: 'Cambita Garabitos', municipio: 'Cambita Garabitos', center: { lat: 18.451, lon: -70.189 }, radiusKm: 1.3, purchasingPower: 0.29, dataQuality: 'estimated' },
-  { id: 'los_cacaos', name: 'Los Cacaos', municipio: 'Los Cacaos', center: { lat: 18.55, lon: -70.26 }, radiusKm: 1.3, purchasingPower: 0.26, dataQuality: 'estimated' },
+  { id: 'los_cacaos', name: 'Los Cacaos', municipio: 'Los Cacaos', center: { lat: 18.55, lon: -70.26 }, radiusKm: 1.3, purchasingPower: 0.26, povertyRate: 61.3, dataQuality: 'sourced' },
 ];
 
 const METERS_PER_DEG_LAT = 111_320;

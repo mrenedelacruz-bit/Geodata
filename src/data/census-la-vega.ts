@@ -33,15 +33,15 @@ export interface CensusSector {
 export const CENSUS_SECTORS: CensusSector[] = [
   // ── Concepción de La Vega (cabecera provincial) ──
   { id: 'lv_centro', name: 'Centro / Parque Duarte', municipio: 'La Vega', center: { lat: 19.222, lon: -70.529 }, radiusKm: 1.0, purchasingPower: 0.5, dataQuality: 'estimated' },
-  { id: 'lv_urbanizaciones', name: 'Urbanizaciones Norte (Villa Rosa / El Mirador)', municipio: 'La Vega', center: { lat: 19.235, lon: -70.52 }, radiusKm: 1.1, purchasingPower: 0.55, dataQuality: 'estimated' },
-  { id: 'lv_barrios_sur', name: 'Barrios del Sur (Palmarito / Río Verde)', municipio: 'La Vega', center: { lat: 19.205, lon: -70.54 }, radiusKm: 1.2, purchasingPower: 0.32, dataQuality: 'estimated' },
+  { id: 'lv_urbanizaciones', name: 'Urbanizaciones Norte (Villa Rosa / El Mirador)', municipio: 'La Vega', center: { lat: 19.235, lon: -70.52 }, radiusKm: 1.1, purchasingPower: 0.55, povertyRate: 35.5, dataQuality: 'sourced' },
+  { id: 'lv_barrios_sur', name: 'Barrios del Sur (Palmarito / Río Verde)', municipio: 'La Vega', center: { lat: 19.205, lon: -70.54 }, radiusKm: 1.2, purchasingPower: 0.32, povertyRate: 27.9, dataQuality: 'sourced' },
   { id: 'lv_zona_franca', name: 'Zona Franca / periferia industrial', municipio: 'La Vega', center: { lat: 19.25, lon: -70.55 }, radiusKm: 1.2, purchasingPower: 0.38, dataQuality: 'estimated' },
-  { id: 'lv_cutupu', name: 'Cutupú / Rincón', municipio: 'La Vega', center: { lat: 19.28, lon: -70.47 }, radiusKm: 1.3, purchasingPower: 0.28, dataQuality: 'estimated' },
+  { id: 'lv_cutupu', name: 'Cutupú / Rincón', municipio: 'La Vega', center: { lat: 19.28, lon: -70.47 }, radiusKm: 1.3, purchasingPower: 0.28, povertyRate: 47.7, dataQuality: 'sourced' },
 
   // ── Jarabacoa (turismo de montaña) ──
   { id: 'jarabacoa_centro', name: 'Jarabacoa Centro', municipio: 'Jarabacoa', center: { lat: 19.117, lon: -70.637 }, radiusKm: 1.1, purchasingPower: 0.5, dataQuality: 'estimated' },
   { id: 'jarabacoa_villas', name: 'Villas y proyectos de montaña', municipio: 'Jarabacoa', center: { lat: 19.14, lon: -70.62 }, radiusKm: 1.4, purchasingPower: 0.68, dataQuality: 'estimated' },
-  { id: 'jarabacoa_rural', name: 'Zona rural (Manabao dirección)', municipio: 'Jarabacoa', center: { lat: 19.08, lon: -70.7 }, radiusKm: 1.5, purchasingPower: 0.28, dataQuality: 'estimated' },
+  { id: 'jarabacoa_rural', name: 'Zona rural (Manabao dirección)', municipio: 'Jarabacoa', center: { lat: 19.08, lon: -70.7 }, radiusKm: 1.5, purchasingPower: 0.28, povertyRate: 59.1, dataQuality: 'sourced' },
 
   // ── Constanza (valle agrícola de altura) ──
   { id: 'constanza_centro', name: 'Constanza Centro', municipio: 'Constanza', center: { lat: 18.909, lon: -70.746 }, radiusKm: 1.2, purchasingPower: 0.4, dataQuality: 'estimated' },

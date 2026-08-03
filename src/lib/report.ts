@@ -176,9 +176,10 @@ export function openPrintReport(data: ReportData): void {
 
   <div class="pie">
     Generado con el Asesor de Ubicación de Negocios — <a href="${esc(appUrl)}">${esc(appUrl)}</a><br>
-    Datos: © OpenStreetMap contributors (ODbL) · Población: X Censo Nacional 2022 (ONE) · Poder adquisitivo:
-    estimaciones por estrato ICV municipal (SIUBEN/MEPyD). El puntaje es un modelo aproximado (demanda por
-    anclas ajustada por poder adquisitivo, menos densidad de competencia); no sustituye un estudio de mercado formal.
+    Datos: © OpenStreetMap contributors (ODbL) · Población: X Censo Nacional 2022 (ONE) · Pobreza por sector:
+    ICV oficial por barrio (SIUBEN Open Data) donde hay cifra directa; el resto, estimación alineada al modelo
+    ICV-3. El puntaje es un modelo aproximado (demanda por anclas ajustada por poder adquisitivo, menos densidad
+    de competencia); no sustituye un estudio de mercado formal.
   </div>
   <script>window.onload = () => window.print();</script>
 </body>

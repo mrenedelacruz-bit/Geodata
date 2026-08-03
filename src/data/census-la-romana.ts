@@ -34,17 +34,17 @@ export const CENSUS_SECTORS: CensusSector[] = [
   // ── La Romana ciudad (cabecera provincial) ──
   { id: 'lr_centro', name: 'Centro / Parque Central', municipio: 'La Romana', center: { lat: 18.428, lon: -68.972 }, radiusKm: 1.0, purchasingPower: 0.5, dataQuality: 'estimated' },
   { id: 'lr_buena_vista', name: 'Buena Vista Norte / Sur', municipio: 'La Romana', center: { lat: 18.445, lon: -68.965 }, radiusKm: 1.1, purchasingPower: 0.45, dataQuality: 'estimated' },
-  { id: 'lr_barrios_oeste', name: 'Barrios del Oeste (Villa Verde / Piedra Linda)', municipio: 'La Romana', center: { lat: 18.44, lon: -68.995 }, radiusKm: 1.2, purchasingPower: 0.32, dataQuality: 'estimated' },
+  { id: 'lr_barrios_oeste', name: 'Barrios del Oeste (Villa Verde / Piedra Linda)', municipio: 'La Romana', center: { lat: 18.44, lon: -68.995 }, radiusKm: 1.2, purchasingPower: 0.32, povertyRate: 41.0, dataQuality: 'sourced' },
   { id: 'lr_zona_franca', name: 'Zona Franca / Central Romana', municipio: 'La Romana', center: { lat: 18.445, lon: -69.005 }, radiusKm: 1.2, purchasingPower: 0.38, dataQuality: 'estimated' },
-  { id: 'lr_caleta', name: 'Caleta / costa oeste', municipio: 'La Romana', center: { lat: 18.43, lon: -69.04 }, radiusKm: 1.2, purchasingPower: 0.3, dataQuality: 'estimated' },
+  { id: 'lr_caleta', name: 'Caleta / costa oeste', municipio: 'La Romana', center: { lat: 18.43, lon: -69.04 }, radiusKm: 1.2, purchasingPower: 0.3, povertyRate: 43.7, dataQuality: 'sourced' },
 
   // ── Polo turístico de lujo (este) ──
   { id: 'casa_de_campo', name: 'Casa de Campo', municipio: 'La Romana', center: { lat: 18.405, lon: -68.905 }, radiusKm: 1.8, purchasingPower: 0.95, dataQuality: 'estimated' },
   { id: 'altos_chavon', name: 'Altos de Chavón / Marina', municipio: 'La Romana', center: { lat: 18.417, lon: -68.885 }, radiusKm: 1.2, purchasingPower: 0.85, dataQuality: 'estimated' },
 
   // ── Villa Hermosa (corredor hacia el norte) ──
-  { id: 'villa_hermosa', name: 'Villa Hermosa Centro', municipio: 'Villa Hermosa', center: { lat: 18.462, lon: -68.955 }, radiusKm: 1.3, purchasingPower: 0.32, dataQuality: 'estimated' },
-  { id: 'cumayasa', name: 'Cumayasa / corredor La Romana–San Pedro', municipio: 'Villa Hermosa', center: { lat: 18.44, lon: -69.07 }, radiusKm: 1.3, purchasingPower: 0.28, dataQuality: 'estimated' },
+  { id: 'villa_hermosa', name: 'Villa Hermosa Centro', municipio: 'Villa Hermosa', center: { lat: 18.462, lon: -68.955 }, radiusKm: 1.3, purchasingPower: 0.32, povertyRate: 22.6, dataQuality: 'sourced' },
+  { id: 'cumayasa', name: 'Cumayasa / corredor La Romana–San Pedro', municipio: 'Villa Hermosa', center: { lat: 18.44, lon: -69.07 }, radiusKm: 1.3, purchasingPower: 0.28, povertyRate: 48.0, dataQuality: 'sourced' },
 
   // ── Guaymate y bateyes del norte ──
   { id: 'guaymate', name: 'Guaymate Centro', municipio: 'Guaymate', center: { lat: 18.58, lon: -68.98 }, radiusKm: 1.4, purchasingPower: 0.26, dataQuality: 'estimated' },

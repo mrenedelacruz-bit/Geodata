@@ -606,11 +606,10 @@ export default function Sidebar({
         </p>
         <p>
           Datos: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>{' '}
-          contributors (ODbL). Población provincial: X Censo Nacional de Población y Vivienda 2022 (ONE). Poder
-          adquisitivo por sector: estimaciones derivadas de los estratos ICV municipales (SIUBEN/MEPyD); la
-          calibración sector por sector con el modelo ICV-3 (SIUBEN, 2024) está en proceso. El puntaje es un modelo
-          aproximado (demanda por anclas ajustada por poder adquisitivo, menos densidad de competencia); no sustituye
-          un estudio de mercado formal.
+          contributors (ODbL). Población: X Censo Nacional 2022 (ONE). Pobreza por sector: % oficial de hogares
+          pobres ICV del barrio (SIUBEN Open Data, ICV_BARRIOS) donde hay cifra directa — el panel lo indica; el
+          resto usa estimación alineada al modelo ICV-3. El puntaje es un modelo aproximado (demanda por anclas
+          ajustada por poder adquisitivo, menos densidad de competencia); no sustituye un estudio de mercado formal.
         </p>
       </footer>
     </aside>

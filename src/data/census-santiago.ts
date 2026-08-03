@@ -36,15 +36,15 @@ export interface CensusSector {
 export const CENSUS_SECTORS: CensusSector[] = [
   // ── Santiago de los Caballeros (cabecera, área metropolitana) ──
   { id: 'stgo_centro', name: 'Centro Histórico / Monumento', municipio: 'Santiago', center: { lat: 19.451, lon: -70.697 }, radiusKm: 1.0, purchasingPower: 0.55, dataQuality: 'estimated' },
-  { id: 'stgo_jardines', name: 'Los Jardines Metropolitanos / Villa Olga', municipio: 'Santiago', center: { lat: 19.465, lon: -70.684 }, radiusKm: 1.2, purchasingPower: 0.8, dataQuality: 'estimated' },
-  { id: 'stgo_cerros_gurabo', name: 'Cerros de Gurabo / La Trinitaria', municipio: 'Santiago', center: { lat: 19.478, lon: -70.67 }, radiusKm: 1.2, purchasingPower: 0.78, dataQuality: 'estimated' },
-  { id: 'stgo_gurabo', name: 'Gurabo / Llanos de Gurabo', municipio: 'Santiago', center: { lat: 19.495, lon: -70.66 }, radiusKm: 1.3, purchasingPower: 0.55, dataQuality: 'estimated' },
+  { id: 'stgo_jardines', name: 'Los Jardines Metropolitanos / Villa Olga', municipio: 'Santiago', center: { lat: 19.465, lon: -70.684 }, radiusKm: 1.2, purchasingPower: 0.8, povertyRate: 19.7, dataQuality: 'sourced' },
+  { id: 'stgo_cerros_gurabo', name: 'Cerros de Gurabo / La Trinitaria', municipio: 'Santiago', center: { lat: 19.478, lon: -70.67 }, radiusKm: 1.2, purchasingPower: 0.78, povertyRate: 19.1, dataQuality: 'sourced' },
+  { id: 'stgo_gurabo', name: 'Gurabo / Llanos de Gurabo', municipio: 'Santiago', center: { lat: 19.495, lon: -70.66 }, radiusKm: 1.3, purchasingPower: 0.55, povertyRate: 19.1, dataQuality: 'sourced' },
   { id: 'stgo_el_embrujo', name: 'El Embrujo / El Despertar', municipio: 'Santiago', center: { lat: 19.432, lon: -70.677 }, radiusKm: 1.0, purchasingPower: 0.62, dataQuality: 'estimated' },
-  { id: 'stgo_la_joya', name: 'La Joya / Baracoa', municipio: 'Santiago', center: { lat: 19.458, lon: -70.708 }, radiusKm: 0.9, purchasingPower: 0.42, dataQuality: 'estimated' },
-  { id: 'stgo_pekin', name: 'Pekín / Bella Vista', municipio: 'Santiago', center: { lat: 19.438, lon: -70.712 }, radiusKm: 1.0, purchasingPower: 0.34, dataQuality: 'estimated' },
-  { id: 'stgo_cienfuegos', name: 'Cienfuegos', municipio: 'Santiago', center: { lat: 19.474, lon: -70.741 }, radiusKm: 1.5, purchasingPower: 0.28, dataQuality: 'estimated' },
-  { id: 'stgo_los_salados', name: 'Los Salados / Ensanche Bermúdez', municipio: 'Santiago', center: { lat: 19.459, lon: -70.727 }, radiusKm: 1.1, purchasingPower: 0.3, dataQuality: 'estimated' },
-  { id: 'stgo_hato_yaque', name: 'Hato del Yaque', municipio: 'Santiago', center: { lat: 19.47, lon: -70.79 }, radiusKm: 1.3, purchasingPower: 0.27, dataQuality: 'estimated' },
+  { id: 'stgo_la_joya', name: 'La Joya / Baracoa', municipio: 'Santiago', center: { lat: 19.458, lon: -70.708 }, radiusKm: 0.9, purchasingPower: 0.42, povertyRate: 24.1, dataQuality: 'sourced' },
+  { id: 'stgo_pekin', name: 'Pekín / Bella Vista', municipio: 'Santiago', center: { lat: 19.438, lon: -70.712 }, radiusKm: 1.0, purchasingPower: 0.34, povertyRate: 19.6, dataQuality: 'sourced' },
+  { id: 'stgo_cienfuegos', name: 'Cienfuegos', municipio: 'Santiago', center: { lat: 19.474, lon: -70.741 }, radiusKm: 1.5, purchasingPower: 0.28, povertyRate: 30.5, dataQuality: 'sourced' },
+  { id: 'stgo_los_salados', name: 'Los Salados / Ensanche Bermúdez', municipio: 'Santiago', center: { lat: 19.459, lon: -70.727 }, radiusKm: 1.1, purchasingPower: 0.3, povertyRate: 22.0, dataQuality: 'sourced' },
+  { id: 'stgo_hato_yaque', name: 'Hato del Yaque', municipio: 'Santiago', center: { lat: 19.47, lon: -70.79 }, radiusKm: 1.3, purchasingPower: 0.27, povertyRate: 37.7, dataQuality: 'sourced' },
   { id: 'stgo_matanzas', name: 'Aeropuerto del Cibao / Matanzas', municipio: 'Santiago', center: { lat: 19.4, lon: -70.6 }, radiusKm: 1.4, purchasingPower: 0.4, dataQuality: 'estimated' },
 
   // ── Corredor este (Tamboril / Licey / Puñal) ──
@@ -60,7 +60,7 @@ export const CENSUS_SECTORS: CensusSector[] = [
   { id: 'sajoma', name: 'San José de las Matas Centro', municipio: 'San José de las Matas', center: { lat: 19.339, lon: -70.943 }, radiusKm: 1.3, purchasingPower: 0.32, dataQuality: 'estimated' },
   { id: 'janico', name: 'Jánico', municipio: 'Jánico', center: { lat: 19.3, lon: -70.79 }, radiusKm: 1.2, purchasingPower: 0.28, dataQuality: 'estimated' },
   { id: 'sabana_iglesia', name: 'Sabana Iglesia', municipio: 'Sabana Iglesia', center: { lat: 19.322, lon: -70.749 }, radiusKm: 1.1, purchasingPower: 0.28, dataQuality: 'estimated' },
-  { id: 'baitoa', name: 'Baitoa', municipio: 'Baitoa', center: { lat: 19.335, lon: -70.703 }, radiusKm: 1.1, purchasingPower: 0.29, dataQuality: 'estimated' },
+  { id: 'baitoa', name: 'Baitoa', municipio: 'Baitoa', center: { lat: 19.335, lon: -70.703 }, radiusKm: 1.1, purchasingPower: 0.29, povertyRate: 43.8, dataQuality: 'sourced' },
 ];
 
 const METERS_PER_DEG_LAT = 111_320;
