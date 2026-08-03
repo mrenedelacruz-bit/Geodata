@@ -166,6 +166,7 @@ const MEDIO_OVERRIDES = new Set([
   'General Antonio Duverge|Santo Domingo De Guzmán',
   'Cacique|Santo Domingo De Guzmán',
   'Centro De Los Heroes|Santo Domingo De Guzmán',
+  'Miramar|Santo Domingo De Guzmán',
 ]);
 
 const POPULAR_OVERRIDES = new Set([
