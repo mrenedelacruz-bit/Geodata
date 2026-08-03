@@ -146,6 +146,7 @@ const ELITE_MUNS = new Set(['Santo Domingo De Guzmán', 'Santiago']);
 const ALTO_OVERRIDES = new Set([
   'Los Cacicazgos|Santo Domingo De Guzmán',
   'La Julia|Santo Domingo De Guzmán',
+  'Julieta Morales|Santo Domingo De Guzmán',
 ]);
 
 const POPULAR_OVERRIDES = new Set([
@@ -160,7 +161,7 @@ export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: 
   const p = b.p;
   const a = b.a ?? 60;
   if (ALTO_OVERRIDES.has(`${b.n}|${b.m}`)) {
-    const l = 52 - Math.min(1, (a - 45) / 30) * 22;
+    const l = 52 - Math.max(0, Math.min(1, (a - 45) / 30)) * 22;
     return { cat: 'alto', label: 'Alto ingreso', color: `hsl(262, 60%, ${Math.round(l)}%)` };
   }
   if (p === null) return { cat: 'sin-dato', label: 'Sin cifra ICV', color: '#94a3b8' };
