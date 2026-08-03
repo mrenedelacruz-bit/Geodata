@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { BUSINESS_CATEGORIES } from '../data/categories';
 import { powerLabel, powerColor, sectorAt, census2022For, type CensusSector } from '../data/census';
 import { saturationLabel, saturationColor } from '../lib/saturation';
+import { municipiosFor } from '../data/census2022-municipios';
 import { formatDistance } from '../lib/geo';
 import { openPrintReport } from '../lib/report';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
@@ -69,6 +70,7 @@ export default function Sidebar({
   const [linkCopied, setLinkCopied] = useState(false);
 
   const census2022 = census2022For(location);
+  const municipios = municipiosFor(location);
 
   const isInComparison = (cell: GridCell) =>
     comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
@@ -95,6 +97,7 @@ export default function Sidebar({
       categoryTotals,
       poiCount,
       census2022,
+      municipios,
     });
   }
 
@@ -490,6 +493,48 @@ export default function Sidebar({
             ))}
         </ul>
       </div>
+
+      {municipios.length > 0 && (
+        <div className="panel">
+          <h2>Población por municipio</h2>
+          <p className="hint">Censo ONE 2022, cifras definitivas (Cuadro 4, Vol. I)</p>
+          <ul className="totals-list">
+            {municipios.map((m) => (
+              <li key={m.name} style={{ padding: '4px 4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{m.name}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#0ea5e9' }}>
+                    {m.population.toLocaleString('es-DO')}
+                  </span>
+                </div>
+                {m.dms && (
+                  <ul style={{ listStyle: 'none', margin: '2px 0 0', padding: '0 0 0 14px' }}>
+                    {m.dms.map((dm) => (
+                      <li
+                        key={dm.name}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: '11px',
+                          color: '#6b7280',
+                          padding: '1px 0',
+                        }}
+                      >
+                        <span>└ {dm.name} (DM)</span>
+                        <span>{dm.population.toLocaleString('es-DO')}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+          <p style={{ fontSize: '9.5px', color: '#9ca3af', marginTop: '4px' }}>
+            La población del municipio incluye la de sus distritos municipales (se listan los DM de 10 mil+
+            habitantes y polos de interés).
+          </p>
+        </div>
+      )}
 
       <footer>
         <p style={{ marginBottom: '8px' }}>

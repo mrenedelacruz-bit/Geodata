@@ -1,5 +1,6 @@
 import type { BusinessCategory, GridCell } from '../types';
 import type { CensusSector } from '../data/census';
+import type { MunicipioPop } from '../data/census2022-municipios';
 import { powerLabel } from '../data/census';
 import { saturationLabel } from './saturation';
 
@@ -21,6 +22,7 @@ interface ReportData {
   categoryTotals: { category: BusinessCategory; count: number }[];
   poiCount: number;
   census2022: { population: number; urbanPct: number } | null;
+  municipios: MunicipioPop[];
 }
 
 function esc(s: string): string {
@@ -33,7 +35,7 @@ function esc(s: string): string {
  * cliente — sin librerías extra ni backend.
  */
 export function openPrintReport(data: ReportData): void {
-  const { locationLabel, category, pointAnalysis, topZones, categoryTotals, poiCount, census2022 } = data;
+  const { locationLabel, category, pointAnalysis, topZones, categoryTotals, poiCount, census2022, municipios } = data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
   const appUrl = window.location.href;
 
@@ -122,6 +124,28 @@ export function openPrintReport(data: ReportData): void {
     <tr><th>Categoría</th><th>Establecimientos</th></tr>
     ${totalesHtml}
   </table>
+
+  ${
+    municipios.length
+      ? `<h2>Población por municipio (Censo ONE 2022, cifras definitivas)</h2>
+  <table class="lista">
+    <tr><th>Municipio</th><th>Población</th></tr>
+    ${municipios
+      .map(
+        (m) =>
+          `<tr><td>${esc(m.name)}</td><td>${m.population.toLocaleString('es-DO')}</td></tr>` +
+          (m.dms ?? [])
+            .map(
+              (dm) =>
+                `<tr><td style="padding-left:22px;color:#6b7280;">└ ${esc(dm.name)} (DM)</td><td style="color:#6b7280;">${dm.population.toLocaleString('es-DO')}</td></tr>`,
+            )
+            .join(''),
+      )
+      .join('')}
+  </table>
+  <p class="mini">Fuente: X Censo Nacional de Población y Vivienda 2022, Cuadro 4 del Volumen I (ONE). La población del municipio incluye la de sus distritos municipales.</p>`
+      : ''
+  }
 
   <div class="pie">
     Generado con el Asesor de Ubicación de Negocios — <a href="${esc(appUrl)}">${esc(appUrl)}</a><br>
