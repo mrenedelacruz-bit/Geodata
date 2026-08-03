@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { MapContainer, TileLayer, Rectangle, CircleMarker, Polyline, Popup, useMapEvents } from 'react-leaflet';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import { getLocation } from '../data/locations';
+import { PROVINCE_BOUNDARIES } from '../data/province-boundaries';
 import { formatDistance } from '../lib/geo';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
@@ -117,6 +118,14 @@ export default function MapView({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <ClickHandler onClick={onMapClick} />
+        {/* Límite provincial oficial (SIUBEN Open Data), solo contorno. */}
+        {(PROVINCE_BOUNDARIES[location] ?? []).map((ring, i) => (
+          <Polyline
+            key={`boundary_${i}`}
+            positions={[...ring, ring[0]]}
+            pathOptions={{ color: '#334155', weight: 1.6, opacity: 0.55, dashArray: '2 6', interactive: false }}
+          />
+        ))}
         {showHeatmap && <HeatmapLayerComponent grid={grid} />}
         {showCensus && <CensusLayer location={location} />}
         {showGrid &&
