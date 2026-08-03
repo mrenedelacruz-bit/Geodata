@@ -17,6 +17,7 @@ import { formatDistance } from '../lib/geo';
 import { openPrintReport } from '../lib/report';
 import { powerFromBarrio } from '../lib/barrios';
 import type { BarrioFeature, BarrioIndex } from '../lib/barrios';
+import { dgiiCountFor, DGII_CUTOFF } from '../data/dgii';
 import { formatRD, SATURATION_META, CATCHMENT_MINUTES } from '../lib/market';
 import type { MarketAnalysis, SavedSpot, TravelMode } from '../lib/market';
 import type { TargetSegment } from '../lib/grid';
@@ -837,12 +838,19 @@ export default function Sidebar({
                   {census2022 && (
                     <span style={{ display: 'block', fontSize: '9px', color: '#9ca3af' }}>
                       {((count / census2022.population) * 10000).toFixed(1)} /10k hab.
+                      {dgiiCountFor(c.id) !== null && (
+                        <> · RNC país: {dgiiCountFor(c.id)!.toLocaleString('es-DO')}</>
+                      )}
                     </span>
                   )}
                 </span>
               </li>
             ))}
         </ul>
+        <p style={{ fontSize: '9.5px', color: '#9ca3af', marginTop: '4px' }}>
+          "RNC país" = contribuyentes activos del rubro a nivel nacional (DGII, listado RNC al {DGII_CUTOFF}).
+          El conteo local proviene de OpenStreetMap y es la submuestra mapeada.
+        </p>
       </div>
 
       {topBarrios && (topBarrios.byStratum.length > 0 || topBarrios.byScore.length > 0) && (

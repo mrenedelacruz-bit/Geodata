@@ -6,6 +6,7 @@ import { powerLabel } from '../data/census';
 import { saturationLabel } from './saturation';
 import { formatRD, SATURATION_META } from './market';
 import type { MarketAnalysis, SavedSpot } from './market';
+import { dgiiCountFor, DGII_CUTOFF, DGII_COLMADOS } from '../data/dgii';
 
 interface ReportPointAnalysis {
   label: string;
@@ -168,7 +169,7 @@ export function openPrintReport(data: ReportData): void {
       (t) =>
         `<tr><td>${t.category.icon} ${esc(t.category.label)}</td><td>${t.count.toLocaleString('es-DO')}</td><td>${
           census2022 ? ((t.count / census2022.population) * 10000).toFixed(1) : '—'
-        }</td></tr>`,
+        }</td><td>${dgiiCountFor(t.category.id)?.toLocaleString('es-DO') ?? '—'}</td></tr>`,
     )
     .join('');
 
@@ -227,11 +228,14 @@ export function openPrintReport(data: ReportData): void {
 
   <h2>Totalizador por tipo de negocio en ${esc(locationLabel)}</h2>
   <table class="lista">
-    <tr><th>Categoría</th><th>Establecimientos</th><th>Por 10,000 habitantes</th></tr>
+    <tr><th>Categoría</th><th>Establecimientos (OSM)</th><th>Por 10,000 habitantes</th><th>RNC país (DGII)</th></tr>
     ${totalesHtml}
   </table>
   <p class="mini">La densidad por 10,000 habitantes usa la población del Censo ONE 2022; permite detectar rubros
-  sub-atendidos comparando entre provincias y categorías.</p>
+  sub-atendidos comparando entre provincias y categorías. "RNC país" = contribuyentes activos del rubro a nivel
+  nacional (DGII, listado RNC al ${DGII_CUTOFF}); dimensiona el mercado formal — el conteo OSM es la submuestra
+  mapeada localmente. Referencia del canal tradicional: ${DGII_COLMADOS.toLocaleString('es-DO')} colmados con RNC
+  activo vs. ~65,000 estimados por FENACERD (la mayoría del canal opera informal).</p>
 
   ${
     topBarrios && (topBarrios.byScore.length || topBarrios.byStratum.length)
