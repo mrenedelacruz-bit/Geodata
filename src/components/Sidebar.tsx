@@ -536,6 +536,7 @@ export default function Sidebar({
                     {m.viviendas !== undefined && (
                       <span style={{ fontSize: '9.5px', color: '#9ca3af', display: 'block' }}>
                         {m.viviendas.toLocaleString('es-DO')} viv.
+                        {m.urbanPct !== undefined ? ` · ${m.urbanPct}% urb.` : ''}
                       </span>
                     )}
                   </span>
