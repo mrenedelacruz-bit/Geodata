@@ -30,23 +30,29 @@ function moduleFor(location: string): CensusModule {
 }
 
 /**
- * Población por provincia — X Censo Nacional de Población y Vivienda 2022 (ONE),
- * resultados oficiales. Santo Domingo suma la provincia Santo Domingo
- * (2,769,589) y el Distrito Nacional (1,029,110) porque el módulo cubre el
- * Gran Santo Domingo completo.
+ * Cifras definitivas del X Censo Nacional de Población y Vivienda 2022 —
+ * Informe General (ONE, ajustado por la Encuesta de Control de Cobertura y
+ * Calidad). Santo Domingo suma la provincia Santo Domingo (2,769,588) y el
+ * Distrito Nacional (1,029,110) porque el módulo cubre el Gran Santo Domingo.
+ * urbanPct = % de la población en zona urbana, del mismo informe.
  */
-const POPULATION_2022: Record<string, number> = {
-  'santo-domingo': 3_798_699,
-  'puerto-plata': 338_354,
-  'la-altagracia': 446_060,
-  'san-cristobal': 689_828,
-  'santiago': 1_074_648,
-  'la-vega': 442_720,
-  'la-romana': 287_915,
+interface Census2022 {
+  population: number;
+  urbanPct: number;
+}
+
+const CENSUS_2022: Record<string, Census2022> = {
+  'santo-domingo': { population: 3_798_698, urbanPct: 87 },
+  'puerto-plata': { population: 338_355, urbanPct: 58 },
+  'la-altagracia': { population: 446_060, urbanPct: 77 },
+  'san-cristobal': { population: 688_828, urbanPct: 52 },
+  'santiago': { population: 1_074_679, urbanPct: 73 },
+  'la-vega': { population: 442_719, urbanPct: 48 },
+  'la-romana': { population: 287_914, urbanPct: 95 },
 };
 
-export function populationFor(location: string): number | null {
-  return POPULATION_2022[location] ?? null;
+export function census2022For(location: string): Census2022 | null {
+  return CENSUS_2022[location] ?? null;
 }
 
 export function getCensusSectors(location: string): SD.CensusSector[] {

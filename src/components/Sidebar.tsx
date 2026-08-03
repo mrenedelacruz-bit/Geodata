@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { BUSINESS_CATEGORIES } from '../data/categories';
-import { powerLabel, powerColor, sectorAt, populationFor, type CensusSector } from '../data/census';
+import { powerLabel, powerColor, sectorAt, census2022For, type CensusSector } from '../data/census';
 import { saturationLabel, saturationColor } from '../lib/saturation';
 import { formatDistance } from '../lib/geo';
 import { openPrintReport } from '../lib/report';
@@ -68,7 +68,7 @@ export default function Sidebar({
   const totalAllCategories = useMemo(() => categoryTotals.reduce((sum, t) => sum + t.count, 0), [categoryTotals]);
   const [linkCopied, setLinkCopied] = useState(false);
 
-  const population = populationFor(location);
+  const census2022 = census2022For(location);
 
   const isInComparison = (cell: GridCell) =>
     comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
@@ -94,7 +94,7 @@ export default function Sidebar({
       topZones,
       categoryTotals,
       poiCount,
-      population2022: population,
+      census2022,
     });
   }
 
@@ -128,9 +128,10 @@ export default function Sidebar({
       {loading && <p className="status">Cargando datos de OpenStreetMap para {locationLabel}…</p>}
       {error && <p className="status error">{error}</p>}
       {!loading && !error && <p className="status">{poiCount.toLocaleString('es-DO')} puntos de interés cargados</p>}
-      {population !== null && (
+      {census2022 && (
         <p className="status" style={{ marginTop: '-6px' }}>
-          👥 {population.toLocaleString('es-DO')} habitantes (Censo ONE 2022)
+          👥 {census2022.population.toLocaleString('es-DO')} habitantes · {census2022.urbanPct}% zona urbana (Censo
+          ONE 2022)
         </p>
       )}
 
