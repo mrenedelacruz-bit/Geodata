@@ -20,9 +20,17 @@ interface Barrio {
 /**
  * Provincias con cartografía oficial de barrios (SIUBEN Open Data,
  * INGRESO_BARRIOS geometrías + ICV_BARRIOS atributos, unidos por código).
- * Las demás usan los sectores aproximados dibujados a mano.
+ * Cobertura completa: las 7 provincias de la app.
  */
-const OFFICIAL_BARRIOS = new Set(['puerto-plata', 'la-altagracia', 'san-cristobal', 'santiago', 'la-vega']);
+const OFFICIAL_BARRIOS = new Set([
+  'santo-domingo',
+  'puerto-plata',
+  'la-altagracia',
+  'san-cristobal',
+  'santiago',
+  'la-vega',
+  'la-romana',
+]);
 
 /** Verde (poca pobreza) → rojo (mucha), por % de hogares pobres ICV-1+2. */
 function poorColor(p: number | null): string {
