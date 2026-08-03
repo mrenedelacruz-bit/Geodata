@@ -173,6 +173,28 @@ export function icvCategoryOf(power: number): { cat: string; label: string } {
   return { cat: 'ICV-I', label: 'pobreza extrema' };
 }
 
+/**
+ * Hogares por condición de pobreza ICV — dataset oficial "INGRESO PROVINCIA"
+ * del portal de datos abiertos de SIUBEN (siuben-open-data-siuben.hub.arcgis.com).
+ * pobres = hogares en pobreza extrema + moderada según ICV en el registro
+ * SIUBEN; pctHogares = esos hogares como % del total de hogares del censo
+ * 2022 (Cuadro 10). Es el piso oficial de pobreza identificada, no una
+ * encuesta de toda la población. Gran Santo Domingo suma DN + prov. SD.
+ */
+const SIUBEN_ICV: Record<string, { pobres: number; pctHogares: number }> = {
+  'santo-domingo': { pobres: 339_149, pctHogares: 26.0 }, // DN 69,781 + SD 269,368
+  'puerto-plata': { pobres: 26_074, pctHogares: 20.9 },
+  'la-altagracia': { pobres: 13_195, pctHogares: 7.7 }, // la extrema más baja del país (1.23%)
+  'san-cristobal': { pobres: 59_742, pctHogares: 26.8 },
+  'santiago': { pobres: 84_012, pctHogares: 22.3 },
+  'la-vega': { pobres: 35_246, pctHogares: 22.9 },
+  'la-romana': { pobres: 27_987, pctHogares: 29.0 },
+};
+
+export function siubenIcvFor(location: string): { pobres: number; pctHogares: number } | null {
+  return SIUBEN_ICV[location] ?? null;
+}
+
 export const POVERTY_CONTEXT_2025 = {
   rateGeneral: 17.3,
   rateExtrema: 2.2,

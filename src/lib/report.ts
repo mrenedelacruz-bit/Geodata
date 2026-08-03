@@ -25,6 +25,7 @@ interface ReportData {
   census2022: Census2022 | null;
   municipios: MunicipioPop[];
   poverty: RegionalPoverty | null;
+  siubenIcv: { pobres: number; pctHogares: number } | null;
 }
 
 function esc(s: string): string {
@@ -37,8 +38,18 @@ function esc(s: string): string {
  * cliente — sin librerías extra ni backend.
  */
 export function openPrintReport(data: ReportData): void {
-  const { locationLabel, category, pointAnalysis, topZones, categoryTotals, poiCount, census2022, municipios, poverty } =
-    data;
+  const {
+    locationLabel,
+    category,
+    pointAnalysis,
+    topZones,
+    categoryTotals,
+    poiCount,
+    census2022,
+    municipios,
+    poverty,
+    siubenIcv,
+  } = data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
   const appUrl = window.location.href;
 
@@ -119,6 +130,11 @@ export function openPrintReport(data: ReportData): void {
     poverty
       ? `<div class="meta">Pobreza monetaria general: ${poverty.povertyPct}% en la región ${esc(poverty.region)} (PIP ONE/MEPyD, 2025) · nacional ${NATIONAL_POVERTY.pct}% (${esc(NATIONAL_POVERTY.period)}, Hacienda y Economía)</div>
   <div class="meta">Contexto nacional 2025 (Boletín Anual de Pobreza Monetaria): pobreza general 17.3% (extrema 2.2%) · línea de pobreza RD$${POVERTY_CONTEXT_2025.lineGeneralRD.toLocaleString('es-DO')}/persona/mes (extrema RD$${POVERTY_CONTEXT_2025.lineExtremaRD.toLocaleString('es-DO')}) · ingreso per cápita RD$${POVERTY_CONTEXT_2025.ingresoPerCapitaRD.toLocaleString('es-DO')}/mes · Gini ${POVERTY_CONTEXT_2025.gini}</div>`
+      : ''
+  }
+  ${
+    siubenIcv
+      ? `<div class="meta">Hogares en pobreza según ICV (registro SIUBEN, datos abiertos): ${siubenIcv.pobres.toLocaleString('es-DO')} hogares · ${siubenIcv.pctHogares}% de los hogares del censo</div>`
       : ''
   }
 

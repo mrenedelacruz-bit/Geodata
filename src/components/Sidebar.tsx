@@ -7,6 +7,7 @@ import {
   census2022For,
   regionalPovertyFor,
   icvCategoryOf,
+  siubenIcvFor,
   NATIONAL_POVERTY,
   type CensusSector,
 } from '../data/census';
@@ -81,6 +82,7 @@ export default function Sidebar({
   const census2022 = census2022For(location);
   const municipios = municipiosFor(location);
   const poverty = regionalPovertyFor(location);
+  const siubenIcv = siubenIcvFor(location);
 
   const isInComparison = (cell: GridCell) =>
     comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
@@ -109,6 +111,7 @@ export default function Sidebar({
       census2022,
       municipios,
       poverty,
+      siubenIcv,
     });
   }
 
@@ -159,8 +162,14 @@ export default function Sidebar({
               {NATIONAL_POVERTY.pct}% ({NATIONAL_POVERTY.period})
             </div>
           )}
+          {siubenIcv && (
+            <div>
+              🏚️ {siubenIcv.pobres.toLocaleString('es-DO')} hogares en pobreza ICV (SIUBEN) ·{' '}
+              {siubenIcv.pctHogares}% de los hogares
+            </div>
+          )}
           <div style={{ fontSize: '10px', color: '#9ca3af' }}>
-            Censo ONE 2022 (Vol. I y V, definitivo) · PIP ONE/MEPyD 2025 · Hacienda y Economía 2026
+            Censo ONE 2022 · PIP ONE/MEPyD 2025 · Hacienda y Economía 2026 · SIUBEN Open Data
           </div>
         </div>
       )}
