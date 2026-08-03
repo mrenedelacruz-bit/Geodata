@@ -6,6 +6,7 @@ import {
   sectorAt,
   census2022For,
   regionalPovertyFor,
+  icvCategoryOf,
   NATIONAL_POVERTY,
   type CensusSector,
 } from '../data/census';
@@ -381,6 +382,13 @@ export default function Sidebar({
               {pointAnalysis.sector.povertyRate !== undefined && (
                 <div>Hogares pobres: {pointAnalysis.sector.povertyRate}% (SIUBEN)</div>
               )}
+              <div>
+                Estrato ICV-3 (aprox.):{' '}
+                <strong>
+                  {icvCategoryOf(pointAnalysis.sector.purchasingPower).cat} ·{' '}
+                  {icvCategoryOf(pointAnalysis.sector.purchasingPower).label}
+                </strong>
+              </div>
               <div style={{ fontSize: '10px', color: '#7a8a99', marginTop: '3px' }}>
                 {pointAnalysis.sector.dataQuality === 'sourced'
                   ? 'Fuente: SIUBEN/MEPyD · Censo ONE 2022'

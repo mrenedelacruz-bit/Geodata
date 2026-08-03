@@ -1,5 +1,5 @@
 import type { BusinessCategory, GridCell } from '../types';
-import { NATIONAL_POVERTY, POVERTY_CONTEXT_2025 } from '../data/census';
+import { NATIONAL_POVERTY, POVERTY_CONTEXT_2025, icvCategoryOf } from '../data/census';
 import type { Census2022, CensusSector, RegionalPoverty } from '../data/census';
 import type { MunicipioPop } from '../data/census2022-municipios';
 import { powerLabel } from '../data/census';
@@ -54,6 +54,7 @@ export function openPrintReport(data: ReportData): void {
       pointAnalysis.sector
         ? `<tr><th>Sector censal</th><td>${esc(pointAnalysis.sector.name)} · ${esc(pointAnalysis.sector.municipio)}</td></tr>
     <tr><th>Poder adquisitivo</th><td>${esc(powerLabel(pointAnalysis.sector.purchasingPower))}${pointAnalysis.sector.dataQuality === 'estimated' ? ' (estimación por estrato municipal)' : ' (SIUBEN/MEPyD)'}</td></tr>
+    <tr><th>Estrato ICV-3 (aprox.)</th><td>${esc(icvCategoryOf(pointAnalysis.sector.purchasingPower).cat)} · ${esc(icvCategoryOf(pointAnalysis.sector.purchasingPower).label)} (cortes oficiales Modelo ICV SIUBEN 3, 2024)</td></tr>
     ${pointAnalysis.sector.povertyRate !== undefined ? `<tr><th>Hogares pobres (SIUBEN)</th><td>${pointAnalysis.sector.povertyRate}%</td></tr>` : ''}`
         : ''
     }

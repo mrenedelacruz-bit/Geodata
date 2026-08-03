@@ -158,6 +158,21 @@ export const NATIONAL_POVERTY = { pct: 15.4, period: 'ene-mar 2026, preliminar' 
  * Monetaria ene-dic 2025 (Ministerio de Hacienda y Economía, CTP/ENCFT-BCRD).
  * Líneas de pobreza al T4-2025, en RD$ por persona al mes.
  */
+/**
+ * Categorías oficiales del Modelo ICV SIUBEN 3 (2024) — Cuadro 4.14, puntos
+ * de corte nacionales obtenidos por el método de Dalenius sobre la ENCFT 2020,
+ * en la escala ICV 0-100. El índice de poder adquisitivo de la app (0-1) se
+ * mapea a estas categorías como APROXIMACIÓN (escala propia alineada a los
+ * cortes oficiales), no como medición ICV certificada.
+ */
+export function icvCategoryOf(power: number): { cat: string; label: string } {
+  const icv = power * 100;
+  if (icv > 70.37) return { cat: 'ICV-IV', label: 'estrato alto' };
+  if (icv > 62.08) return { cat: 'ICV-III', label: 'estrato medio' };
+  if (icv > 49.66) return { cat: 'ICV-II', label: 'pobreza moderada' };
+  return { cat: 'ICV-I', label: 'pobreza extrema' };
+}
+
 export const POVERTY_CONTEXT_2025 = {
   rateGeneral: 17.3,
   rateExtrema: 2.2,
