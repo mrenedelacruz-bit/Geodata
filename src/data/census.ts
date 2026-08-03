@@ -36,7 +36,7 @@ function moduleFor(location: string): CensusModule {
  * Distrito Nacional (1,029,110) porque el módulo cubre el Gran Santo Domingo.
  * urbanPct = % de la población en zona urbana, del mismo informe.
  */
-interface Census2022 {
+export interface Census2022 {
   population: number;
   urbanPct: number;
   /** Hogares en viviendas particulares ocupadas (Cuadro 10, Vol. I). */

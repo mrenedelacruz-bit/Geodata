@@ -1,5 +1,5 @@
 import type { BusinessCategory, GridCell } from '../types';
-import type { CensusSector } from '../data/census';
+import type { Census2022, CensusSector } from '../data/census';
 import type { MunicipioPop } from '../data/census2022-municipios';
 import { powerLabel } from '../data/census';
 import { saturationLabel } from './saturation';
@@ -21,15 +21,7 @@ interface ReportData {
   topZones: GridCell[];
   categoryTotals: { category: BusinessCategory; count: number }[];
   poiCount: number;
-  census2022: {
-    population: number;
-    urbanPct: number;
-    hogares: number;
-    avgHogar: number;
-    ocupados: number;
-    empleadores: number;
-    growthPct: number;
-  } | null;
+  census2022: Census2022 | null;
   municipios: MunicipioPop[];
 }
 
