@@ -149,6 +149,21 @@ const ALTO_OVERRIDES = new Set([
   'Julieta Morales|Santo Domingo De Guzmán',
 ]);
 
+/**
+ * Barrios que la regla automática de élite sobreclasifica: pocos hogares
+ * registrados y alto % ICV-4 entre ellos, pero validación local dice que son
+ * clase media, no alta (edificios/zonas mixtas con poca penetración de
+ * registro que no reflejan el nivel real del barrio). Fuerza 'medio' incluso
+ * si cumplirían el umbral automático de élite.
+ */
+const MEDIO_OVERRIDES = new Set([
+  'Ciudad Universitaria|Santo Domingo De Guzmán',
+  'Gazcue|Santo Domingo De Guzmán',
+  'Miraflores|Santo Domingo De Guzmán',
+  'Los Jardines|Santo Domingo De Guzmán',
+  'San Geronimo|Santo Domingo De Guzmán',
+]);
+
 const POPULAR_OVERRIDES = new Set([
   'Los Tres Ojos|Santo Domingo Este',
   'San Isidro Adentro|Santo Domingo Este',
@@ -165,6 +180,10 @@ export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: 
     return { cat: 'alto', label: 'Alto ingreso', color: `hsl(262, 60%, ${Math.round(l)}%)` };
   }
   if (p === null) return { cat: 'sin-dato', label: 'Sin cifra ICV', color: '#94a3b8' };
+  if (MEDIO_OVERRIDES.has(`${b.n}|${b.m}`)) {
+    const l = 40 + (p / 35) * 28;
+    return { cat: 'medio', label: 'Ingreso medio', color: `hsl(180, 45%, ${Math.round(l)}%)` };
+  }
   const density = b.h / Math.max(0.05, barrioAreaKm2(b));
   const isAlto = ELITE_MUNS.has(b.m)
     ? a >= 45 && p < 15 && density < 800
