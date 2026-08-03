@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Circle, Polygon, Popup } from 'react-leaflet';
 import { getCensusSectors, powerColor, powerLabel } from '../data/census';
-import { loadBarrios } from '../lib/barrios';
+import { loadBarrios, classifyBarrio } from '../lib/barrios';
 import type { BarrioFeature } from '../lib/barrios';
 import type { CensusSector } from '../data/census';
 
@@ -24,31 +24,8 @@ const OFFICIAL_BARRIOS = new Set([
   'la-romana',
 ]);
 
-/**
- * Categoría socioeconómica del barrio a partir de su composición ICV:
- * - Alto ingreso (violeta): estrato alto ICV-4 dominante
- * - Ingreso medio (turquesa): el resto
- * - Pobreza (magenta): 35%+ de hogares pobres ICV-1+2
- * El tono se oscurece con el grado dentro de cada categoría.
- */
-function barrioCategory(b: BarrioFeature): { label: string; color: string } {
-  const p = b.p;
-  const a = b.a ?? 0;
-  if (p === null) return { label: 'Sin cifra ICV', color: '#94a3b8' };
-  if (a >= 60 || (a >= 45 && p < 20)) {
-    // Alto ingreso: más % ICV-4 → violeta más oscuro (45% → 85%+)
-    const l = 55 - Math.min(1, (a - 45) / 40) * 25;
-    return { label: 'Alto ingreso', color: `hsl(262, 60%, ${Math.round(l)}%)` };
-  }
-  if (p >= 35) {
-    // Pobreza: más % pobres → magenta más oscuro (35% → 85%)
-    const l = 62 - Math.min(1, (p - 35) / 50) * 27;
-    return { label: 'Pobreza', color: `hsl(330, 60%, ${Math.round(l)}%)` };
-  }
-  // Ingreso medio: menos pobreza → turquesa más oscuro
-  const l = 40 + (p / 35) * 28;
-  return { label: 'Ingreso medio', color: `hsl(180, 45%, ${Math.round(l)}%)` };
-}
+// La clasificación (con su corrección del sesgo del registro SIUBEN) vive en
+// lib/barrios.ts (classifyBarrio) para que capa, score y paneles coincidan.
 
 export default function CensusLayer({ location }: Props) {
   const official = OFFICIAL_BARRIOS.has(location);
@@ -81,7 +58,7 @@ export default function CensusLayer({ location }: Props) {
     return (
       <>
         {barrios.map((b, i) => {
-          const cat = barrioCategory(b);
+          const cat = classifyBarrio(b);
           return (
             <Polygon
               key={i}

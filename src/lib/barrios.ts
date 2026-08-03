@@ -91,17 +91,82 @@ export function barrioAt(idx: BarrioIndex, point: LatLon): BarrioFeature | null 
   return null;
 }
 
+const areaCache = new WeakMap<BarrioFeature, number>();
+
+/** Área aproximada del barrio en km² (shoelace con corrección de latitud). */
+export function barrioAreaKm2(b: BarrioFeature): number {
+  const hit = areaCache.get(b);
+  if (hit !== undefined) return hit;
+  let total = 0;
+  for (const ring of b.r) {
+    let sum = 0;
+    const cos = Math.cos((ring[0][0] * Math.PI) / 180);
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [lat1, lon1] = ring[i];
+      const [lat2, lon2] = ring[j];
+      sum += lon1 * cos * lat2 - lon2 * cos * lat1;
+    }
+    total += Math.abs(sum / 2) * 111.32 * 111.32;
+  }
+  areaCache.set(b, total);
+  return total;
+}
+
+export type BarrioCategory = 'alto' | 'medio' | 'pobreza' | 'sin-dato';
+
+/**
+ * Clasificación socioeconómica del barrio.
+ *
+ * El registro SIUBEN sobre-representa hogares vulnerables: en barrios de élite
+ * casi nadie se registra (Piantini: 22 hogares) mientras en barrios populares
+ * consolidados el registro es masivo y muchos alcanzan ICV-4 (que mide
+ * condiciones de vida adecuadas, no riqueza — ~29% del país). Por eso "alto
+ * ingreso" exige las dos señales de élite: ICV-4 dominante entre los pocos
+ * registrados Y baja penetración del registro (<800 hogares SIUBEN/km²).
+ */
+/**
+ * Municipios con distritos de élite consolidados, donde la señal
+ * "ICV-4 dominante + baja penetración del registro" es confiable. Fuera de
+ * ellos (periferias con suelo abierto que abarata la densidad) se exige
+ * evidencia más fuerte para "alto ingreso".
+ */
+const ELITE_MUNS = new Set(['Santo Domingo De Guzmán', 'Santiago']);
+
+export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: string; color: string } {
+  const p = b.p;
+  const a = b.a ?? 0;
+  if (p === null) return { cat: 'sin-dato', label: 'Sin cifra ICV', color: '#94a3b8' };
+  const density = b.h / Math.max(0.05, barrioAreaKm2(b));
+  const isAlto = ELITE_MUNS.has(b.m)
+    ? a >= 45 && p < 15 && density < 800
+    : a >= 55 && p < 12 && density < 600;
+  if (isAlto) {
+    const l = 52 - Math.min(1, (a - 45) / 30) * 22; // violeta: 52% → 30%
+    return { cat: 'alto', label: 'Alto ingreso', color: `hsl(262, 60%, ${Math.round(l)}%)` };
+  }
+  if (p >= 35) {
+    const l = 62 - Math.min(1, (p - 35) / 50) * 27; // magenta: 62% → 35%
+    return { cat: 'pobreza', label: 'Pobreza', color: `hsl(330, 60%, ${Math.round(l)}%)` };
+  }
+  const l = 40 + (p / 35) * 28; // turquesa: oscuro = media sólida
+  return { cat: 'medio', label: 'Ingreso medio', color: `hsl(180, 45%, ${Math.round(l)}%)` };
+}
+
 /**
  * Poder adquisitivo 0-1 desde la composición ICV oficial del barrio.
  * Curva logística sobre el % de hogares pobres, calibrada contra sectores
- * conocidos (Piantini ~0.95, Gazcue ~0.8, Capotillo ~0.27, La Zurza ~0.1),
- * con un impulso acotado por el % de estrato alto ICV-4.
+ * conocidos (Piantini ~0.95, Capotillo ~0.27, La Zurza ~0.1), con impulso por
+ * % ICV-4. El tope 0.78 aplica a barrios populares consolidados: solo los
+ * clasificados como élite (ICV-4 alto + baja penetración del registro) pueden
+ * superar ese techo — corrige el sesgo de composición del registro SIUBEN.
  */
 export function powerFromBarrio(b: BarrioFeature): number | null {
   if (b.p === null) return null;
   const base = 0.05 + 0.9 / (1 + Math.exp((b.p - 20) / 7));
   const boost = b.a !== null ? Math.min(0.15, b.a * 0.0025) : 0;
-  return Math.min(0.97, Math.max(0.05, base + boost));
+  const raw = Math.min(0.97, Math.max(0.05, base + boost));
+  const cap = classifyBarrio(b).cat === 'alto' ? 0.97 : 0.78;
+  return Math.min(cap, raw);
 }
 
 /** Poder en un punto usando barrios oficiales, con caché por celda. */
