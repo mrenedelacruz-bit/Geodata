@@ -115,16 +115,6 @@ export function barrioAreaKm2(b: BarrioFeature): number {
 export type BarrioCategory = 'alto' | 'medio' | 'pobreza' | 'sin-dato';
 
 /**
- * Clasificación socioeconómica del barrio.
- *
- * El registro SIUBEN sobre-representa hogares vulnerables: en barrios de élite
- * casi nadie se registra (Piantini: 22 hogares) mientras en barrios populares
- * consolidados el registro es masivo y muchos alcanzan ICV-4 (que mide
- * condiciones de vida adecuadas, no riqueza — ~29% del país). Por eso "alto
- * ingreso" exige las dos señales de élite: ICV-4 dominante entre los pocos
- * registrados Y baja penetración del registro (<800 hogares SIUBEN/km²).
- */
-/**
  * Municipios con distritos de élite consolidados, donde la señal
  * "ICV-4 dominante + baja penetración del registro" es confiable. Fuera de
  * ellos (periferias con suelo abierto que abarata la densidad) se exige
@@ -133,15 +123,11 @@ export type BarrioCategory = 'alto' | 'medio' | 'pobreza' | 'sin-dato';
 const ELITE_MUNS = new Set(['Santo Domingo De Guzmán', 'Santiago']);
 
 /**
- * Barrios populares donde el suelo abierto (parques, cañadas, lotes rurales)
- * abarata la densidad del registro y la señal automática falla. Validación
- * local: son barrios populares de ingreso bajo, no de ingreso medio.
- */
-/**
  * Barrios de élite que las reglas automáticas no alcanzan. Los Cacicazgos:
  * solo 17 hogares SIUBEN en 1 km² (16/km², la penetración más baja del DN,
- * firma de élite) pero <20 categorizados ⇒ sin % oficial. La Julia: sector
- * alto consolidado cuyo registro supera el umbral de densidad popular.
+ * firma de élite) pero <20 categorizados ⇒ sin % oficial. La Julia y Julieta
+ * Morales: sectores altos consolidados cuyo registro supera el umbral de
+ * densidad popular.
  */
 const ALTO_OVERRIDES = new Set([
   'Los Cacicazgos|Santo Domingo De Guzmán',
@@ -169,6 +155,11 @@ const MEDIO_OVERRIDES = new Set([
   'Miramar|Santo Domingo De Guzmán',
 ]);
 
+/**
+ * Barrios populares donde el suelo abierto (parques, cañadas, lotes rurales)
+ * abarata la densidad del registro y la señal automática falla. Validación
+ * local: son barrios populares de ingreso bajo, no de ingreso medio.
+ */
 const POPULAR_OVERRIDES = new Set([
   'Los Tres Ojos|Santo Domingo Este',
   'San Isidro Adentro|Santo Domingo Este',
@@ -186,6 +177,19 @@ const POPULAR_OVERRIDES = new Set([
  */
 const MUNI_INGRESO_BAJO = new Set(['Los Alcarrizos']);
 
+/**
+ * Clasificación socioeconómica del barrio.
+ *
+ * El registro SIUBEN sobre-representa hogares vulnerables: en barrios de élite
+ * casi nadie se registra (Piantini: 22 hogares) mientras en barrios populares
+ * consolidados el registro es masivo y muchos alcanzan ICV-4 (que mide
+ * condiciones de vida adecuadas, no riqueza — ~29% del país). Por eso "alto
+ * ingreso" exige las dos señales de élite: ICV-4 dominante entre los pocos
+ * registrados Y baja penetración del registro (<800 hogares SIUBEN/km²).
+ * Orden de evaluación: overrides de validación local (alto → medio) → regla
+ * automática de élite → pobreza extrema (≥35% ICV-1+2) → barrio popular
+ * (densidad de registro masiva o municipio de ingreso bajo) → ingreso medio.
+ */
 export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: string; color: string } {
   const p = b.p;
   const a = b.a ?? 60;

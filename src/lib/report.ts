@@ -146,13 +146,13 @@ export function openPrintReport(data: ReportData): void {
     ? `
   <h2>Comparador de ubicaciones</h2>
   <table class="lista">
-    <tr><th>Ubicación</th><th>Score</th><th>Barrio</th><th>Hogares</th><th>Demanda/mes</th><th>Compet.</th><th>Saturación</th><th>Expos. vehicular</th><th>Huff</th><th>Ventas pot./mes</th></tr>
+    <tr><th>Ubicación</th><th>Score</th><th>Barrio</th><th>Captación</th><th>Hogares</th><th>Demanda/mes</th><th>Compet.</th><th>Saturación</th><th>Expos. vehicular</th><th>Huff</th><th>Ventas pot./mes</th></tr>
     ${savedSpots
       .map(
         (s, i) =>
           `<tr><td><strong>${String.fromCharCode(65 + i)}</strong> · ${esc(s.label)}</td><td>${s.score ?? '—'}</td><td>${
             s.barrio ? esc(s.barrio) : '—'
-          }</td><td>${s.market.households?.toLocaleString('es-DO') ?? '—'}</td><td>${
+          }</td><td>${s.market.minutes} min ${s.market.mode === 'walk' ? 'a pie' : 'en carro'}</td><td>${s.market.households?.toLocaleString('es-DO') ?? '—'}</td><td>${
             s.market.demandRD !== null ? esc(formatRD(s.market.demandRD)) : '—'
           }</td><td>${s.market.competitorsIn}</td><td>${
             s.market.saturation ? esc(SATURATION_META[s.market.saturation].label) : '—'
@@ -164,9 +164,7 @@ export function openPrintReport(data: ReportData): void {
       )
       .join('')}
   </table>
-  <p class="mini">Captación de ${savedSpots[0].market.minutes} min ${
-    savedSpots[0].market.mode === 'walk' ? 'a pie' : 'en carro'
-  } al momento de guardar cada ubicación.</p>`
+  <p class="mini">Cada ubicación conserva la captación (modo y minutos) con la que se guardó.</p>`
     : '';
 
   const zonasHtml = topZones

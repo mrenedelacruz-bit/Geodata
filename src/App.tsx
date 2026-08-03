@@ -4,7 +4,7 @@ import MapView from './components/MapView';
 import Sidebar from './components/Sidebar';
 import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
-import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
+import { computeGrid, scoreAtPoint, findPoiAtPoint, cellAt } from './lib/grid';
 import type { TargetSegment } from './lib/grid';
 import { computeMarket, catchmentRadiusM, CATCHMENT_MINUTES } from './lib/market';
 import type { TravelMode, SavedSpot } from './lib/market';
@@ -21,13 +21,6 @@ import './App.css';
 
 interface AppProps {
   location: string;
-}
-
-/** Celda de la cuadrícula que contiene un punto (o undefined si cae fuera). */
-function cellAt(grid: GridCell[], p: LatLon): GridCell | undefined {
-  return grid.find(
-    (c) => p.lat >= c.bounds[0][0] && p.lat < c.bounds[1][0] && p.lon >= c.bounds[0][1] && p.lon < c.bounds[1][1],
-  );
 }
 
 /**
@@ -201,7 +194,7 @@ export default function App({ location }: AppProps) {
   const pointAnalysis = useMemo(() => {
     if (!selectedPoint || !pois.length) return null;
     const result = scoreAtPoint(pois, category, selectedPoint.point);
-    const cell = cellAt(grid, selectedPoint.point);
+    const cell = cellAt(grid, location, selectedPoint.point);
     const sector = sectorAt(selectedPoint.point, location);
     const barrio = barrioIndex ? barrioAt(barrioIndex, selectedPoint.point) : null;
     return {
@@ -242,7 +235,7 @@ export default function App({ location }: AppProps) {
   const myAnalysis = useMemo(() => {
     if (!myLocation || !pois.length) return null;
     const result = scoreAtPoint(pois, category, myLocation);
-    const cell = cellAt(grid, myLocation);
+    const cell = cellAt(grid, location, myLocation);
     const sector = sectorAt(myLocation, location);
     return { score: cell?.score ?? null, sector, ...result };
   }, [myLocation, pois, category, grid, location]);

@@ -164,6 +164,21 @@ export function computeGrid(
   return cells;
 }
 
+/**
+ * Celda de la cuadrícula que contiene un punto, en O(1): la malla es regular
+ * y row-major, así que el índice se calcula con aritmética en vez de escanear
+ * miles de celdas (importa en topBarrios, que consulta una celda por barrio).
+ */
+export function cellAt(grid: GridCell[], location: string, p: LatLon): GridCell | undefined {
+  if (!grid.length) return undefined;
+  const bbox = getLocation(location).bbox;
+  const { latStep, lonStep, rows, cols } = buildGridDims(bbox);
+  const row = Math.floor((p.lat - bbox.south) / latStep);
+  const col = Math.floor((p.lon - bbox.west) / lonStep);
+  if (row < 0 || row >= rows || col < 0 || col >= cols) return undefined;
+  return grid[row * cols + col];
+}
+
 export function findPoiAtPoint(pois: OsmPOI[], point: LatLon, radiusMeters = 30): OsmPOI | null {
   let closest: OsmPOI | null = null;
   let closestDist = radiusMeters;

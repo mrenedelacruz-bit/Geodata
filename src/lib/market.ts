@@ -3,7 +3,8 @@ import { distanceMeters } from './geo';
 import type { VehicularExposure } from './roads';
 import { barrioAt, barrioAreaKm2, powerFromBarrio } from './barrios';
 import type { BarrioFeature, BarrioIndex } from './barrios';
-import type { BusinessCategory, LatLon, OsmPOI } from '../types';
+import { saturationLabel, saturationColor } from './saturation';
+import type { BusinessCategory, LatLon, OsmPOI, SaturationLevel } from '../types';
 
 /**
  * Análisis de mercado del punto seleccionado: área de captación estimada
@@ -38,7 +39,9 @@ const SPEND_SHARE: Record<string, number | null> = {
   gasolinera: 0.045,
   estacion_gas: 0.02,
   restaurante: 0.055,
+  pizzeria: 0.012,
   cafeteria: 0.015,
+  tienda_cafe: 0.004,
   farmacia: 0.035,
   supermercado: 0.18,
   salon_belleza: 0.015,
@@ -55,7 +58,8 @@ const SPEND_SHARE: Record<string, number | null> = {
   transporte_pasajeros: 0.03,
 };
 
-export type MarketSaturation = 'oportunidad' | 'moderado' | 'saturado';
+/** Mismo semáforo (y colores) que la saturación de las celdas de la cuadrícula. */
+export type MarketSaturation = SaturationLevel;
 
 export interface CompetitorOverlap {
   name: string;
@@ -273,8 +277,9 @@ export function formatRD(v: number): string {
   return `RD$${Math.round(v).toLocaleString('es-DO')}`;
 }
 
+/** Semáforo unificado con la cuadrícula (lib/saturation): un solo color por nivel en toda la app. */
 export const SATURATION_META: Record<MarketSaturation, { label: string; color: string }> = {
-  oportunidad: { label: 'Oportunidad', color: '#16a34a' },
-  moderado: { label: 'Moderado', color: '#d97706' },
-  saturado: { label: 'Saturado', color: '#dc2626' },
+  oportunidad: { label: saturationLabel('oportunidad'), color: saturationColor('oportunidad') },
+  moderado: { label: saturationLabel('moderado'), color: saturationColor('moderado') },
+  saturado: { label: saturationLabel('saturado'), color: saturationColor('saturado') },
 };

@@ -7,17 +7,12 @@ import { getLocation } from '../data/locations';
 import { PROVINCE_BOUNDARIES } from '../data/province-boundaries';
 import { MUNICIPIO_BOUNDARIES } from '../data/municipio-boundaries';
 import { formatDistance } from '../lib/geo';
+import { scoreColor } from '../lib/saturation';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
 import IvaccLayer from './IvaccLayer';
 import LayerControl from './LayerControl';
 import LocationSwitcher from './LocationSwitcher';
-
-function scoreColor(score: number): string {
-  // 0 (red, saturated) -> 100 (green, oportunidad)
-  const hue = Math.max(0, Math.min(120, (score / 100) * 120));
-  return `hsl(${hue}, 70%, 45%)`;
-}
 
 function ClickHandler({ onClick }: { onClick: (p: LatLon) => void }) {
   useMapEvents({

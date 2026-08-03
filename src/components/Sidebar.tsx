@@ -11,7 +11,7 @@ import {
   NATIONAL_POVERTY,
   type CensusSector,
 } from '../data/census';
-import { saturationLabel, saturationColor } from '../lib/saturation';
+import { saturationLabel, saturationColor, scoreColor } from '../lib/saturation';
 import { municipiosFor } from '../data/census2022-municipios';
 import { formatDistance } from '../lib/geo';
 import { openPrintReport } from '../lib/report';
@@ -22,6 +22,7 @@ import { peajesFor, PEAJES_CUTOFF } from '../data/peajes';
 import { formatRD, SATURATION_META, CATCHMENT_MINUTES } from '../lib/market';
 import type { MarketAnalysis, SavedSpot, TravelMode } from '../lib/market';
 import type { VehicularExposure } from '../lib/roads';
+import { cellAt } from '../lib/grid';
 import type { TargetSegment } from '../lib/grid';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import SearchBox from './SearchBox';
@@ -129,10 +130,7 @@ export default function Sidebar({
     const withMeta = barrioIndex.list
       .map((b, i) => {
         const c = barrioIndex.centroids[i];
-        const cell = grid.find(
-          (g) =>
-            c.lat >= g.bounds[0][0] && c.lat < g.bounds[1][0] && c.lon >= g.bounds[0][1] && c.lon < g.bounds[1][1],
-        );
+        const cell = cellAt(grid, location, c);
         return { b, centroid: c, score: cell?.score ?? 0 };
       })
       .filter((x) => x.b.h >= 100);
@@ -142,7 +140,7 @@ export default function Sidebar({
       .slice(0, 5);
     const byScore = [...withMeta].sort((x, y) => y.score - x.score).slice(0, 5);
     return { byStratum, byScore };
-  }, [barrioIndex, grid]);
+  }, [barrioIndex, grid, location]);
   const poverty = regionalPovertyFor(location);
   const siubenIcv = siubenIcvFor(location);
   const peajes = peajesFor(location);
@@ -403,6 +401,10 @@ export default function Sidebar({
                 {([
                   ['Score', (s: SavedSpot) => (s.score !== null ? String(s.score) : '—')],
                   ['Barrio', (s: SavedSpot) => s.barrio ?? '—'],
+                  [
+                    'Captación',
+                    (s: SavedSpot) => `${s.market.minutes} min ${s.market.mode === 'walk' ? 'a pie' : 'en carro'}`,
+                  ],
                   ['Hogares en captación', (s: SavedSpot) => s.market.households?.toLocaleString('es-DO') ?? '—'],
                   ['Demanda/mes', (s: SavedSpot) => (s.market.demandRD !== null ? formatRD(s.market.demandRD) : '—')],
                   ['Competencia', (s: SavedSpot) => String(s.market.competitorsIn)],
@@ -440,9 +442,8 @@ export default function Sidebar({
             </table>
           </div>
           <p style={{ fontSize: '9.5px', color: '#9ca3af', margin: '4px 0 0' }}>
-            Captación de {savedSpots[0].market.minutes} min{' '}
-            {savedSpots[0].market.mode === 'walk' ? 'a pie' : 'en carro'} al momento de guardar cada punto. Los
-            puntos guardados se marcan A/B/C en el mapa.
+            Cada punto conserva la captación (modo y minutos) con la que se guardó. Los puntos se marcan A/B/C
+            en el mapa.
           </p>
         </div>
       )}
@@ -769,7 +770,7 @@ export default function Sidebar({
               }}
             >
               <span onClick={() => onSelectCell(cell)} style={{ flex: 1 }}>
-                <span className="score-pill" style={{ background: `hsl(${(cell.score / 100) * 120}, 70%, 45%)` }}>
+                <span className="score-pill" style={{ background: scoreColor(cell.score) }}>
                   {cell.score}
                 </span>
                 <span
@@ -886,7 +887,7 @@ export default function Sidebar({
               <ol className="zone-list">
                 {topBarrios.byScore.map(({ b, centroid, score }) => (
                   <li key={`s_${b.n}_${b.m}`} onClick={() => onSearchSelect(centroid, `${b.n} (${b.m})`)}>
-                    <span className="score-pill" style={{ background: `hsl(${(score / 100) * 120}, 70%, 45%)` }}>
+                    <span className="score-pill" style={{ background: scoreColor(score) }}>
                       {score}
                     </span>
                     <span>
