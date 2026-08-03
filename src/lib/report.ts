@@ -21,7 +21,15 @@ interface ReportData {
   topZones: GridCell[];
   categoryTotals: { category: BusinessCategory; count: number }[];
   poiCount: number;
-  census2022: { population: number; urbanPct: number } | null;
+  census2022: {
+    population: number;
+    urbanPct: number;
+    hogares: number;
+    avgHogar: number;
+    ocupados: number;
+    empleadores: number;
+    growthPct: number;
+  } | null;
   municipios: MunicipioPop[];
 }
 
@@ -105,11 +113,12 @@ export function openPrintReport(data: ReportData): void {
 <body>
   <h1>Asesor de Ubicación de Negocios</h1>
   <div class="meta">Reporte de análisis · ${esc(locationLabel)} · ${esc(category.icon)} ${esc(category.label)} · ${fecha}</div>
-  <div class="meta">${poiCount.toLocaleString('es-DO')} puntos de interés analizados (OpenStreetMap)${
+  <div class="meta">${poiCount.toLocaleString('es-DO')} puntos de interés analizados (OpenStreetMap)</div>
+  ${
     census2022
-      ? ` · ${census2022.population.toLocaleString('es-DO')} habitantes, ${census2022.urbanPct}% urbana (Censo ONE 2022, cifras definitivas)`
+      ? `<div class="meta">Censo ONE 2022 (definitivo): ${census2022.population.toLocaleString('es-DO')} habitantes (${census2022.urbanPct}% urbana, crecimiento ${census2022.growthPct >= 0 ? '+' : ''}${census2022.growthPct}%/año 2010-2022) · ${census2022.hogares.toLocaleString('es-DO')} hogares (${census2022.avgHogar} pers./hogar) · ${census2022.ocupados.toLocaleString('es-DO')} ocupados · ${census2022.empleadores.toLocaleString('es-DO')} empleadores</div>`
       : ''
-  }</div>
+  }
 
   ${puntoHtml}
 
@@ -129,21 +138,21 @@ export function openPrintReport(data: ReportData): void {
     municipios.length
       ? `<h2>Población por municipio (Censo ONE 2022, cifras definitivas)</h2>
   <table class="lista">
-    <tr><th>Municipio</th><th>Población</th></tr>
+    <tr><th>Municipio</th><th>Población</th><th>Viviendas ocupadas</th></tr>
     ${municipios
       .map(
         (m) =>
-          `<tr><td>${esc(m.name)}</td><td>${m.population.toLocaleString('es-DO')}</td></tr>` +
+          `<tr><td>${esc(m.name)}</td><td>${m.population.toLocaleString('es-DO')}</td><td>${m.viviendas !== undefined ? m.viviendas.toLocaleString('es-DO') : '—'}</td></tr>` +
           (m.dms ?? [])
             .map(
               (dm) =>
-                `<tr><td style="padding-left:22px;color:#6b7280;">└ ${esc(dm.name)} (DM)</td><td style="color:#6b7280;">${dm.population.toLocaleString('es-DO')}</td></tr>`,
+                `<tr><td style="padding-left:22px;color:#6b7280;">└ ${esc(dm.name)} (DM)</td><td style="color:#6b7280;">${dm.population.toLocaleString('es-DO')}</td><td style="color:#6b7280;">—</td></tr>`,
             )
             .join(''),
       )
       .join('')}
   </table>
-  <p class="mini">Fuente: X Censo Nacional de Población y Vivienda 2022, Cuadro 4 del Volumen I (ONE). La población del municipio incluye la de sus distritos municipales.</p>`
+  <p class="mini">Fuente: X Censo Nacional de Población y Vivienda 2022 (ONE) — Cuadros 4 y 7 del Volumen I. La población y las viviendas del municipio incluyen las de sus distritos municipales.</p>`
       : ''
   }
 

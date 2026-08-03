@@ -132,10 +132,18 @@ export default function Sidebar({
       {error && <p className="status error">{error}</p>}
       {!loading && !error && <p className="status">{poiCount.toLocaleString('es-DO')} puntos de interés cargados</p>}
       {census2022 && (
-        <p className="status" style={{ marginTop: '-6px' }}>
-          👥 {census2022.population.toLocaleString('es-DO')} habitantes · {census2022.urbanPct}% zona urbana (Censo
-          ONE 2022)
-        </p>
+        <div className="status" style={{ marginTop: '-6px', lineHeight: 1.6 }}>
+          <div>
+            👥 {census2022.population.toLocaleString('es-DO')} hab. · {census2022.urbanPct}% urbana ·{' '}
+            {census2022.growthPct >= 0 ? '+' : ''}
+            {census2022.growthPct}%/año
+          </div>
+          <div>
+            🏠 {census2022.hogares.toLocaleString('es-DO')} hogares ({census2022.avgHogar} pers.) · 💼{' '}
+            {census2022.ocupados.toLocaleString('es-DO')} ocupados
+          </div>
+          <div style={{ fontSize: '10px', color: '#9ca3af' }}>Censo ONE 2022 (Vol. I y V, cifras definitivas)</div>
+        </div>
       )}
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -503,8 +511,15 @@ export default function Sidebar({
               <li key={m.name} style={{ padding: '4px 4px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span>{m.name}</span>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#0ea5e9' }}>
-                    {m.population.toLocaleString('es-DO')}
+                  <span style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#0ea5e9', display: 'block' }}>
+                      {m.population.toLocaleString('es-DO')}
+                    </span>
+                    {m.viviendas !== undefined && (
+                      <span style={{ fontSize: '9.5px', color: '#9ca3af', display: 'block' }}>
+                        {m.viviendas.toLocaleString('es-DO')} viv.
+                      </span>
+                    )}
                   </span>
                 </div>
                 {m.dms && (

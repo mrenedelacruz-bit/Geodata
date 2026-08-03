@@ -39,16 +39,82 @@ function moduleFor(location: string): CensusModule {
 interface Census2022 {
   population: number;
   urbanPct: number;
+  /** Hogares en viviendas particulares ocupadas (Cuadro 10, Vol. I). */
+  hogares: number;
+  /** Promedio de personas por hogar (Cuadro 10, Vol. I). */
+  avgHogar: number;
+  /** Población de 10 años y más ocupada (Cuadro 5, Vol. V). */
+  ocupados: number;
+  /** Empleadores/patronos — densidad empresarial (Cuadro 5, Vol. V). */
+  empleadores: number;
+  /** Tasa media anual de crecimiento 2010-2022, % (Cuadro 4, Informe General). */
+  growthPct: number;
 }
 
 const CENSUS_2022: Record<string, Census2022> = {
-  'santo-domingo': { population: 3_798_698, urbanPct: 87 },
-  'puerto-plata': { population: 338_355, urbanPct: 58 },
-  'la-altagracia': { population: 446_060, urbanPct: 77 },
-  'san-cristobal': { population: 688_828, urbanPct: 52 },
-  'santiago': { population: 1_074_679, urbanPct: 73 },
-  'la-vega': { population: 442_719, urbanPct: 48 },
-  'la-romana': { population: 287_914, urbanPct: 95 },
+  'santo-domingo': {
+    population: 3_798_698,
+    urbanPct: 87,
+    hogares: 1_305_361,
+    avgHogar: 2.9,
+    ocupados: 1_786_196,
+    empleadores: 104_446,
+    growthPct: 1.08, // combinado prov. SD (1.30) + DN (0.54)
+  },
+  'puerto-plata': {
+    population: 338_355,
+    urbanPct: 58,
+    hogares: 125_047,
+    avgHogar: 2.7,
+    ocupados: 154_261,
+    empleadores: 11_503,
+    growthPct: 0.43,
+  },
+  'la-altagracia': {
+    population: 446_060,
+    urbanPct: 77,
+    hogares: 172_419,
+    avgHogar: 2.6,
+    ocupados: 211_644,
+    empleadores: 14_073,
+    growthPct: 4.18, // la provincia de mayor crecimiento del país
+  },
+  'san-cristobal': {
+    population: 688_828,
+    urbanPct: 52,
+    hogares: 223_003,
+    avgHogar: 3.1,
+    ocupados: 299_041,
+    empleadores: 15_243,
+    growthPct: 1.6,
+  },
+  'santiago': {
+    population: 1_074_679,
+    urbanPct: 73,
+    hogares: 376_703,
+    avgHogar: 2.8,
+    ocupados: 529_049,
+    empleadores: 38_209,
+    growthPct: 0.92,
+  },
+  'la-vega': {
+    population: 442_719,
+    urbanPct: 48,
+    hogares: 153_581,
+    avgHogar: 2.9,
+    ocupados: 203_962,
+    empleadores: 15_311,
+    growthPct: 0.98,
+  },
+  'la-romana': {
+    population: 287_914,
+    urbanPct: 95,
+    hogares: 96_383,
+    avgHogar: 3.0,
+    ocupados: 139_659,
+    empleadores: 6_263,
+    growthPct: 1.34,
+  },
 };
 
 export function census2022For(location: string): Census2022 | null {
