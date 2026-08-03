@@ -137,6 +137,17 @@ const ELITE_MUNS = new Set(['Santo Domingo De Guzmán', 'Santiago']);
  * abarata la densidad del registro y la señal automática falla. Validación
  * local: son barrios populares de ingreso bajo, no de ingreso medio.
  */
+/**
+ * Barrios de élite que las reglas automáticas no alcanzan. Los Cacicazgos:
+ * solo 17 hogares SIUBEN en 1 km² (16/km², la penetración más baja del DN,
+ * firma de élite) pero <20 categorizados ⇒ sin % oficial. La Julia: sector
+ * alto consolidado cuyo registro supera el umbral de densidad popular.
+ */
+const ALTO_OVERRIDES = new Set([
+  'Los Cacicazgos|Santo Domingo De Guzmán',
+  'La Julia|Santo Domingo De Guzmán',
+]);
+
 const POPULAR_OVERRIDES = new Set([
   'Los Tres Ojos|Santo Domingo Este',
   'San Isidro Adentro|Santo Domingo Este',
@@ -147,7 +158,11 @@ const POPULAR_OVERRIDES = new Set([
 
 export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: string; color: string } {
   const p = b.p;
-  const a = b.a ?? 0;
+  const a = b.a ?? 60;
+  if (ALTO_OVERRIDES.has(`${b.n}|${b.m}`)) {
+    const l = 52 - Math.min(1, (a - 45) / 30) * 22;
+    return { cat: 'alto', label: 'Alto ingreso', color: `hsl(262, 60%, ${Math.round(l)}%)` };
+  }
   if (p === null) return { cat: 'sin-dato', label: 'Sin cifra ICV', color: '#94a3b8' };
   const density = b.h / Math.max(0.05, barrioAreaKm2(b));
   const isAlto = ELITE_MUNS.has(b.m)
@@ -185,11 +200,11 @@ export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: 
  * uno de clase media aunque sus registrados alcancen ICV-4.
  */
 export function powerFromBarrio(b: BarrioFeature): number | null {
-  if (b.p === null) return null;
+  const cat = classifyBarrio(b).cat;
+  if (b.p === null) return cat === 'alto' ? 0.92 : null;
   const base = 0.05 + 0.9 / (1 + Math.exp((b.p - 20) / 7));
   const boost = b.a !== null ? Math.min(0.15, b.a * 0.0025) : 0;
   const raw = Math.min(0.97, Math.max(0.05, base + boost));
-  const cat = classifyBarrio(b).cat;
   const cap = cat === 'alto' ? 0.97 : cat === 'pobreza' ? 0.55 : 0.78;
   return Math.min(cap, raw);
 }
