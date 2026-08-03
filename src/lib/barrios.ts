@@ -162,6 +162,10 @@ const MEDIO_OVERRIDES = new Set([
   'Miraflores|Santo Domingo De Guzmán',
   'Los Jardines|Santo Domingo De Guzmán',
   'San Geronimo|Santo Domingo De Guzmán',
+  'Atala|Santo Domingo De Guzmán',
+  'General Antonio Duverge|Santo Domingo De Guzmán',
+  'Cacique|Santo Domingo De Guzmán',
+  'Centro De Los Heroes|Santo Domingo De Guzmán',
 ]);
 
 const POPULAR_OVERRIDES = new Set([
