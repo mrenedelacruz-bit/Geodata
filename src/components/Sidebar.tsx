@@ -6,6 +6,7 @@ import {
   sectorAt,
   census2022For,
   regionalPovertyFor,
+  NATIONAL_POVERTY,
   type CensusSector,
 } from '../data/census';
 import { saturationLabel, saturationColor } from '../lib/saturation';
@@ -153,11 +154,12 @@ export default function Sidebar({
           </div>
           {poverty && (
             <div>
-              📉 Pobreza monetaria {poverty.povertyPct}% (región {poverty.region}, 2025)
+              📉 Pobreza monetaria {poverty.povertyPct}% (región {poverty.region}, 2025) · nacional{' '}
+              {NATIONAL_POVERTY.pct}% ({NATIONAL_POVERTY.period})
             </div>
           )}
           <div style={{ fontSize: '10px', color: '#9ca3af' }}>
-            Censo ONE 2022 (Vol. I y V, definitivo) · PIP ONE/MEPyD 2025
+            Censo ONE 2022 (Vol. I y V, definitivo) · PIP ONE/MEPyD 2025 · Hacienda y Economía 2026
           </div>
         </div>
       )}

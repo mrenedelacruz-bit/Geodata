@@ -145,6 +145,14 @@ export function regionalPovertyFor(location: string): RegionalPoverty | null {
   return POVERTY_2025[location] ?? null;
 }
 
+/**
+ * Pobreza monetaria general nacional, cifras preliminares enero-marzo 2026 —
+ * "Infografía de seguimiento a cifras preliminares de pobreza monetaria"
+ * (Ministerio de Hacienda y Economía, Viceministerio de Economía).
+ * Urbana 14.8%, rural 18.8%. Referencia de tendencia: 2025 cerró en 17.3%.
+ */
+export const NATIONAL_POVERTY = { pct: 15.4, period: 'ene-mar 2026, preliminar' };
+
 export function getCensusSectors(location: string): SD.CensusSector[] {
   return moduleFor(location).CENSUS_SECTORS;
 }
