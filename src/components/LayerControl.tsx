@@ -11,6 +11,8 @@ interface Props {
   onCompetitorsToggle: (show: boolean) => void;
   showCensus: boolean;
   onCensusToggle: (show: boolean) => void;
+  showIvacc: boolean;
+  onIvaccToggle: (show: boolean) => void;
 }
 
 export default function LayerControl({
@@ -23,6 +25,8 @@ export default function LayerControl({
   onCompetitorsToggle,
   showCensus,
   onCensusToggle,
+  showIvacc,
+  onIvaccToggle,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -96,6 +100,22 @@ export default function LayerControl({
         <div className="sub">
           Barrios oficiales SIUBEN por nivel socioeconómico: violeta oscuro = estrato alto, claro =
           pobreza alta. Clic en un barrio para el detalle.
+        </div>
+
+        <div
+          className={`layer-btn ${showIvacc ? '' : 'off'}`}
+          onClick={() => toggleLayer(onIvaccToggle, showIvacc)}
+        >
+          <div
+            className="swatch"
+            style={{ background: 'linear-gradient(135deg, #fde9c8, #b45309)' }}
+          />
+          Riesgo climático (IVACC)
+          <div className="chk">{showIvacc ? '✓' : ''}</div>
+        </div>
+        <div className="sub">
+          % de hogares con vulnerabilidad alta ante huracanes e inundaciones, por municipio (SIUBEN).
+          Ámbar oscuro = mayor riesgo.
         </div>
       </div>
     </div>

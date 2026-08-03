@@ -7,6 +7,7 @@ import { MUNICIPIO_BOUNDARIES } from '../data/municipio-boundaries';
 import { formatDistance } from '../lib/geo';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
+import IvaccLayer from './IvaccLayer';
 import LayerControl from './LayerControl';
 import LocationSwitcher from './LocationSwitcher';
 
@@ -44,6 +45,8 @@ interface Props {
   onCompetitorsToggle: (show: boolean) => void;
   showCensus: boolean;
   onCensusToggle: (show: boolean) => void;
+  showIvacc: boolean;
+  onIvaccToggle: (show: boolean) => void;
 }
 
 export default function MapView({
@@ -65,6 +68,8 @@ export default function MapView({
   onCompetitorsToggle,
   showCensus,
   onCensusToggle,
+  showIvacc,
+  onIvaccToggle,
 }: Props) {
   const locationConfig = getLocation(location);
 
@@ -139,6 +144,7 @@ export default function MapView({
         ))}
         {showHeatmap && <HeatmapLayerComponent grid={grid} />}
         {showCensus && <CensusLayer location={location} />}
+        {showIvacc && <IvaccLayer location={location} />}
         {showGrid &&
           grid
             .filter((cell) => cell.anchorScore > 0 || cell.competitorCount > 0)
@@ -214,6 +220,8 @@ export default function MapView({
         onCompetitorsToggle={onCompetitorsToggle}
         showCensus={showCensus}
         onCensusToggle={onCensusToggle}
+        showIvacc={showIvacc}
+        onIvaccToggle={onIvaccToggle}
       />
     </div>
   );

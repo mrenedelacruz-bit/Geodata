@@ -10,6 +10,7 @@ interface ReportPointAnalysis {
   point: { lat: number; lon: number };
   score: number | null;
   sector: CensusSector | null;
+  barrio?: { n: string; m: string; h: number; p: number | null; a: number | null } | null;
   competitorCount: number;
   anchorScore: number;
   nearby: { anchor: string; count: number }[];
@@ -26,6 +27,11 @@ interface ReportData {
   municipios: MunicipioPop[];
   poverty: RegionalPoverty | null;
   siubenIcv: { pobres: number; pctHogares: number } | null;
+  targetLabel: string | null;
+  topBarrios: {
+    byScore: { name: string; muni: string; score: number }[];
+    byStratum: { name: string; muni: string; aPct: number }[];
+  } | null;
 }
 
 function esc(s: string): string {
@@ -49,6 +55,8 @@ export function openPrintReport(data: ReportData): void {
     municipios,
     poverty,
     siubenIcv,
+    targetLabel,
+    topBarrios,
   } = data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
   const appUrl = window.location.href;
@@ -61,6 +69,11 @@ export function openPrintReport(data: ReportData): void {
     ${pointAnalysis.score !== null ? `<tr><th>Score de la zona</th><td><strong>${pointAnalysis.score}</strong> / 100</td></tr>` : ''}
     <tr><th>Demanda (POIs atractivos en 500 m)</th><td>${pointAnalysis.anchorScore.toFixed(1)}</td></tr>
     <tr><th>${esc(category.competitorLabel)} en 500 m</th><td>${pointAnalysis.competitorCount}</td></tr>
+    ${
+      pointAnalysis.barrio
+        ? `<tr><th>Barrio oficial (SIUBEN)</th><td>${esc(pointAnalysis.barrio.n)} · ${esc(pointAnalysis.barrio.m)} — ${pointAnalysis.barrio.h.toLocaleString('es-DO')} hogares${pointAnalysis.barrio.p !== null ? `, ${pointAnalysis.barrio.p}% pobres (ICV-1+2)` : ''}${pointAnalysis.barrio.a !== null ? `, ${pointAnalysis.barrio.a}% estrato alto` : ''}</td></tr>`
+        : ''
+    }
     ${
       pointAnalysis.sector
         ? `<tr><th>Sector censal</th><td>${esc(pointAnalysis.sector.name)} · ${esc(pointAnalysis.sector.municipio)}</td></tr>
@@ -94,7 +107,12 @@ export function openPrintReport(data: ReportData): void {
 
   const totalesHtml = [...categoryTotals]
     .sort((a, b) => b.count - a.count)
-    .map((t) => `<tr><td>${t.category.icon} ${esc(t.category.label)}</td><td>${t.count.toLocaleString('es-DO')}</td></tr>`)
+    .map(
+      (t) =>
+        `<tr><td>${t.category.icon} ${esc(t.category.label)}</td><td>${t.count.toLocaleString('es-DO')}</td><td>${
+          census2022 ? ((t.count / census2022.population) * 10000).toFixed(1) : '—'
+        }</td></tr>`,
+    )
     .join('');
 
   const html = `<!DOCTYPE html>
@@ -119,7 +137,9 @@ export function openPrintReport(data: ReportData): void {
 </head>
 <body>
   <h1>Asesor de Ubicación de Negocios</h1>
-  <div class="meta">Reporte de análisis · ${esc(locationLabel)} · ${esc(category.icon)} ${esc(category.label)} · ${fecha}</div>
+  <div class="meta">Reporte de análisis · ${esc(locationLabel)} · ${esc(category.icon)} ${esc(category.label)}${
+    targetLabel ? ` · Cliente objetivo: ${esc(targetLabel)}` : ''
+  } · ${fecha}</div>
   <div class="meta">${poiCount.toLocaleString('es-DO')} puntos de interés analizados (OpenStreetMap)</div>
   ${
     census2022
@@ -148,9 +168,31 @@ export function openPrintReport(data: ReportData): void {
 
   <h2>Totalizador por tipo de negocio en ${esc(locationLabel)}</h2>
   <table class="lista">
-    <tr><th>Categoría</th><th>Establecimientos</th></tr>
+    <tr><th>Categoría</th><th>Establecimientos</th><th>Por 10,000 habitantes</th></tr>
     ${totalesHtml}
   </table>
+  <p class="mini">La densidad por 10,000 habitantes usa la población del Censo ONE 2022; permite detectar rubros
+  sub-atendidos comparando entre provincias y categorías.</p>
+
+  ${
+    topBarrios && (topBarrios.byScore.length || topBarrios.byStratum.length)
+      ? `<h2>Top barrios oficiales (SIUBEN)</h2>
+  ${
+    topBarrios.byScore.length
+      ? `<p class="mini"><strong>Mejor score para ${esc(category.label.toLowerCase())}:</strong> ${topBarrios.byScore
+          .map((b) => `${esc(b.name)} (${esc(b.muni)}, ${b.score})`)
+          .join(' · ')}</p>`
+      : ''
+  }
+  ${
+    topBarrios.byStratum.length
+      ? `<p class="mini"><strong>Mayor estrato alto ICV-4:</strong> ${topBarrios.byStratum
+          .map((b) => `${esc(b.name)} (${esc(b.muni)}, ${b.aPct}%)`)
+          .join(' · ')}</p>`
+      : ''
+  }`
+      : ''
+  }
 
   ${
     municipios.length

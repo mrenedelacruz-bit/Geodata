@@ -15,8 +15,18 @@ import { saturationLabel, saturationColor } from '../lib/saturation';
 import { municipiosFor } from '../data/census2022-municipios';
 import { formatDistance } from '../lib/geo';
 import { openPrintReport } from '../lib/report';
+import { powerFromBarrio } from '../lib/barrios';
+import type { BarrioFeature, BarrioIndex } from '../lib/barrios';
+import type { TargetSegment } from '../lib/grid';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import SearchBox from './SearchBox';
+
+const TARGET_LABELS: Record<TargetSegment, string> = {
+  todos: 'Todos los públicos',
+  premium: 'Premium (estrato alto)',
+  medio: 'Clase media',
+  masivo: 'Masivo / popular',
+};
 
 interface MyAnalysis {
   score: number | null;
@@ -29,6 +39,7 @@ interface MyAnalysis {
 interface PointAnalysis extends MyAnalysis {
   point: LatLon;
   label: string;
+  barrio: BarrioFeature | null;
 }
 
 interface Props {
@@ -47,6 +58,9 @@ interface Props {
   onToggleComparison: (cell: GridCell) => void;
   location: string;
   categoryTotals: { category: BusinessCategory; count: number }[];
+  target: TargetSegment;
+  onTargetChange: (t: TargetSegment) => void;
+  barrioIndex: BarrioIndex | null;
   myLocation: LatLon | null;
   onSetMyLocation: (p: LatLon | null) => void;
   myAnalysis: MyAnalysis | null;
@@ -69,6 +83,9 @@ export default function Sidebar({
   onToggleComparison,
   location,
   categoryTotals,
+  target,
+  onTargetChange,
+  barrioIndex,
   myLocation,
   onSetMyLocation,
   myAnalysis,
@@ -81,6 +98,28 @@ export default function Sidebar({
 
   const census2022 = census2022For(location);
   const municipios = municipiosFor(location);
+
+  // Top barrios oficiales: por estrato alto (ICV-4) y por score del rubro
+  // (celda de la cuadrícula donde cae el centroide). Mínimo 100 hogares.
+  const topBarrios = useMemo(() => {
+    if (!barrioIndex) return null;
+    const withMeta = barrioIndex.list
+      .map((b, i) => {
+        const c = barrioIndex.centroids[i];
+        const cell = grid.find(
+          (g) =>
+            c.lat >= g.bounds[0][0] && c.lat < g.bounds[1][0] && c.lon >= g.bounds[0][1] && c.lon < g.bounds[1][1],
+        );
+        return { b, centroid: c, score: cell?.score ?? 0 };
+      })
+      .filter((x) => x.b.h >= 100);
+    const byStratum = [...withMeta]
+      .filter((x) => x.b.a !== null)
+      .sort((x, y) => (y.b.a ?? 0) - (x.b.a ?? 0))
+      .slice(0, 5);
+    const byScore = [...withMeta].sort((x, y) => y.score - x.score).slice(0, 5);
+    return { byStratum, byScore };
+  }, [barrioIndex, grid]);
   const poverty = regionalPovertyFor(location);
   const siubenIcv = siubenIcvFor(location);
 
@@ -112,6 +151,13 @@ export default function Sidebar({
       municipios,
       poverty,
       siubenIcv,
+      targetLabel: target !== 'todos' ? TARGET_LABELS[target] : null,
+      topBarrios: topBarrios
+        ? {
+            byScore: topBarrios.byScore.map(({ b, score }) => ({ name: b.n, muni: b.m, score })),
+            byStratum: topBarrios.byStratum.map(({ b }) => ({ name: b.n, muni: b.m, aPct: Math.round(b.a ?? 0) })),
+          }
+        : null,
     });
   }
 
@@ -123,7 +169,7 @@ export default function Sidebar({
         usando datos abiertos de OpenStreetMap.
       </p>
 
-      <SearchBox onSelect={onSearchSelect} locationLabel={locationLabel} />
+      <SearchBox onSelect={onSearchSelect} locationLabel={locationLabel} barrioIndex={barrioIndex} />
 
       <label className="field">
         <span>Tipo de negocio</span>
@@ -141,6 +187,22 @@ export default function Sidebar({
           ))}
         </select>
       </label>
+
+      <label className="field">
+        <span>Cliente objetivo (opcional)</span>
+        <select value={target} onChange={(e) => onTargetChange(e.target.value as TargetSegment)}>
+          {(Object.keys(TARGET_LABELS) as TargetSegment[]).map((t) => (
+            <option key={t} value={t}>
+              {TARGET_LABELS[t]}
+            </option>
+          ))}
+        </select>
+      </label>
+      {target !== 'todos' && (
+        <p style={{ fontSize: '10px', color: '#9ca3af', margin: '-6px 0 10px' }}>
+          El score prioriza zonas con nivel socioeconómico afín a "{TARGET_LABELS[target]}" (barrios ICV SIUBEN).
+        </p>
+      )}
 
       {loading && <p className="status">Cargando datos de OpenStreetMap para {locationLabel}…</p>}
       {error && <p className="status error">{error}</p>}
@@ -377,6 +439,25 @@ export default function Sidebar({
             </div>
           )}
 
+          {pointAnalysis.barrio && (
+            <div style={{ marginBottom: '10px', padding: '8px 10px', backgroundColor: '#faf5ff', borderRadius: '6px', border: '1px solid #e9d5ff', fontSize: '12px' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
+                🏘️ {pointAnalysis.barrio.n} · {pointAnalysis.barrio.m}
+              </div>
+              <div>{pointAnalysis.barrio.h.toLocaleString('es-DO')} hogares en el registro SIUBEN</div>
+              {pointAnalysis.barrio.p !== null && (
+                <div>
+                  Hogares pobres (ICV-1+2): <strong>{pointAnalysis.barrio.p}%</strong>
+                  {pointAnalysis.barrio.a !== null && <> · estrato alto (ICV-4): {pointAnalysis.barrio.a}%</>}
+                </div>
+              )}
+              <div style={{ fontSize: '10px', color: '#7a8a99', marginTop: '3px' }}>
+                Barrio oficial · SIUBEN Open Data (ICV_BARRIOS){' '}
+                {powerFromBarrio(pointAnalysis.barrio) !== null && '· usado por el score'}
+              </div>
+            </div>
+          )}
+
           {pointAnalysis.sector && (
             <div style={{ marginBottom: '10px', padding: '8px 10px', backgroundColor: '#f7fafc', borderRadius: '6px', border: '1px solid #e5edf3', fontSize: '12px' }}>
               <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
@@ -518,24 +599,81 @@ export default function Sidebar({
                 <span>
                   {c.icon} {c.label}
                 </span>
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    color: '#0ea5e9',
-                    background: '#e0f2fe',
-                    borderRadius: '10px',
-                    padding: '1px 9px',
-                    minWidth: '28px',
-                    textAlign: 'center',
-                  }}
-                >
-                  {count.toLocaleString('es-DO')}
+                <span style={{ textAlign: 'right' }}>
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#0ea5e9',
+                      background: '#e0f2fe',
+                      borderRadius: '10px',
+                      padding: '1px 9px',
+                      minWidth: '28px',
+                      display: 'inline-block',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {count.toLocaleString('es-DO')}
+                  </span>
+                  {census2022 && (
+                    <span style={{ display: 'block', fontSize: '9px', color: '#9ca3af' }}>
+                      {((count / census2022.population) * 10000).toFixed(1)} /10k hab.
+                    </span>
+                  )}
                 </span>
               </li>
             ))}
         </ul>
       </div>
+
+      {topBarrios && (topBarrios.byStratum.length > 0 || topBarrios.byScore.length > 0) && (
+        <div className="panel">
+          <h2>Top barrios oficiales</h2>
+          <p className="hint">SIUBEN Open Data · clic para analizar el barrio</p>
+          {topBarrios.byScore.length > 0 && (
+            <>
+              <p style={{ fontSize: '12px', fontWeight: 'bold', margin: '6px 0 4px' }}>
+                Mejor score para {category.label.toLowerCase()}:
+              </p>
+              <ol className="zone-list">
+                {topBarrios.byScore.map(({ b, centroid, score }) => (
+                  <li key={`s_${b.n}_${b.m}`} onClick={() => onSearchSelect(centroid, `${b.n} (${b.m})`)}>
+                    <span className="score-pill" style={{ background: `hsl(${(score / 100) * 120}, 70%, 45%)` }}>
+                      {score}
+                    </span>
+                    <span>
+                      {b.n} · {b.m}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
+          {topBarrios.byStratum.length > 0 && (
+            <>
+              <p style={{ fontSize: '12px', fontWeight: 'bold', margin: '10px 0 4px' }}>
+                Mayor estrato alto (ICV-4):
+              </p>
+              <ol className="zone-list">
+                {topBarrios.byStratum.map(({ b, centroid }) => (
+                  <li key={`a_${b.n}_${b.m}`} onClick={() => onSearchSelect(centroid, `${b.n} (${b.m})`)}>
+                    <span
+                      className="score-pill"
+                      style={{ background: '#6d28d9' }}
+                      title="% de hogares en estrato alto ICV-4"
+                    >
+                      {Math.round(b.a ?? 0)}%
+                    </span>
+                    <span>
+                      {b.n} · {b.m}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
+        </div>
+      )}
 
       {municipios.length > 0 && (
         <div className="panel">

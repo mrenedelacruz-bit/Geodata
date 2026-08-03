@@ -1,20 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Circle, Polygon, Popup } from 'react-leaflet';
 import { getCensusSectors, powerColor, powerLabel } from '../data/census';
+import { loadBarrios } from '../lib/barrios';
+import type { BarrioFeature } from '../lib/barrios';
 import type { CensusSector } from '../data/census';
 
 interface Props {
   location: string;
-}
-
-/** Barrio oficial SIUBEN: nombre, municipio, hogares, % pobres, % ICV-4, anillos. */
-interface Barrio {
-  n: string;
-  m: string;
-  h: number;
-  p: number | null;
-  a: number | null;
-  r: [number, number][][];
 }
 
 /**
@@ -44,7 +36,7 @@ function poorColor(p: number | null): string {
 
 export default function CensusLayer({ location }: Props) {
   const official = OFFICIAL_BARRIOS.has(location);
-  const [barrios, setBarrios] = useState<Barrio[] | null>(null);
+  const [barrios, setBarrios] = useState<BarrioFeature[] | null>(null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -55,14 +47,11 @@ export default function CensusLayer({ location }: Props) {
     let cancelled = false;
     setBarrios(null);
     setFailed(false);
-    fetch(`${import.meta.env.BASE_URL}data/barrios/${location}.json`)
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
-      .then((data) => {
-        if (!cancelled) setBarrios(data);
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
-      });
+    loadBarrios(location).then((idx) => {
+      if (cancelled) return;
+      if (idx) setBarrios(idx.list);
+      else setFailed(true);
+    });
     return () => {
       cancelled = true;
     };

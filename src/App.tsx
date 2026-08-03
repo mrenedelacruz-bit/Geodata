@@ -5,6 +5,9 @@ import Sidebar from './components/Sidebar';
 import { BUSINESS_CATEGORIES } from './data/categories';
 import { fetchOsmPOIs } from './lib/overpass';
 import { computeGrid, scoreAtPoint, findPoiAtPoint } from './lib/grid';
+import type { TargetSegment } from './lib/grid';
+import { loadBarrios, barrioAt } from './lib/barrios';
+import type { BarrioIndex } from './lib/barrios';
 import { distanceMeters } from './lib/geo';
 import { mergeManualPois } from './data/manualPois';
 import { sectorAt } from './data/census';
@@ -44,15 +47,20 @@ function initialParams() {
       : null;
   const capas = p.get('capas')?.split(',') ?? ['competencia'];
   const grid = capas.includes('cuadricula');
+  const objRaw = p.get('obj');
+  const target: TargetSegment =
+    objRaw === 'premium' || objRaw === 'medio' || objRaw === 'masivo' ? objRaw : 'todos';
   return {
     category,
     point,
     myLocation,
+    target,
     // calor y cuadrícula son excluyentes; en enlaces viejos con ambas gana la cuadrícula
     showHeatmap: capas.includes('calor') && !grid,
     showGrid: grid,
     showCompetitors: capas.includes('competencia'),
     showCensus: capas.includes('censo'),
+    showIvacc: capas.includes('riesgo'),
   };
 }
 
@@ -66,10 +74,13 @@ export default function App({ location }: AppProps) {
   const [selectedPoint, setSelectedPoint] = useState<{ point: LatLon; label: string } | null>(initial.point);
   const [myLocation, setMyLocation] = useState<LatLon | null>(initial.myLocation);
   const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
+  const [target, setTarget] = useState<TargetSegment>(initial.target);
+  const [barrioIndex, setBarrioIndex] = useState<BarrioIndex | null>(null);
   const [showHeatmap, setShowHeatmap] = useState(initial.showHeatmap);
   const [showGrid, setShowGrid] = useState(initial.showGrid);
   const [showCompetitors, setShowCompetitors] = useState(initial.showCompetitors);
   const [showCensus, setShowCensus] = useState(initial.showCensus);
+  const [showIvacc, setShowIvacc] = useState(initial.showIvacc);
 
   const locationConfig = getLocation(location);
   const prevLocation = useRef(location);
@@ -87,18 +98,32 @@ export default function App({ location }: AppProps) {
       p.set('milat', myLocation.lat.toFixed(6));
       p.set('milon', myLocation.lon.toFixed(6));
     }
+    if (target !== 'todos') p.set('obj', target);
     const capas = [
       showHeatmap && 'calor',
       showGrid && 'cuadricula',
       showCompetitors && 'competencia',
       showCensus && 'censo',
+      showIvacc && 'riesgo',
     ]
       .filter(Boolean)
       .join(',');
     if (capas !== 'competencia') p.set('capas', capas);
     const qs = p.toString();
     window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
-  }, [category, selectedPoint, myLocation, showHeatmap, showGrid, showCompetitors, showCensus]);
+  }, [category, selectedPoint, myLocation, target, showHeatmap, showGrid, showCompetitors, showCensus, showIvacc]);
+
+  // Índice de barrios oficiales SIUBEN para el motor de score y el buscador.
+  useEffect(() => {
+    let cancelled = false;
+    setBarrioIndex(null);
+    loadBarrios(location).then((idx) => {
+      if (!cancelled) setBarrioIndex(idx);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [location]);
 
   useEffect(() => {
     // Al cambiar de ciudad (no en el primer montaje, para respetar el estado
@@ -136,7 +161,10 @@ export default function App({ location }: AppProps) {
     setComparisonCells([]);
   }, [category]);
 
-  const grid = useMemo(() => (pois.length ? computeGrid(pois, category, location) : []), [pois, category, location]);
+  const grid = useMemo(
+    () => (pois.length ? computeGrid(pois, category, location, { barrios: barrioIndex, target }) : []),
+    [pois, category, location, barrioIndex, target],
+  );
 
   const competitors = useMemo(() => pois.filter((p) => category.matchesCompetitor(p.tags)), [pois, category]);
 
@@ -152,8 +180,16 @@ export default function App({ location }: AppProps) {
     const result = scoreAtPoint(pois, category, selectedPoint.point);
     const cell = cellAt(grid, selectedPoint.point);
     const sector = sectorAt(selectedPoint.point, location);
-    return { point: selectedPoint.point, label: selectedPoint.label, score: cell?.score ?? null, sector, ...result };
-  }, [selectedPoint, pois, category, grid, location]);
+    const barrio = barrioIndex ? barrioAt(barrioIndex, selectedPoint.point) : null;
+    return {
+      point: selectedPoint.point,
+      label: selectedPoint.label,
+      score: cell?.score ?? null,
+      sector,
+      barrio,
+      ...result,
+    };
+  }, [selectedPoint, pois, category, grid, location, barrioIndex]);
 
   // Análisis fijo en "mi ubicación" (independiente del punto seleccionado).
   const myAnalysis = useMemo(() => {
@@ -232,6 +268,9 @@ export default function App({ location }: AppProps) {
         onToggleComparison={handleToggleComparison}
         location={location}
         categoryTotals={categoryTotals}
+        target={target}
+        onTargetChange={setTarget}
+        barrioIndex={barrioIndex}
         myLocation={myLocation}
         onSetMyLocation={setMyLocation}
         myAnalysis={myAnalysis}
@@ -257,6 +296,8 @@ export default function App({ location }: AppProps) {
           onCompetitorsToggle={setShowCompetitors}
           showCensus={showCensus}
           onCensusToggle={setShowCensus}
+          showIvacc={showIvacc}
+          onIvaccToggle={setShowIvacc}
         />
       </main>
     </div>

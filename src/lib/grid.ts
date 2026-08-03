@@ -2,7 +2,30 @@ import { ANCHOR_SIGNALS } from '../data/categories';
 import { purchasingPowerAt } from '../data/census';
 import { getLocation } from '../data/locations';
 import { METERS_PER_DEG_LAT, distanceMeters, metersPerDegLon } from './geo';
+import { barrioPowerAt } from './barrios';
+import type { BarrioIndex } from './barrios';
 import type { BBox, BusinessCategory, GridCell, LatLon, OsmPOI, SaturationLevel } from '../types';
+
+/** Cliente objetivo: modula cómo el nivel socioeconómico pondera la demanda. */
+export type TargetSegment = 'todos' | 'premium' | 'medio' | 'masivo';
+
+/**
+ * Multiplicador socioeconómico de la demanda según el cliente objetivo.
+ * 'todos' es el comportamiento clásico (±30%); 'premium' premia estrato alto,
+ * 'medio' hace pico en poder medio y 'masivo' favorece zonas populares densas.
+ */
+function segmentMultiplier(power: number, target: TargetSegment): number {
+  switch (target) {
+    case 'premium':
+      return 0.4 + 1.2 * power;
+    case 'medio':
+      return Math.max(0.4, 1.15 - 0.9 * Math.abs(power - 0.55));
+    case 'masivo':
+      return 1.25 - 0.5 * power;
+    default:
+      return 0.7 + 0.6 * power;
+  }
+}
 
 const CELL_METERS = 450;
 
@@ -74,7 +97,13 @@ function bucketContributions(
   return buckets;
 }
 
-export function computeGrid(pois: OsmPOI[], category: BusinessCategory, location = 'santo-domingo'): GridCell[] {
+export function computeGrid(
+  pois: OsmPOI[],
+  category: BusinessCategory,
+  location = 'santo-domingo',
+  opts: { barrios?: BarrioIndex | null; target?: TargetSegment } = {},
+): GridCell[] {
+  const { barrios = null, target = 'todos' } = opts;
   const locationConfig = getLocation(location);
   const bbox = locationConfig.bbox;
   const { latStep, lonStep, rows, cols } = buildGridDims(bbox);
@@ -124,11 +153,12 @@ export function computeGrid(pois: OsmPOI[], category: BusinessCategory, location
   for (const cell of cells) {
     const demand = cell.anchorScore / maxAnchor;
     const saturation = cell.competitorCount / maxCompetitor;
-    // Ajuste socioeconómico (ONE/SIUBEN): el poder adquisitivo del sector
-    // modula la demanda en ±30% — power 0.5 es neutro (×1.0), 1.0 → ×1.3,
-    // 0.0 → ×0.7. Multiplicativo para que celdas sin demanda sigan en 0.
-    const power = purchasingPowerAt(cell.center, location);
-    const adjustedDemand = demand * (0.7 + 0.6 * power);
+    // Poder adquisitivo de la celda: primero el barrio oficial SIUBEN
+    // (punto-en-polígono sobre los polígonos ICV_BARRIOS); si la celda cae
+    // fuera de todo barrio o el barrio no tiene cifra, el sector estimado.
+    const barrioPower = barrios ? barrioPowerAt(barrios, cell.center) : null;
+    const power = barrioPower ?? purchasingPowerAt(cell.center, location);
+    const adjustedDemand = demand * segmentMultiplier(power, target);
     cell.score = Math.round(Math.min(100, Math.max(0, adjustedDemand * 100 - saturation * 55)));
   }
   return cells;
