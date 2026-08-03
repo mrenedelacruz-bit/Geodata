@@ -153,6 +153,20 @@ export function regionalPovertyFor(location: string): RegionalPoverty | null {
  */
 export const NATIONAL_POVERTY = { pct: 15.4, period: 'ene-mar 2026, preliminar' };
 
+/**
+ * Contexto oficial 2025 — Boletín Anual de Estadísticas Oficiales de Pobreza
+ * Monetaria ene-dic 2025 (Ministerio de Hacienda y Economía, CTP/ENCFT-BCRD).
+ * Líneas de pobreza al T4-2025, en RD$ por persona al mes.
+ */
+export const POVERTY_CONTEXT_2025 = {
+  rateGeneral: 17.3,
+  rateExtrema: 2.2,
+  lineGeneralRD: 8_274,
+  lineExtremaRD: 3_943,
+  ingresoPerCapitaRD: 20_192,
+  gini: 0.389,
+};
+
 export function getCensusSectors(location: string): SD.CensusSector[] {
   return moduleFor(location).CENSUS_SECTORS;
 }

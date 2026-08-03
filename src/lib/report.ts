@@ -1,5 +1,5 @@
 import type { BusinessCategory, GridCell } from '../types';
-import { NATIONAL_POVERTY } from '../data/census';
+import { NATIONAL_POVERTY, POVERTY_CONTEXT_2025 } from '../data/census';
 import type { Census2022, CensusSector, RegionalPoverty } from '../data/census';
 import type { MunicipioPop } from '../data/census2022-municipios';
 import { powerLabel } from '../data/census';
@@ -116,7 +116,8 @@ export function openPrintReport(data: ReportData): void {
   }
   ${
     poverty
-      ? `<div class="meta">Pobreza monetaria general: ${poverty.povertyPct}% en la región ${esc(poverty.region)} (PIP ONE/MEPyD, 2025) · nacional ${NATIONAL_POVERTY.pct}% (${esc(NATIONAL_POVERTY.period)}, Hacienda y Economía)</div>`
+      ? `<div class="meta">Pobreza monetaria general: ${poverty.povertyPct}% en la región ${esc(poverty.region)} (PIP ONE/MEPyD, 2025) · nacional ${NATIONAL_POVERTY.pct}% (${esc(NATIONAL_POVERTY.period)}, Hacienda y Economía)</div>
+  <div class="meta">Contexto nacional 2025 (Boletín Anual de Pobreza Monetaria): pobreza general 17.3% (extrema 2.2%) · línea de pobreza RD$${POVERTY_CONTEXT_2025.lineGeneralRD.toLocaleString('es-DO')}/persona/mes (extrema RD$${POVERTY_CONTEXT_2025.lineExtremaRD.toLocaleString('es-DO')}) · ingreso per cápita RD$${POVERTY_CONTEXT_2025.ingresoPerCapitaRD.toLocaleString('es-DO')}/mes · Gini ${POVERTY_CONTEXT_2025.gini}</div>`
       : ''
   }
 
