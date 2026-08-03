@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Rectangle, CircleMarker, Polyline, Popup, useM
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
 import { getLocation } from '../data/locations';
 import { PROVINCE_BOUNDARIES } from '../data/province-boundaries';
+import { MUNICIPIO_BOUNDARIES } from '../data/municipio-boundaries';
 import { formatDistance } from '../lib/geo';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
@@ -118,6 +119,16 @@ export default function MapView({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <ClickHandler onClick={onMapClick} />
+        {/* Límites municipales oficiales (SIUBEN Open Data), líneas finas. */}
+        {(MUNICIPIO_BOUNDARIES[location] ?? []).map((mun) =>
+          mun.rings.map((ring, i) => (
+            <Polyline
+              key={`mun_${mun.name}_${i}`}
+              positions={[...ring, ring[0]]}
+              pathOptions={{ color: '#94a3b8', weight: 1, opacity: 0.5, interactive: false }}
+            />
+          )),
+        )}
         {/* Límite provincial oficial (SIUBEN Open Data), solo contorno. */}
         {(PROVINCE_BOUNDARIES[location] ?? []).map((ring, i) => (
           <Polyline
