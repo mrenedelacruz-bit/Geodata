@@ -42,6 +42,7 @@ function poorColor(p: number | null): string {
 export default function CensusLayer({ location }: Props) {
   const official = OFFICIAL_BARRIOS.has(location);
   const [barrios, setBarrios] = useState<Barrio[] | null>(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!official) {
@@ -50,18 +51,23 @@ export default function CensusLayer({ location }: Props) {
     }
     let cancelled = false;
     setBarrios(null);
+    setFailed(false);
     fetch(`${import.meta.env.BASE_URL}data/barrios/${location}.json`)
-      .then((res) => (res.ok ? res.json() : null))
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
       .then((data) => {
         if (!cancelled) setBarrios(data);
       })
       .catch(() => {
-        if (!cancelled) setBarrios(null);
+        if (!cancelled) setFailed(true);
       });
     return () => {
       cancelled = true;
     };
   }, [location, official]);
+
+  // Mientras cargan los barrios oficiales no se pinta nada (evita el parpadeo
+  // de los círculos aproximados); estos quedan solo como respaldo si falla la red.
+  if (official && !barrios && !failed) return null;
 
   if (official && barrios) {
     return (
@@ -69,7 +75,9 @@ export default function CensusLayer({ location }: Props) {
         {barrios.map((b, i) => (
           <Polygon
             key={i}
-            positions={b.r}
+            // LatLng[][][]: cada anillo es un polígono independiente (multiparte),
+            // no un agujero — Leaflet interpreta LatLng[][] como exterior+agujeros.
+            positions={b.r.map((ring) => [ring])}
             pathOptions={{
               color: '#475569',
               weight: 0.4,
