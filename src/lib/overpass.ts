@@ -9,7 +9,7 @@ const ENDPOINTS = [
 
 // Solo las etiquetas que la app usa (matchers de categorías, anclas y popups);
 // recortar el resto reduce varias veces el peso del JSON en localStorage.
-const KEEP_TAGS = ['amenity', 'shop', 'leisure', 'office', 'highway', 'landuse', 'tourism', 'fuel:lpg', 'name', 'brand', 'source'];
+const KEEP_TAGS = ['amenity', 'shop', 'leisure', 'office', 'highway', 'landuse', 'tourism', 'fuel:lpg', 'cuisine', 'name', 'brand', 'source'];
 
 function slimPois(pois: OsmPOI[]): OsmPOI[] {
   return pois.map((p) => {
@@ -49,9 +49,10 @@ interface OverpassElement {
 }
 
 export async function fetchOsmPOIs(bbox: BBox): Promise<OsmPOI[]> {
-  // v2: se agregó la etiqueta tourism (agencias de viaje/transporte turístico);
-  // subir la versión invalida la caché vieja que no la traía.
-  const cacheKey = `osm_pois_v2_${bbox.south}_${bbox.west}_${bbox.north}_${bbox.east}`;
+  // v3: se agregó la etiqueta cuisine (para distinguir pizzerías dentro de
+  // restaurantes/comida rápida); subir la versión invalida la caché vieja
+  // que no la traía.
+  const cacheKey = `osm_pois_v3_${bbox.south}_${bbox.west}_${bbox.north}_${bbox.east}`;
   const cached = readCache<OsmPOI[]>(cacheKey);
   if (cached && !cached.stale) return cached.value;
 

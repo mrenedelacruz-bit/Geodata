@@ -17,6 +17,7 @@ export const DGII_BY_CATEGORY: Record<string, number> = {
   gasolinera: 767, // venta al por menor de combustible (incl. estaciones de servicio)
   estacion_gas: 204, // fraccionamiento y distribución de GLP + gas en garrafas
   restaurante: 3_044, // restaurantes y cantinas + comida rápida
+  pizzeria: 1_036, // servicios de pizzerías, fast food y locales de venta al paso (incl. pizza, empanadas, hamburguesas)
   cafeteria: 779,
   farmacia: 3_031, // venta al por menor de productos farmacéuticos
   supermercado: 625, // venta al por menor en supermercados

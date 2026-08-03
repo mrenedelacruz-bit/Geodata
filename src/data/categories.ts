@@ -16,6 +16,16 @@ const GLP_BRANDS = ['tropigas', 'propagas', 'gasval', 'comatgas', 'agagas', 'alb
 // contienen "gas" como substring pero no son estaciones de GLP.
 const GLP_WORD_RE = /\b(gas|glp|planta)\b/i;
 
+// cuisine=pizza es el tag de OSM para pizzerías; se aplica sobre
+// amenity=restaurant o fast_food (no es un amenity propio). El nombre es
+// respaldo para locales sin cuisine etiquetado.
+function isPizzeria(t: Record<string, string>): boolean {
+  if (!has(t, 'amenity', ['restaurant', 'fast_food'])) return false;
+  const cuisine = (t.cuisine ?? '').toLowerCase();
+  if (cuisine.split(';').includes('pizza')) return true;
+  return /pizza/i.test(t.name ?? '');
+}
+
 function isGlpStation(t: Record<string, string>): boolean {
   const name = (t.name ?? '').toLowerCase();
   const brand = (t.brand ?? '').toLowerCase();
@@ -80,6 +90,23 @@ export const BUSINESS_CATEGORIES: BusinessCategory[] = [
       transit: 2.0,
       residential: 1.8,
       retail: 1.0,
+    },
+  },
+  {
+    id: 'pizzeria',
+    label: 'Pizzería',
+    icon: '🍕',
+    competitorLabel: 'Pizzerías',
+    matchesCompetitor: isPizzeria,
+    anchorWeights: {
+      office: 1.0,
+      mall: 2.0,
+      university: 2.0,
+      health: 0.3,
+      bank: 0.6,
+      transit: 1.8,
+      residential: 2.2,
+      retail: 0.9,
     },
   },
   {
