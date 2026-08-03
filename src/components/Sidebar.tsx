@@ -1,6 +1,13 @@
 import { useMemo, useState } from 'react';
 import { BUSINESS_CATEGORIES } from '../data/categories';
-import { powerLabel, powerColor, sectorAt, census2022For, type CensusSector } from '../data/census';
+import {
+  powerLabel,
+  powerColor,
+  sectorAt,
+  census2022For,
+  regionalPovertyFor,
+  type CensusSector,
+} from '../data/census';
 import { saturationLabel, saturationColor } from '../lib/saturation';
 import { municipiosFor } from '../data/census2022-municipios';
 import { formatDistance } from '../lib/geo';
@@ -71,6 +78,7 @@ export default function Sidebar({
 
   const census2022 = census2022For(location);
   const municipios = municipiosFor(location);
+  const poverty = regionalPovertyFor(location);
 
   const isInComparison = (cell: GridCell) =>
     comparisonCells.some((c) => c.row === cell.row && c.col === cell.col);
@@ -98,6 +106,7 @@ export default function Sidebar({
       poiCount,
       census2022,
       municipios,
+      poverty,
     });
   }
 
@@ -142,7 +151,14 @@ export default function Sidebar({
             🏠 {census2022.hogares.toLocaleString('es-DO')} hogares ({census2022.avgHogar} pers.) · 💼{' '}
             {census2022.ocupados.toLocaleString('es-DO')} ocupados
           </div>
-          <div style={{ fontSize: '10px', color: '#9ca3af' }}>Censo ONE 2022 (Vol. I y V, cifras definitivas)</div>
+          {poverty && (
+            <div>
+              📉 Pobreza monetaria {poverty.povertyPct}% (región {poverty.region}, 2025)
+            </div>
+          )}
+          <div style={{ fontSize: '10px', color: '#9ca3af' }}>
+            Censo ONE 2022 (Vol. I y V, definitivo) · PIP ONE/MEPyD 2025
+          </div>
         </div>
       )}
 

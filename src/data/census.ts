@@ -121,6 +121,30 @@ export function census2022For(location: string): Census2022 | null {
   return CENSUS_2022[location] ?? null;
 }
 
+/**
+ * Incidencia de pobreza monetaria general por región, 2025 — Portal
+ * Interactivo de Pobreza (PIP, ONE/MEPyD), indicador 1.1.4. La región es la
+ * máxima desagregación territorial que publica el PIP.
+ */
+export interface RegionalPoverty {
+  region: string;
+  povertyPct: number;
+}
+
+const POVERTY_2025: Record<string, RegionalPoverty> = {
+  'santo-domingo': { region: 'Metropolitana (Ozama)', povertyPct: 22.0 },
+  'puerto-plata': { region: 'Cibao Norte', povertyPct: 11.3 },
+  'santiago': { region: 'Cibao Norte', povertyPct: 11.3 },
+  'la-vega': { region: 'Cibao Sur', povertyPct: 9.7 },
+  'san-cristobal': { region: 'Valdesia', povertyPct: 10.0 },
+  'la-altagracia': { region: 'Yuma', povertyPct: 13.5 },
+  'la-romana': { region: 'Yuma', povertyPct: 13.5 },
+};
+
+export function regionalPovertyFor(location: string): RegionalPoverty | null {
+  return POVERTY_2025[location] ?? null;
+}
+
 export function getCensusSectors(location: string): SD.CensusSector[] {
   return moduleFor(location).CENSUS_SECTORS;
 }

@@ -1,5 +1,5 @@
 import type { BusinessCategory, GridCell } from '../types';
-import type { Census2022, CensusSector } from '../data/census';
+import type { Census2022, CensusSector, RegionalPoverty } from '../data/census';
 import type { MunicipioPop } from '../data/census2022-municipios';
 import { powerLabel } from '../data/census';
 import { saturationLabel } from './saturation';
@@ -23,6 +23,7 @@ interface ReportData {
   poiCount: number;
   census2022: Census2022 | null;
   municipios: MunicipioPop[];
+  poverty: RegionalPoverty | null;
 }
 
 function esc(s: string): string {
@@ -35,7 +36,8 @@ function esc(s: string): string {
  * cliente — sin librerías extra ni backend.
  */
 export function openPrintReport(data: ReportData): void {
-  const { locationLabel, category, pointAnalysis, topZones, categoryTotals, poiCount, census2022, municipios } = data;
+  const { locationLabel, category, pointAnalysis, topZones, categoryTotals, poiCount, census2022, municipios, poverty } =
+    data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
   const appUrl = window.location.href;
 
@@ -109,6 +111,11 @@ export function openPrintReport(data: ReportData): void {
   ${
     census2022
       ? `<div class="meta">Censo ONE 2022 (definitivo): ${census2022.population.toLocaleString('es-DO')} habitantes (${census2022.urbanPct}% urbana, crecimiento ${census2022.growthPct >= 0 ? '+' : ''}${census2022.growthPct}%/año 2010-2022) · ${census2022.hogares.toLocaleString('es-DO')} hogares (${census2022.avgHogar} pers./hogar) · ${census2022.ocupados.toLocaleString('es-DO')} ocupados · ${census2022.empleadores.toLocaleString('es-DO')} empleadores</div>`
+      : ''
+  }
+  ${
+    poverty
+      ? `<div class="meta">Pobreza monetaria general: ${poverty.povertyPct}% en la región ${esc(poverty.region)} (PIP ONE/MEPyD, 2025)</div>`
       : ''
   }
 
