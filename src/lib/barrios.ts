@@ -177,6 +177,15 @@ const POPULAR_OVERRIDES = new Set([
   'Cancino Adentro|Santo Domingo Este',
 ]);
 
+/**
+ * Municipios enteros de ingreso bajo por validación local: aunque algunos de
+ * sus barrios no alcancen el umbral automático de densidad de registro
+ * (suelo aún poco poblado, lotificaciones nuevas), el municipio completo es
+ * de ingreso bajo. No aplica a barrios ya en ALTO_OVERRIDES ni a los que
+ * cruzan el umbral de pobreza extrema (siguen en 'Pobreza', tono oscuro).
+ */
+const MUNI_INGRESO_BAJO = new Set(['Los Alcarrizos']);
+
 export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: string; color: string } {
   const p = b.p;
   const a = b.a ?? 60;
@@ -190,9 +199,9 @@ export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: 
     return { cat: 'medio', label: 'Ingreso medio', color: `hsl(180, 45%, ${Math.round(l)}%)` };
   }
   const density = b.h / Math.max(0.05, barrioAreaKm2(b));
-  const isAlto = ELITE_MUNS.has(b.m)
-    ? a >= 45 && p < 15 && density < 800
-    : a >= 55 && p < 12 && density < 600;
+  const isAlto =
+    !MUNI_INGRESO_BAJO.has(b.m) &&
+    (ELITE_MUNS.has(b.m) ? a >= 45 && p < 15 && density < 800 : a >= 55 && p < 12 && density < 600);
   if (isAlto) {
     const l = 52 - Math.min(1, (a - 45) / 30) * 22; // violeta: 52% → 30%
     return { cat: 'alto', label: 'Alto ingreso', color: `hsl(262, 60%, ${Math.round(l)}%)` };
@@ -206,7 +215,10 @@ export function classifyBarrio(b: BarrioFeature): { cat: BarrioCategory; label: 
   // pobreza ICV ≥20%), más la lista de validación local para barrios cuyo
   // suelo abierto engaña a la densidad.
   const isPopular =
-    density >= 1200 || (p >= 20 && density >= 800) || POPULAR_OVERRIDES.has(`${b.n}|${b.m}`);
+    density >= 1200 ||
+    (p >= 20 && density >= 800) ||
+    POPULAR_OVERRIDES.has(`${b.n}|${b.m}`) ||
+    MUNI_INGRESO_BAJO.has(b.m);
   if (isPopular) {
     const l = 74 - (p / 35) * 16; // magenta claro: 74% → 58%
     return { cat: 'pobreza', label: 'Popular / ingreso bajo', color: `hsl(330, 55%, ${Math.round(l)}%)` };
