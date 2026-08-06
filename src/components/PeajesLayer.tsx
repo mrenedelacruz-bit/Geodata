@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CircleMarker, Popup } from 'react-leaflet';
 
 /**
- * Estaciones de peaje RD Vial con su tráfico REAL medido, por año
+ * Las 18 estaciones de peaje RD Vial con su tráfico REAL medido, por año
  * (2021 – jun 2026). El año activo lo elige el usuario en el control de
  * capas; cada estación se dibuja escalada y coloreada por su promedio de
  * vehículos/día en ese año. Coordenadas validadas por el usuario contra el

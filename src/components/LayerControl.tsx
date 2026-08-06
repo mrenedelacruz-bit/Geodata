@@ -193,7 +193,7 @@ export default function LayerControl({
           <div className="chk">{showPeajes ? '✓' : ''}</div>
         </div>
         <div className="sub">
-          Tráfico real medido en las 15 estaciones de peaje del país. El tamaño y tono azul de cada estación
+          Tráfico real medido en las 18 estaciones de peaje del país. El tamaño y tono azul de cada estación
           reflejan sus vehículos/día en el año elegido; el popup trae la serie 2021-2026 y el crecimiento.
         </div>
         {showPeajes && (
