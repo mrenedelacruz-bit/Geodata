@@ -263,13 +263,17 @@ footer a {
 }
 
 .legend-body {
-  max-height: 500px;
+  /* Con 7 capas y sus menús el contenido supera los 500px de antes: en vez
+     de recortarse en silencio, el panel hace scroll interno y nunca excede
+     el alto de la ventana. */
+  max-height: min(72vh, 700px);
   transition: max-height 0.2s ease;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .legend-body.collapsed {
   max-height: 0;
+  overflow: hidden;
 }
 
 .layer-btn {
