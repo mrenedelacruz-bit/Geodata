@@ -10,6 +10,7 @@ import { formatDistance } from '../lib/geo';
 import { scoreColor } from '../lib/saturation';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
+import AforosLayer from './AforosLayer';
 import IvaccLayer from './IvaccLayer';
 import LayerControl from './LayerControl';
 import LocationSwitcher from './LocationSwitcher';
@@ -49,6 +50,10 @@ interface Props {
   onCensusToggle: (show: boolean) => void;
   showIvacc: boolean;
   onIvaccToggle: (show: boolean) => void;
+  showAforos: boolean;
+  onAforosToggle: (show: boolean) => void;
+  aforoHour: string;
+  onAforoHourChange: (h: string) => void;
 }
 
 export default function MapView({
@@ -77,6 +82,10 @@ export default function MapView({
   onCensusToggle,
   showIvacc,
   onIvaccToggle,
+  showAforos,
+  onAforosToggle,
+  aforoHour,
+  onAforoHourChange,
 }: Props) {
   const locationConfig = getLocation(location);
 
@@ -152,6 +161,7 @@ export default function MapView({
         {showHeatmap && <HeatmapLayerComponent grid={grid} />}
         {showCensus && <CensusLayer location={location} />}
         {showIvacc && <IvaccLayer location={location} />}
+        {showAforos && <AforosLayer location={location} hour={aforoHour} />}
         {showGrid &&
           grid
             .filter((cell) => cell.anchorScore > 0 || cell.competitorCount > 0)
@@ -277,6 +287,11 @@ export default function MapView({
         onCensusToggle={onCensusToggle}
         showIvacc={showIvacc}
         onIvaccToggle={onIvaccToggle}
+        showAforos={showAforos}
+        onAforosToggle={onAforosToggle}
+        aforoHour={aforoHour}
+        onAforoHourChange={onAforoHourChange}
+        aforosAvailable={location === 'santo-domingo'}
       />
     </div>
   );

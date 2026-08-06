@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AFORO_BANDS } from './AforosLayer';
 import type { BusinessCategory } from '../types';
 
 interface Props {
@@ -13,6 +14,11 @@ interface Props {
   onCensusToggle: (show: boolean) => void;
   showIvacc: boolean;
   onIvaccToggle: (show: boolean) => void;
+  showAforos: boolean;
+  onAforosToggle: (show: boolean) => void;
+  aforoHour: string;
+  onAforoHourChange: (h: string) => void;
+  aforosAvailable: boolean;
 }
 
 export default function LayerControl({
@@ -27,6 +33,11 @@ export default function LayerControl({
   onCensusToggle,
   showIvacc,
   onIvaccToggle,
+  showAforos,
+  onAforosToggle,
+  aforoHour,
+  onAforoHourChange,
+  aforosAvailable,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -120,6 +131,46 @@ export default function LayerControl({
           % de hogares con vulnerabilidad alta ante huracanes e inundaciones, por municipio (SIUBEN).
           Ámbar oscuro = mayor riesgo.
         </div>
+
+        {aforosAvailable && (
+          <>
+            <div
+              className={`layer-btn ${showAforos ? '' : 'off'}`}
+              onClick={() => toggleLayer(onAforosToggle, showAforos)}
+            >
+              <div
+                className="swatch"
+                style={{ background: 'linear-gradient(135deg, #22c55e 33%, #f59e0b 33% 66%, #dc2626 66%)' }}
+              />
+              Aforos de tráfico (INTRANT)
+              <div className="chk">{showAforos ? '✓' : ''}</div>
+            </div>
+            <div className="sub">
+              Conteos vehiculares reales por intersección (Gran Santo Domingo, 2017-2019). El tamaño y color de
+              cada punto reflejan el volumen en la banda horaria elegida: verde = menor flujo, rojo = mayor.
+            </div>
+            {showAforos && (
+              <select
+                value={aforoHour}
+                onChange={(e) => onAforoHourChange(e.target.value)}
+                style={{
+                  width: '100%',
+                  margin: '2px 0 8px',
+                  padding: '5px 8px',
+                  fontSize: '12px',
+                  borderRadius: '6px',
+                  border: '1px solid #d1d5db',
+                }}
+              >
+                {AFORO_BANDS.map((b) => (
+                  <option key={b.hour} value={b.hour}>
+                    🕐 {b.label}
+                  </option>
+                ))}
+              </select>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

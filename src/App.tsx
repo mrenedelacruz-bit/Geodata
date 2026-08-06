@@ -58,6 +58,8 @@ function initialParams() {
     showCompetitors: capas.includes('competencia'),
     showCensus: capas.includes('censo'),
     showIvacc: capas.includes('riesgo'),
+    showAforos: capas.includes('aforos'),
+    aforoHour: ['7','8','9','10','15','16','17','18'].includes(p.get('hora') ?? '') ? (p.get('hora') as string) : '7',
   };
 }
 
@@ -82,6 +84,8 @@ export default function App({ location }: AppProps) {
   const [showCompetitors, setShowCompetitors] = useState(initial.showCompetitors);
   const [showCensus, setShowCensus] = useState(initial.showCensus);
   const [showIvacc, setShowIvacc] = useState(initial.showIvacc);
+  const [showAforos, setShowAforos] = useState(initial.showAforos);
+  const [aforoHour, setAforoHour] = useState(initial.aforoHour);
 
   const locationConfig = getLocation(location);
   const prevLocation = useRef(location);
@@ -106,13 +110,15 @@ export default function App({ location }: AppProps) {
       showCompetitors && 'competencia',
       showCensus && 'censo',
       showIvacc && 'riesgo',
+      showAforos && 'aforos',
     ]
       .filter(Boolean)
       .join(',');
     if (capas !== 'competencia') p.set('capas', capas);
+    if (showAforos && aforoHour !== '7') p.set('hora', aforoHour);
     const qs = p.toString();
     window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
-  }, [category, selectedPoint, myLocation, target, showHeatmap, showGrid, showCompetitors, showCensus, showIvacc]);
+  }, [category, selectedPoint, myLocation, target, showHeatmap, showGrid, showCompetitors, showCensus, showIvacc, showAforos, aforoHour]);
 
   // Índice de barrios oficiales SIUBEN para el motor de score y el buscador.
   useEffect(() => {
@@ -384,6 +390,10 @@ export default function App({ location }: AppProps) {
           onCensusToggle={setShowCensus}
           showIvacc={showIvacc}
           onIvaccToggle={setShowIvacc}
+          showAforos={showAforos}
+          onAforosToggle={setShowAforos}
+          aforoHour={aforoHour}
+          onAforoHourChange={setAforoHour}
         />
       </main>
     </div>
