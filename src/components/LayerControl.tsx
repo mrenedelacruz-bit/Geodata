@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AFORO_BANDS } from './AforosLayer';
+import { PEAJE_YEARS } from './PeajesLayer';
 import type { BusinessCategory } from '../types';
 
 interface Props {
@@ -19,6 +20,10 @@ interface Props {
   aforoHour: string;
   onAforoHourChange: (h: string) => void;
   aforosAvailable: boolean;
+  showPeajes: boolean;
+  onPeajesToggle: (show: boolean) => void;
+  peajeYear: string;
+  onPeajeYearChange: (y: string) => void;
 }
 
 export default function LayerControl({
@@ -38,6 +43,10 @@ export default function LayerControl({
   aforoHour,
   onAforoHourChange,
   aforosAvailable,
+  showPeajes,
+  onPeajesToggle,
+  peajeYear,
+  onPeajeYearChange,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -170,6 +179,42 @@ export default function LayerControl({
               </select>
             )}
           </>
+        )}
+
+        <div
+          className={`layer-btn ${showPeajes ? '' : 'off'}`}
+          onClick={() => toggleLayer(onPeajesToggle, showPeajes)}
+        >
+          <div
+            className="swatch"
+            style={{ background: 'linear-gradient(135deg, #bcd7f5, #1e4f8f)' }}
+          />
+          Peajes RD Vial (por año)
+          <div className="chk">{showPeajes ? '✓' : ''}</div>
+        </div>
+        <div className="sub">
+          Tráfico real medido en las 15 estaciones de peaje del país. El tamaño y tono azul de cada estación
+          reflejan sus vehículos/día en el año elegido; el popup trae la serie 2021-2026 y el crecimiento.
+        </div>
+        {showPeajes && (
+          <select
+            value={peajeYear}
+            onChange={(e) => onPeajeYearChange(e.target.value)}
+            style={{
+              width: '100%',
+              margin: '2px 0 8px',
+              padding: '5px 8px',
+              fontSize: '12px',
+              borderRadius: '6px',
+              border: '1px solid #d1d5db',
+            }}
+          >
+            {PEAJE_YEARS.map((y) => (
+              <option key={y} value={y}>
+                📅 {y}{y === '2026' ? ' (ene-jun)' : ''}
+              </option>
+            ))}
+          </select>
         )}
       </div>
     </div>

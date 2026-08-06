@@ -59,6 +59,8 @@ function initialParams() {
     showCensus: capas.includes('censo'),
     showIvacc: capas.includes('riesgo'),
     showAforos: capas.includes('aforos'),
+    showPeajes: capas.includes('peajes'),
+    peajeYear: ['2021','2022','2023','2024','2025','2026'].includes(p.get('anio') ?? '') ? (p.get('anio') as string) : '2025',
     aforoHour: ['7','8','9','10','15','16','17','18'].includes(p.get('hora') ?? '') ? (p.get('hora') as string) : '7',
   };
 }
@@ -86,6 +88,8 @@ export default function App({ location }: AppProps) {
   const [showIvacc, setShowIvacc] = useState(initial.showIvacc);
   const [showAforos, setShowAforos] = useState(initial.showAforos);
   const [aforoHour, setAforoHour] = useState(initial.aforoHour);
+  const [showPeajes, setShowPeajes] = useState(initial.showPeajes);
+  const [peajeYear, setPeajeYear] = useState(initial.peajeYear);
 
   const locationConfig = getLocation(location);
   const prevLocation = useRef(location);
@@ -111,14 +115,16 @@ export default function App({ location }: AppProps) {
       showCensus && 'censo',
       showIvacc && 'riesgo',
       showAforos && 'aforos',
+      showPeajes && 'peajes',
     ]
       .filter(Boolean)
       .join(',');
     if (capas !== 'competencia') p.set('capas', capas);
     if (showAforos && aforoHour !== '7') p.set('hora', aforoHour);
+    if (showPeajes && peajeYear !== '2025') p.set('anio', peajeYear);
     const qs = p.toString();
     window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
-  }, [category, selectedPoint, myLocation, target, showHeatmap, showGrid, showCompetitors, showCensus, showIvacc, showAforos, aforoHour]);
+  }, [category, selectedPoint, myLocation, target, showHeatmap, showGrid, showCompetitors, showCensus, showIvacc, showAforos, aforoHour, showPeajes, peajeYear]);
 
   // Índice de barrios oficiales SIUBEN para el motor de score y el buscador.
   useEffect(() => {
@@ -394,6 +400,10 @@ export default function App({ location }: AppProps) {
           onAforosToggle={setShowAforos}
           aforoHour={aforoHour}
           onAforoHourChange={setAforoHour}
+          showPeajes={showPeajes}
+          onPeajesToggle={setShowPeajes}
+          peajeYear={peajeYear}
+          onPeajeYearChange={setPeajeYear}
         />
       </main>
     </div>

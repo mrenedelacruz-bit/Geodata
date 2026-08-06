@@ -33,15 +33,15 @@ export const PEAJES: PeajeStation[] = [
   { name: 'Romana', corridor: 'Autovía del Este (SD–La Romana)', provinces: ['la-romana'], daily2025: 15_309, growthPct: 50.1, baseYear: 2021, daily2026: 19_276 },
   { name: 'Coral 1', corridor: 'Autopista del Coral (La Romana–Punta Cana)', provinces: ['la-romana', 'la-altagracia'], daily2025: 18_601, growthPct: 53.6, baseYear: 2021, daily2026: 20_770 },
   { name: 'Coral 2', corridor: 'Autopista del Coral (La Romana–Punta Cana)', provinces: ['la-romana', 'la-altagracia'], daily2025: 17_522, growthPct: 77.4, baseYear: 2021, daily2026: 20_466 },
+  { name: 'Tramo 1', corridor: 'Circunvalación Juan Bosch, Tramo I (Haina–Aut. Duarte)', provinces: ['santo-domingo'], daily2025: 19_854, growthPct: 40.7, baseYear: 2021, daily2026: 24_369 },
+  { name: 'Tramo 2', corridor: 'Circunvalación Juan Bosch, Tramo II (Aut. Duarte–Yamasá)', provinces: ['santo-domingo'], daily2025: 19_430, growthPct: 60.2, baseYear: 2021, daily2026: 22_093 },
+  { name: 'Tramo 2B', corridor: 'Circunvalación Juan Bosch, Tramo 2B (Yamasá–Aut. del Nordeste)', provinces: ['santo-domingo'], daily2025: 14_203, growthPct: 92.8, baseYear: 2021, daily2026: 17_678 },
+  { name: 'Marbella', corridor: 'Inicio Autopista del Nordeste (SD Este)', provinces: ['santo-domingo'], daily2025: 7_396, growthPct: -33.0, baseYear: 2022, daily2026: 5_977 },
 ];
 
 /** Estaciones fuera de las 7 provincias (contexto de corredores nacionales). */
 export const PEAJES_OTROS: PeajeStation[] = [
-  { name: 'Tramo 1', corridor: 'Autopista Juan Pablo II (SD–Samaná)', provinces: [], daily2025: 19_854, growthPct: 40.7, baseYear: 2021, daily2026: 24_369 },
-  { name: 'Tramo 2', corridor: 'Autopista Juan Pablo II (SD–Samaná)', provinces: [], daily2025: 19_430, growthPct: 60.2, baseYear: 2021, daily2026: 22_093 },
-  { name: 'Tramo 2B', corridor: 'Autopista Juan Pablo II (SD–Samaná)', provinces: [], daily2025: 14_203, growthPct: 92.8, baseYear: 2021, daily2026: 17_678 },
-  { name: 'Naranjal', corridor: 'Autopista Juan Pablo II (SD–Samaná)', provinces: [], daily2025: 8_236, growthPct: 32.0, baseYear: 2022, daily2026: 9_260 },
-  { name: 'Marbella', corridor: 'Boulevard Turístico del Atlántico', provinces: [], daily2025: 7_396, growthPct: -33.0, baseYear: 2022, daily2026: 5_977 },
+  { name: 'Naranjal', corridor: 'Autopista del Nordeste (SD–Samaná)', provinces: [], daily2025: 8_236, growthPct: 32.0, baseYear: 2022, daily2026: 9_260 },
   { name: 'Guaraguao', corridor: 'Boulevard Turístico del Atlántico', provinces: [], daily2025: 5_333, growthPct: 25.0, baseYear: 2022, daily2026: 5_840 },
   { name: 'Catey', corridor: 'Boulevard Turístico del Atlántico (Samaná)', provinces: [], daily2025: 1_806, growthPct: 25.9, baseYear: 2022, daily2026: 2_225 },
   { name: 'Circunv. Azua', corridor: 'Circunvalación de Azua', provinces: [], daily2025: 5_786, growthPct: null, baseYear: null, daily2026: 7_807 },

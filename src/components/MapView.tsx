@@ -11,6 +11,7 @@ import { scoreColor } from '../lib/saturation';
 import HeatmapLayerComponent from './HeatmapLayer';
 import CensusLayer from './CensusLayer';
 import AforosLayer from './AforosLayer';
+import PeajesLayer from './PeajesLayer';
 import IvaccLayer from './IvaccLayer';
 import LayerControl from './LayerControl';
 import LocationSwitcher from './LocationSwitcher';
@@ -54,6 +55,10 @@ interface Props {
   onAforosToggle: (show: boolean) => void;
   aforoHour: string;
   onAforoHourChange: (h: string) => void;
+  showPeajes: boolean;
+  onPeajesToggle: (show: boolean) => void;
+  peajeYear: string;
+  onPeajeYearChange: (y: string) => void;
 }
 
 export default function MapView({
@@ -86,6 +91,10 @@ export default function MapView({
   onAforosToggle,
   aforoHour,
   onAforoHourChange,
+  showPeajes,
+  onPeajesToggle,
+  peajeYear,
+  onPeajeYearChange,
 }: Props) {
   const locationConfig = getLocation(location);
 
@@ -162,6 +171,7 @@ export default function MapView({
         {showCensus && <CensusLayer location={location} />}
         {showIvacc && <IvaccLayer location={location} />}
         {showAforos && <AforosLayer location={location} hour={aforoHour} />}
+        {showPeajes && <PeajesLayer year={peajeYear} />}
         {showGrid &&
           grid
             .filter((cell) => cell.anchorScore > 0 || cell.competitorCount > 0)
@@ -292,6 +302,10 @@ export default function MapView({
         aforoHour={aforoHour}
         onAforoHourChange={onAforoHourChange}
         aforosAvailable={location === 'santo-domingo'}
+        showPeajes={showPeajes}
+        onPeajesToggle={onPeajesToggle}
+        peajeYear={peajeYear}
+        onPeajeYearChange={onPeajeYearChange}
       />
     </div>
   );
