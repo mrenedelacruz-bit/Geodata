@@ -175,6 +175,7 @@ const POPULAR_OVERRIDES = new Set([
   'Cancino|Santo Domingo Este',
   'Cancino Afuera|Santo Domingo Este',
   'Cancino Adentro|Santo Domingo Este',
+  'Caballona|Santo Domingo Oeste',
 ]);
 
 /**
