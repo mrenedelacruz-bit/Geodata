@@ -9,7 +9,12 @@ export default function RootApp() {
         {Object.keys(LOCATIONS).map((id) => (
           <Route key={id} path={`/${id}`} element={<App location={id} />} />
         ))}
-        <Route path="/" element={<Navigate to="/santo-domingo" replace />} />
+        {/* Redirigir conservando el query string: un enlace compartido de la
+            raíz (?cat=..&lat=..) debe reproducir el análisis tras redirigir. */}
+        <Route
+          path="*"
+          element={<Navigate to={{ pathname: '/santo-domingo', search: window.location.search }} replace />}
+        />
       </Routes>
     </BrowserRouter>
   )

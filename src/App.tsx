@@ -172,10 +172,11 @@ export default function App({ location }: AppProps) {
 
   // Los scores de la comparación dependen del rubro: al cambiarlo dejan de
   // ser comparables y se vacía la selección (celdas y ubicaciones guardadas).
-  useEffect(() => {
+  function handleCategoryChange(c: typeof category) {
+    setCategory(c);
     setComparisonCells([]);
     setSavedSpots([]);
-  }, [category]);
+  }
 
   const grid = useMemo(
     () => (pois.length ? computeGrid(pois, category, location, { barrios: barrioIndex, target }) : []),
@@ -327,7 +328,7 @@ export default function App({ location }: AppProps) {
         title={locationConfig.title}
         locationLabel={locationConfig.label}
         category={category}
-        onCategoryChange={setCategory}
+        onCategoryChange={handleCategoryChange}
         grid={grid}
         loading={loading}
         error={error}
