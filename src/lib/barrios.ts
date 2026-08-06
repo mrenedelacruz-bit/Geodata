@@ -60,7 +60,13 @@ export function loadBarrios(location: string): Promise<BarrioIndex | null> {
     p = fetch(`${import.meta.env.BASE_URL}data/barrios/${location}.json`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data: BarrioFeature[] | null) => (data ? buildIndex(data) : null))
-      .catch(() => null);
+      .catch(() => null)
+      .then((idx) => {
+        // No cachear el fallo: un error de red momentáneo no debe dejar la
+        // capa muerta hasta recargar — el próximo intento vuelve a descargar.
+        if (idx === null) cache.delete(location);
+        return idx;
+      });
     cache.set(location, p);
   }
   return p;

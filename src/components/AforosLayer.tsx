@@ -44,7 +44,12 @@ export function loadAforos(): Promise<AforoStation[] | null> {
   if (!cache) {
     cache = fetch(`${import.meta.env.BASE_URL}data/aforos-gsd.json`)
       .then((res) => (res.ok ? res.json() : null))
-      .catch(() => null);
+      .catch(() => null)
+      .then((data) => {
+        // No cachear el fallo: permite reintentar al volver a activar la capa.
+        if (data === null) cache = null;
+        return data;
+      });
   }
   return cache;
 }
@@ -61,13 +66,47 @@ interface Props {
   hour: string;
 }
 
+/**
+ * 32 de las 48 estaciones comparten coordenada exacta con otra (geocodificadas
+ * al mismo punto de la avenida): sin separación, unos marcadores tapan a otros
+ * y quedan inclicables. Se aplica un desplazamiento determinista pequeño
+ * (~70 m en círculo) a las estaciones de cada grupo duplicado — solo visual;
+ * el popup ya advierte que la coordenada es aproximada sobre la vía.
+ */
+function spreadDuplicates(stations: AforoStation[]): AforoStation[] {
+  const groups = new Map<string, AforoStation[]>();
+  for (const s of stations) {
+    const key = `${s.lat}_${s.lon}`;
+    const g = groups.get(key);
+    if (g) g.push(s);
+    else groups.set(key, [s]);
+  }
+  const out: AforoStation[] = [];
+  for (const g of groups.values()) {
+    if (g.length === 1) {
+      out.push(g[0]);
+      continue;
+    }
+    g.forEach((s, i) => {
+      const angle = (2 * Math.PI * i) / g.length;
+      const rM = 70;
+      out.push({
+        ...s,
+        lat: s.lat + (rM * Math.sin(angle)) / 111_320,
+        lon: s.lon + (rM * Math.cos(angle)) / (111_320 * Math.cos((s.lat * Math.PI) / 180)),
+      });
+    });
+  }
+  return out;
+}
+
 export default function AforosLayer({ location, hour }: Props) {
   const [stations, setStations] = useState<AforoStation[] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     loadAforos().then((data) => {
-      if (!cancelled) setStations(data);
+      if (!cancelled) setStations(data ? spreadDuplicates(data) : null);
     });
     return () => {
       cancelled = true;
