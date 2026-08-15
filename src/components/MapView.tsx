@@ -105,6 +105,11 @@ export default function MapView({
     () =>
       competitors.map((poi) => {
         const isManual = poi.tags.source?.startsWith('manual:');
+        // Contacto SOLO si está mapeado en OSM (jamás se inventa): las variantes
+        // contact:* son la convención alternativa de etiquetado.
+        const phone = poi.tags.phone ?? poi.tags['contact:phone'];
+        const website = poi.tags.website ?? poi.tags['contact:website'];
+        const webHref = website && !/^https?:\/\//i.test(website) ? `https://${website}` : website;
         return (
           <CircleMarker
             key={poi.id}
@@ -117,10 +122,28 @@ export default function MapView({
             }
           >
             <Popup>
-              <div style={{ fontSize: '12px', minWidth: isManual ? '200px' : undefined }}>
-                <div>
+              <div style={{ fontSize: '12px', minWidth: isManual || phone || website ? '200px' : undefined }}>
+                <div style={{ fontWeight: phone || website ? 700 : 400 }}>
                   {category.icon} {poi.tags.name ?? category.competitorLabel}
                 </div>
+                {phone && (
+                  <div style={{ marginTop: '3px' }}>
+                    📞 <a href={`tel:${phone.replace(/[^+\d]/g, '')}`}>{phone}</a>
+                  </div>
+                )}
+                {website && (
+                  <div style={{ marginTop: '2px', wordBreak: 'break-all' }}>
+                    🌐{' '}
+                    <a href={webHref} target="_blank" rel="noreferrer">
+                      {website.replace(/^https?:\/\//i, '').replace(/\/$/, '')}
+                    </a>
+                  </div>
+                )}
+                {(phone || website) && (
+                  <div style={{ marginTop: '4px', fontSize: '9.5px', color: '#9ca3af' }}>
+                    Contacto según OpenStreetMap — puede estar desactualizado
+                  </div>
+                )}
                 {isManual && (
                   <div style={{ marginTop: '6px', padding: '6px 8px', background: '#fff8ee', borderRadius: '4px', fontSize: '10.5px', color: '#b45309' }}>
                     ⚠ Agregado manualmente — aún no está en OpenStreetMap.{' '}
