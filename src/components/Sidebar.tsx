@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BUSINESS_CATEGORIES } from '../data/categories';
 import {
   powerLabel,
@@ -22,6 +22,8 @@ import { peajesFor, PEAJES_CUTOFF } from '../data/peajes';
 import { formatRD, SATURATION_META, CATCHMENT_MINUTES } from '../lib/market';
 import type { MarketAnalysis, SavedSpot, TravelMode } from '../lib/market';
 import type { VehicularExposure } from '../lib/roads';
+import { loadAforos } from './AforosLayer';
+import type { AforoStation } from './AforosLayer';
 import { cellAt } from '../lib/grid';
 import type { TargetSegment } from '../lib/grid';
 import type { BusinessCategory, GridCell, LatLon, OsmPOI } from '../types';
@@ -141,6 +143,22 @@ export default function Sidebar({
     const byScore = [...withMeta].sort((x, y) => y.score - x.score).slice(0, 5);
     return { byStratum, byScore };
   }, [barrioIndex, grid, location]);
+  // Aforos INTRANT para el reporte (solo Gran Santo Domingo).
+  const [aforos, setAforos] = useState<AforoStation[] | null>(null);
+  useEffect(() => {
+    if (location !== 'santo-domingo') {
+      setAforos(null);
+      return;
+    }
+    let cancelled = false;
+    loadAforos().then((data) => {
+      if (!cancelled) setAforos(data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [location]);
+
   const poverty = regionalPovertyFor(location);
   const siubenIcv = siubenIcvFor(location);
   const peajes = peajesFor(location);
@@ -178,6 +196,13 @@ export default function Sidebar({
       exposure,
       savedSpots,
       peajes,
+      aforos: aforos
+        ? [...aforos]
+            .filter((a) => a.pAM !== null)
+            .sort((x, y) => (y.pAM ?? 0) - (x.pAM ?? 0))
+            .slice(0, 10)
+            .map((a) => ({ n: a.n, hAM: a.hAM, pAM: a.pAM, hPM: a.hPM, pPM: a.pPM }))
+        : [],
       topBarrios: topBarrios
         ? {
             byScore: topBarrios.byScore.map(({ b, score }) => ({ name: b.n, muni: b.m, score })),

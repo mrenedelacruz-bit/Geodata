@@ -42,6 +42,8 @@ interface ReportData {
   exposure?: VehicularExposure | null;
   savedSpots?: SavedSpot[];
   peajes?: PeajeStation[];
+  /** Top intersecciones por pico AM (aforos INTRANT, solo Gran Santo Domingo). */
+  aforos?: { n: string; hAM: string | null; pAM: number | null; hPM: string | null; pPM: number | null }[];
 }
 
 function esc(s: string): string {
@@ -71,6 +73,7 @@ export function openPrintReport(data: ReportData): void {
     exposure = null,
     savedSpots = [],
     peajes = [],
+    aforos = [],
   } = data;
   const fecha = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
   const appUrl = window.location.href;
@@ -290,6 +293,23 @@ export function openPrintReport(data: ReportData): void {
   <p class="mini">Tráfico real medido en los peajes del corredor que sirve a la provincia (dataset "Tráfico
   Estaciones de Peaje", RD Vial/INTRANT, datos.gob.do). No cubre calles urbanas; para el entorno inmediato del
   punto se usa el índice de exposición vehicular (jerarquía vial OSM).</p>`
+      : ''
+  }
+
+  ${
+    aforos.length
+      ? `<h2>Aforos vehiculares INTRANT — top ${aforos.length} intersecciones por hora pico AM</h2>
+  <table class="lista">
+    <tr><th>Intersección</th><th>Hora pico AM</th><th>Vol. pico AM (veh/h)</th><th>Hora pico PM</th><th>Vol. pico PM (veh/h)</th></tr>
+    ${aforos
+      .map(
+        (a) =>
+          `<tr><td>${esc(a.n)}</td><td>${a.hAM ?? '—'}</td><td>${a.pAM?.toLocaleString('es-DO') ?? '—'}</td><td>${a.hPM ?? '—'}</td><td>${a.pPM?.toLocaleString('es-DO') ?? '—'}</td></tr>`,
+      )
+      .join('')}
+  </table>
+  <p class="mini">Conteos reales por intersección (aforos INTRANT 2017-2019, Gran Santo Domingo). La capa
+  🚥 del mapa permite explorar las 48 intersecciones por banda horaria.</p>`
       : ''
   }
 
