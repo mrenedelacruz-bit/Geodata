@@ -69,6 +69,7 @@ interface Props {
   target: TargetSegment;
   onTargetChange: (t: TargetSegment) => void;
   barrioIndex: BarrioIndex | null;
+  escuelasInfo: { centros: number; estudiantes: number } | null;
   myLocation: LatLon | null;
   onSetMyLocation: (p: LatLon | null) => void;
   myAnalysis: MyAnalysis | null;
@@ -103,6 +104,7 @@ export default function Sidebar({
   target,
   onTargetChange,
   barrioIndex,
+  escuelasInfo,
   myLocation,
   onSetMyLocation,
   myAnalysis,
@@ -275,6 +277,12 @@ export default function Sidebar({
               {NATIONAL_POVERTY.pct}% ({NATIONAL_POVERTY.period})
             </div>
           )}
+          {escuelasInfo && (
+            <div>
+              🏫 {escuelasInfo.centros.toLocaleString('es-DO')} centros educativos ·{' '}
+              {escuelasInfo.estudiantes.toLocaleString('es-DO')} estudiantes (MINERD 2023-2024)
+            </div>
+          )}
           {siubenIcv && (
             <div>
               🏚️ {siubenIcv.pobres.toLocaleString('es-DO')} hogares en pobreza ICV (SIUBEN) ·{' '}
@@ -282,7 +290,7 @@ export default function Sidebar({
             </div>
           )}
           <div style={{ fontSize: '10px', color: '#9ca3af' }}>
-            Censo ONE 2022 · PIP ONE/MEPyD 2025 · Hacienda y Economía 2026 · SIUBEN Open Data
+            Censo ONE 2022 · PIP ONE/MEPyD 2025 · Hacienda y Economía 2026 · SIUBEN Open Data · MINERD
           </div>
         </div>
       )}

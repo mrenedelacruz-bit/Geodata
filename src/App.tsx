@@ -15,6 +15,8 @@ import type { BarrioIndex } from './lib/barrios';
 import { distanceMeters } from './lib/geo';
 import { mergeManualPois } from './data/manualPois';
 import { sectorAt } from './data/census';
+import { loadEscuelas, mergeEscuelas } from './data/escuelas';
+import type { Escuela } from './data/escuelas';
 import { getLocation } from './data/locations';
 import type { GridCell, LatLon, OsmPOI } from './types';
 import './App.css';
@@ -77,6 +79,7 @@ export default function App({ location }: AppProps) {
   const [comparisonCells, setComparisonCells] = useState<GridCell[]>([]);
   const [target, setTarget] = useState<TargetSegment>(initial.target);
   const [barrioIndex, setBarrioIndex] = useState<BarrioIndex | null>(null);
+  const [escuelas, setEscuelas] = useState<Escuela[] | null>(null);
   const [roadIndex, setRoadIndex] = useState<RoadIndex | null>(null);
   const [marketMode, setMarketMode] = useState<TravelMode>('walk');
   const [marketMinutes, setMarketMinutes] = useState(10);
@@ -138,6 +141,19 @@ export default function App({ location }: AppProps) {
     };
   }, [location]);
 
+  // Centros educativos oficiales MINERD: anclas educativas completas (OSM
+  // solo tiene una fracción de las escuelas mapeadas).
+  useEffect(() => {
+    let cancelled = false;
+    setEscuelas(null);
+    loadEscuelas(location).then((data) => {
+      if (!cancelled) setEscuelas(data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [location]);
+
   // Vías principales OSM para el índice de exposición vehicular (proxy de
   // tráfico); en paralelo a los POIs y con su propia caché local.
   useEffect(() => {
@@ -190,23 +206,30 @@ export default function App({ location }: AppProps) {
     setSavedSpots([]);
   }
 
-  const grid = useMemo(
-    () => (pois.length ? computeGrid(pois, category, location, { barrios: barrioIndex, target }) : []),
-    [pois, category, location, barrioIndex, target],
+  // POIs de OSM + centros educativos oficiales MINERD (con deduplicación):
+  // esta es la base que alimenta cuadrícula, análisis y totalizadores.
+  const allPois = useMemo(
+    () => (escuelas && pois.length ? mergeEscuelas(pois, escuelas) : pois),
+    [pois, escuelas],
   );
 
-  const competitors = useMemo(() => pois.filter((p) => category.matchesCompetitor(p.tags)), [pois, category]);
+  const grid = useMemo(
+    () => (allPois.length ? computeGrid(allPois, category, location, { barrios: barrioIndex, target }) : []),
+    [allPois, category, location, barrioIndex, target],
+  );
+
+  const competitors = useMemo(() => allPois.filter((p) => category.matchesCompetitor(p.tags)), [allPois, category]);
 
   // Totales por rubro para toda la ciudad activa, sin importar el rubro
   // seleccionado en el selector principal.
   const categoryTotals = useMemo(
-    () => BUSINESS_CATEGORIES.map((c) => ({ category: c, count: pois.filter((p) => c.matchesCompetitor(p.tags)).length })),
-    [pois],
+    () => BUSINESS_CATEGORIES.map((c) => ({ category: c, count: allPois.filter((p) => c.matchesCompetitor(p.tags)).length })),
+    [allPois],
   );
 
   const pointAnalysis = useMemo(() => {
-    if (!selectedPoint || !pois.length) return null;
-    const result = scoreAtPoint(pois, category, selectedPoint.point);
+    if (!selectedPoint || !allPois.length) return null;
+    const result = scoreAtPoint(allPois, category, selectedPoint.point);
     const cell = cellAt(grid, location, selectedPoint.point);
     const sector = sectorAt(selectedPoint.point, location);
     const barrio = barrioIndex ? barrioAt(barrioIndex, selectedPoint.point) : null;
@@ -218,7 +241,7 @@ export default function App({ location }: AppProps) {
       barrio,
       ...result,
     };
-  }, [selectedPoint, pois, category, grid, location, barrioIndex]);
+  }, [selectedPoint, allPois, category, grid, location, barrioIndex]);
 
   // Análisis de mercado de la captación del punto (isócrona estimada, demanda,
   // Huff, saturación, canibalización).
@@ -246,12 +269,12 @@ export default function App({ location }: AppProps) {
 
   // Análisis fijo en "mi ubicación" (independiente del punto seleccionado).
   const myAnalysis = useMemo(() => {
-    if (!myLocation || !pois.length) return null;
-    const result = scoreAtPoint(pois, category, myLocation);
+    if (!myLocation || !allPois.length) return null;
+    const result = scoreAtPoint(allPois, category, myLocation);
     const cell = cellAt(grid, location, myLocation);
     const sector = sectorAt(myLocation, location);
     return { score: cell?.score ?? null, sector, ...result };
-  }, [myLocation, pois, category, grid, location]);
+  }, [myLocation, allPois, category, grid, location]);
 
   // Competidores del rubro ordenados por distancia a mi ubicación.
   const nearestCompetitors = useMemo(() => {
@@ -263,7 +286,7 @@ export default function App({ location }: AppProps) {
   }, [myLocation, competitors]);
 
   function handleMapClick(p: LatLon) {
-    const poi = findPoiAtPoint(pois, p);
+    const poi = findPoiAtPoint(allPois, p);
     const label = poi?.tags.name || `Punto (${p.lat.toFixed(4)}, ${p.lon.toFixed(4)})`;
     setSelectedPoint({ point: p, label });
     setSelectedCell(null);
@@ -355,6 +378,11 @@ export default function App({ location }: AppProps) {
         target={target}
         onTargetChange={setTarget}
         barrioIndex={barrioIndex}
+        escuelasInfo={
+          escuelas
+            ? { centros: escuelas.length, estudiantes: escuelas.reduce((sum, e) => sum + e.m, 0) }
+            : null
+        }
         myLocation={myLocation}
         onSetMyLocation={setMyLocation}
         myAnalysis={myAnalysis}

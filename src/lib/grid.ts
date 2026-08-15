@@ -29,6 +29,17 @@ function segmentMultiplier(power: number, target: TargetSegment): number {
 
 const CELL_METERS = 450;
 
+/**
+ * Escala del ancla por matrícula (centros MINERD): un colegio de 2,000
+ * alumnos genera mucha más demanda de paso que uno de 40. Raíz cuadrada
+ * sobre matrícula/400 (el centro mediano), acotada a [0.4, 3].
+ */
+function enrollmentScale(tags: Record<string, string>): number {
+  const m = tags.matricula ? Number(tags.matricula) : NaN;
+  if (!Number.isFinite(m) || m <= 0) return 1;
+  return Math.min(3, Math.max(0.4, Math.sqrt(m / 400)));
+}
+
 export function buildGridDims(bbox: BBox) {
   const centerLat = (bbox.south + bbox.north) / 2;
   const latStep = CELL_METERS / METERS_PER_DEG_LAT;
@@ -84,6 +95,7 @@ function bucketContributions(
         anchorWeight += weights[anchor.id] ?? anchor.weight;
       }
     }
+    anchorWeight *= enrollmentScale(poi.tags);
     const contribution: PoiContribution = {
       isCompetitor: category.matchesCompetitor(poi.tags),
       anchorWeight,
@@ -206,7 +218,7 @@ export function scoreAtPoint(pois: OsmPOI[], category: BusinessCategory, point: 
     for (const anchor of ANCHOR_SIGNALS) {
       if (anchor.matches(poi.tags)) {
         const weight = weights[anchor.id] ?? anchor.weight;
-        anchorScore += weight;
+        anchorScore += weight * enrollmentScale(poi.tags);
         anchorCounts.set(anchor.label, (anchorCounts.get(anchor.label) ?? 0) + 1);
       }
     }
