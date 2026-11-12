@@ -18,17 +18,22 @@
     padding: 90px 30px 60px;
     page-break-after: always;
   }
-  .cover .logo { font-size: 64px; margin-bottom: 18px; }
-  .cover h1 { font-size: 30px; color: #0b5fa5; margin: 0 0 8px; }
+  .cover .logo-img { width: 340px; max-width: 80%; margin-bottom: 26px; }
+  .cover h1 { font-size: 30px; color: #0D2B4E; margin: 0 0 8px; }
   .cover .sub { font-size: 15px; color: #6b7280; margin-bottom: 40px; }
   .cover .meta {
     display: inline-block; text-align: left; font-size: 12px; color: #374151;
-    border-top: 2px solid #0ea5e9; padding-top: 16px; margin-top: 30px;
+    border-top: 2px solid #16A5E6; padding-top: 16px; margin-top: 30px;
   }
   .cover .meta div { margin: 3px 0; }
+  .cover .compiled {
+    display: inline-block; background: #0D2B4E; color: #fff;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+    padding: 7px 22px; border-radius: 3px; margin-top: 42px;
+  }
   h2 {
-    font-size: 17px; color: #0b5fa5;
-    border-bottom: 2px solid #0ea5e9; padding-bottom: 5px;
+    font-size: 15.5px; color: #fff; background: #0D2B4E;
+    padding: 7px 12px; border-left: 6px solid #16A5E6; border-radius: 2px;
     margin: 28px 0 12px;
   }
   h3 { font-size: 13.5px; color: #111827; margin: 18px 0 6px; }
@@ -36,11 +41,11 @@
   ul, ol { margin: 6px 0; padding-left: 22px; }
   li { margin: 3px 0; }
   table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.5px; }
-  th { background: #0b5fa5; color: #fff; text-align: left; padding: 6px 8px; }
+  th { background: #3D5A80; color: #fff; text-align: left; padding: 6px 8px; }
   td { border: 1px solid #d1d5db; padding: 5px 8px; vertical-align: top; }
   tr:nth-child(even) td { background: #f3f7fb; }
   .box {
-    background: #f0f9ff; border-left: 4px solid #0ea5e9;
+    background: #f0f9ff; border-left: 4px solid #16A5E6;
     padding: 8px 12px; border-radius: 4px; margin: 10px 0;
   }
   .warn {
@@ -66,16 +71,18 @@
 <body>
 
 <div class="cover">
-  <div class="logo">📍</div>
+  <img class="logo-img" src="logo-united-petroleum.png" alt="United Petroleum — Grupo Haina">
   <h1>Asesor de Ubicación de Negocios</h1>
   <div class="sub">Manual de Usuario</div>
   <div class="sub" style="font-size:13px;">Santo Domingo · Puerto Plata · La Altagracia · San Cristóbal · Santiago · La Vega · La Romana<br>República Dominicana</div>
   <div class="meta">
-    <div><strong>Versión:</strong> 7.26</div>
-    <div><strong>Fecha:</strong> Agosto 2026</div>
+    <div><strong>Versión:</strong> 7.27</div>
+    <div><strong>Fecha:</strong> Noviembre 2026</div>
     <div><strong>Plataforma:</strong> Aplicación web (navegador)</div>
     <div><strong>Datos:</strong> OpenStreetMap · Censo ONE 2022 · SIUBEN/MEPyD</div>
   </div>
+  <br>
+  <div class="compiled">Compilado por MRDF — United Petroleum · Grupo Haina</div>
 </div>
 
 <h2>1. ¿Qué es el Asesor de Ubicación?</h2>
@@ -454,10 +461,14 @@ comparar zonas, pero <strong>no sustituye un estudio de mercado o de factibilida
 <h3>¿Los datos de poder adquisitivo son exactos?</h3>
 <p>La población provincial proviene del X Censo Nacional 2022 (ONE, Informe General con cifras definitivas). El poder adquisitivo por sector es una estimación derivada de los estratos ICV municipales (SIUBEN/MEPyD, base Mapa de la Pobreza 2014); cuando el dato exacto del sector no está disponible, la app lo indica. La migración al modelo ICV-3 con cartografía del Censo 2022 está en proceso.</p>
 
-<div class="footer-note">
-Asesor de Ubicación de Negocios · Manual de Usuario v7.26 · Agosto 2026 —
-Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
-Herramienta orientativa; no sustituye un estudio de mercado formal.
+<div class="footer-note" style="text-align:center;">
+  <img src="logo-united-petroleum.png" alt="United Petroleum — Grupo Haina" style="width:170px; margin: 6px 0 10px;"><br>
+  Asesor de Ubicación de Negocios · Manual de Usuario v7.27 · Noviembre 2026 —
+  Datos: © OpenStreetMap contributors (ODbL) · Censo ONE 2022 · SIUBEN/MEPyD.
+  Herramienta orientativa; no sustituye un estudio de mercado formal.
+  <div style="background:#0D2B4E; color:#fff; font-weight:600; letter-spacing:0.06em; padding:6px 0; border-radius:3px; margin-top:10px;">
+    Compilado por MRDF — United Petroleum · Grupo Haina
+  </div>
 </div>
 
 </body>
